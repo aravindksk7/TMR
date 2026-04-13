@@ -1,0 +1,51 @@
+name: qa-pipeline
+
+services:
+
+  # ── SQL Server 2022 ──────────────────────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Pipeline_Test_P@ss1"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: >
+        /opt/mssql-tools18/bin/sqlcmd
+        -S localhost -U sa -P "Pipeline_Test_P@ss1"
+        -Q "SELECT 1" -b -C
+        || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  # ── Pipeline test runner ─────────────────────────────────────────────────────
+  pipeline:
+    build:
+      context: .
+      target: app
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    env_file:
+      - docker/.env.docker
+    environment:
+      # Override with Docker-network hostname
+      STAGING_DB_DSN:   "DRIVER={ODBC Driver 18 for SQL Server};SERVER=sqlserver,1433;DATABASE=Staging_DB;UID=sa;PWD=Pipeline_Test_P@ss1;TrustServerCertificate=yes"
+      REPORTING_DB_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=sqlserver,1433;DATABASE=Reporting_DB;UID=sa;PWD=Pipeline_Test_P@ss1;TrustServerCertificate=yes"
+      SCHEDULER_DB_URL: "mssql+pyodbc://sa:Pipeline_Test_P%40ss1@sqlserver:1433/Staging_DB?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes"
+    volumes:
+      # Mount source for fast iteration without rebuilding
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./config:/app/config
+      - ./scripts:/app/scripts
+    command: ["test"]   # passed as CMD to entrypoint.sh
+
+volumes:
+  sqlserver_data:

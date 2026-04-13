@@ -1,0 +1,85 @@
+{
+  "_comment": "Map Jira custom field IDs to reporting schema columns. Field IDs are instance-specific. Run GET /rest/api/3/field to discover yours and update this file.",
+  "mappings": [
+    {
+      "source_field_id": "customfield_10200",
+      "logical_name":    "program_name",
+      "target_table":    "dim_program",
+      "target_column":   "program_name",
+      "entity_type":     "jira_issue",
+      "field_type":      "string"
+    },
+    {
+      "source_field_id": "customfield_10201",
+      "logical_name":    "squad_name",
+      "target_table":    "dim_squad",
+      "target_column":   "squad_name",
+      "entity_type":     "jira_issue",
+      "field_type":      "string"
+    },
+    {
+      "source_field_id": "customfield_10100",
+      "logical_name":    "test_type",
+      "target_table":    "dim_test",
+      "target_column":   "test_type_sk",
+      "entity_type":     "xray_test",
+      "field_type":      "select_value"
+    },
+    {
+      "source_field_id": "customfield_10101",
+      "logical_name":    "test_repository_path",
+      "target_table":    "dim_test",
+      "target_column":   "repository_path",
+      "entity_type":     "xray_test",
+      "field_type":      "string"
+    },
+    {
+      "source_field_id": "customfield_10102",
+      "logical_name":    "manual_test_steps",
+      "target_table":    "stg_xray_tests",
+      "target_column":   "steps_json",
+      "entity_type":     "xray_test",
+      "field_type":      "json"
+    },
+    {
+      "source_field_id": "customfield_10103",
+      "logical_name":    "gherkin_definition",
+      "target_table":    "dim_test",
+      "target_column":   "gherkin_definition",
+      "entity_type":     "xray_test",
+      "field_type":      "string"
+    },
+    {
+      "source_field_id": "customfield_10104",
+      "logical_name":    "generic_definition",
+      "target_table":    "dim_test",
+      "target_column":   "generic_definition",
+      "entity_type":     "xray_test",
+      "field_type":      "string"
+    },
+    {
+      "source_field_id": "customfield_10300",
+      "logical_name":    "test_environments",
+      "target_table":    "stg_xray_test_executions",
+      "target_column":   "environments_json",
+      "entity_type":     "xray_test_execution",
+      "field_type":      "array"
+    },
+    {
+      "source_field_id": "customfield_10301",
+      "logical_name":    "test_plan_key",
+      "target_table":    "stg_xray_test_executions",
+      "target_column":   "test_plan_key",
+      "entity_type":     "xray_test_execution",
+      "field_type":      "issue_key"
+    },
+    {
+      "source_field_id": "customfield_10302",
+      "logical_name":    "revision",
+      "target_table":    "stg_xray_test_executions",
+      "target_column":   "revision",
+      "entity_type":     "xray_test_execution",
+      "field_type":      "string"
+    }
+  ]
+}

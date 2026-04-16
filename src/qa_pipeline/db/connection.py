@@ -21,12 +21,12 @@ log = structlog.get_logger(__name__)
 
 # ── Connection factory ─────────────────────────────────────────────────────────
 
-def build_connection(dsn: str, autocommit: bool = False) -> pyodbc.Connection:
+def build_connection(dsn: str) -> pyodbc.Connection:
     """
     Open a pyodbc connection with correct UTF-8 encoding for SQL Server.
-    autocommit=False is the default so callers control transactions explicitly.
+    AutoCommit is controlled via the DSN (AutoCommit=True).
     """
-    conn = pyodbc.connect(dsn, autocommit=autocommit)
+    conn = pyodbc.connect(dsn)
     conn.setdecoding(pyodbc.SQL_WCHAR, encoding="utf-8")
     conn.setencoding(encoding="utf-8")
     return conn

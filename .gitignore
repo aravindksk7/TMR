@@ -3,26 +3,28 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+.Python
 *.egg-info/
 dist/
 build/
 .eggs/
 
-# Virtual environment
+# Virtual environments
 .venv/
 venv/
 env/
 
-# Secrets — never commit these
+# Environment / secrets
 .env
+*.env
+
+# pyodbc / DB
+*.db
+*.sqlite3
 
 # Logs
 logs/
 *.log
-
-# OS
-.DS_Store
-Thumbs.db
 
 # IDE
 .vscode/
@@ -30,7 +32,11 @@ Thumbs.db
 *.suo
 *.user
 
-# pytest
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / coverage
 .pytest_cache/
 .coverage
 htmlcov/

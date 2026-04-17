@@ -57,6 +57,7 @@ class JiraExtractor:
             backoff_base_ms=config.rate_limit_backoff_base_ms,
             http_proxy=config.http_proxy,
             https_proxy=config.https_proxy,
+            ssl_ca_bundle=config.ssl_ca_bundle,
         )
 
     def __enter__(self) -> JiraExtractor:

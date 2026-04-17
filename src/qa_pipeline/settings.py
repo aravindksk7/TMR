@@ -6,7 +6,7 @@ Nothing is hardcoded. Import PipelineSettings() anywhere in the codebase.
 """
 from __future__ import annotations
 
-from pydantic import AnyHttpUrl, SecretStr
+from pydantic import AliasChoices, AnyHttpUrl, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -48,6 +48,13 @@ class PipelineSettings(BaseSettings):
     http_proxy: str | None = None   # e.g. http://proxy.corp.com:8080
     https_proxy: str | None = None  # e.g. http://proxy.corp.com:8080
     no_proxy: str | None = None     # comma-separated hosts to bypass
+
+    # ── SSL (optional — set to corporate CA bundle path in on-premises envs) ──
+    # Accepts SSL_CERT_FILE or REQUESTS_CA_BUNDLE (whichever is set in .env)
+    ssl_ca_bundle: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ssl_ca_bundle", "ssl_cert_file", "requests_ca_bundle"),
+    )
 
     # ── Alerting (all optional) ───────────────────────────────────────────────
     alert_webhook_url: AnyHttpUrl | None = None

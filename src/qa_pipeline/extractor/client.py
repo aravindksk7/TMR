@@ -67,15 +67,18 @@ class ApiClient:
         timeout: float = 30.0,
         http_proxy: str | None = None,
         https_proxy: str | None = None,
+        ssl_ca_bundle: str | None = None,
     ) -> None:
         self._base_url = base_url.rstrip("/")
         self._retry_max = retry_max
         self._backoff_base_ms = backoff_base_ms
 
+        # Jira and Xray Server both use HTTP Basic auth.
+        # Prefix with "Basic" unless the caller already supplied "Basic"/"Bearer".
         auth_header = (
             auth_token
             if auth_token.startswith(("Basic ", "Bearer "))
-            else f"Bearer {auth_token}"
+            else f"Basic {auth_token}"
         )
 
         mounts: dict[str, httpx.HTTPTransport] = {}
@@ -93,6 +96,7 @@ class ApiClient:
             },
             timeout=httpx.Timeout(timeout),
             follow_redirects=True,
+            verify=ssl_ca_bundle or True,
             **({"mounts": mounts} if mounts else {}),
         )
 

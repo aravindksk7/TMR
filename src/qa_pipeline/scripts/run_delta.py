@@ -108,6 +108,7 @@ def _run(
             jira_base_url=str(settings.jira_base_url),
             xray_base_url=str(settings.xray_base_url),
             auth_token=settings.jira_auth_token.get_secret_value(),
+            jira_api_version=settings.jira_api_version,
             xray_variant=settings.xray_variant,
             project_keys=settings.project_keys,
             max_results_per_page=settings.max_results_per_page,

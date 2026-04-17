@@ -14,6 +14,7 @@ class ExtractorConfig(BaseModel):
     jira_base_url: str
     xray_base_url: str
     auth_token: str                            # base64 email:api_token or Bearer
+    jira_api_version: str = "2"               # "2" for Server/DC, "3" for Cloud
     xray_variant: Literal["server", "cloud"] = "server"
     project_keys: list[str] = []
     max_results_per_page: int = 100

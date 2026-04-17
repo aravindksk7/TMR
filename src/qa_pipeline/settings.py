@@ -21,6 +21,8 @@ class PipelineSettings(BaseSettings):
     jira_base_url: AnyHttpUrl
     xray_base_url: AnyHttpUrl
     jira_auth_token: SecretStr
+    # "2" for Jira Server/DC (on-premises), "3" for Jira Cloud
+    jira_api_version: str = "2"
     # "server" → REST /rest/raven/2.0/   "cloud" → GraphQL xray.cloud.getxray.app
     xray_variant: str = "server"
     # Comma-separated Jira project keys, e.g. "PROJ1,PROJ2"

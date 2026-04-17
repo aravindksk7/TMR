@@ -1,8 +1,8 @@
 """
 extractor/jira.py — JiraExtractor.
 
-Extracts Jira issues (stories, epics, defects) via the Jira REST API v3
-using JQL with optional watermark filtering.
+Extracts Jira issues (stories, epics, defects) via the Jira REST API
+(v2 for Server/DC, v3 for Cloud) using JQL with optional watermark filtering.
 
 Produces StagingRecord objects for:
   • jira_issue  — stories, tasks, epics (non-defect issue types)
@@ -83,8 +83,9 @@ class JiraExtractor:
         newest_ts: datetime | None = None
 
         try:
+            api_path = f"/rest/api/{self._config.jira_api_version}/search"
             for page in self._client.paginate_jira(
-                path="/rest/api/3/search",
+                path=api_path,
                 results_key="issues",
                 page_size=self._config.max_results_per_page,
                 jql=jql,

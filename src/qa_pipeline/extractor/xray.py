@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
 
+import httpx
 import structlog
 
 from qa_pipeline.extractor.client import ApiClient
@@ -245,25 +246,49 @@ class XrayServerExtractor:
 
 # ── Cloud extractor ────────────────────────────────────────────────────────────
 
+_XRAY_AUTH_URL = "https://xray.cloud.getxray.app/api/v2/authenticate"
+
+
 class XrayCloudExtractor:
     """
-    Extracts Xray Cloud entities via GraphQL.
+    Extracts Xray Cloud entities via GraphQL at
+    https://xray.cloud.getxray.app/api/v2/graphql.
 
-    base_url should be ``https://xray.cloud.getxray.app/api/v2``
+    Authenticates with client_id/client_secret to obtain a JWT Bearer token.
     """
 
     def __init__(self, config: ExtractorConfig, run_id: UUID) -> None:
         self._config = config
         self._run_id = run_id
+
+        bearer_token = self._authenticate(config)
         self._client = ApiClient(
             base_url=config.xray_base_url,
-            auth_token=config.auth_token,
+            auth_token=f"Bearer {bearer_token}",
             retry_max=config.rate_limit_retry_max,
             backoff_base_ms=config.rate_limit_backoff_base_ms,
             http_proxy=config.http_proxy,
             https_proxy=config.https_proxy,
             ssl_ca_bundle=config.ssl_ca_bundle,
         )
+
+    @staticmethod
+    def _authenticate(config: ExtractorConfig) -> str:
+        """POST client credentials to Xray Cloud and return the JWT Bearer token."""
+        if not config.xray_client_id or not config.xray_client_secret:
+            raise ValueError(
+                "XRAY_CLIENT_ID and XRAY_CLIENT_SECRET are required for xray_variant=cloud"
+            )
+        resp = httpx.post(
+            _XRAY_AUTH_URL,
+            json={"client_id": config.xray_client_id, "client_secret": config.xray_client_secret},
+            timeout=30.0,
+            verify=config.ssl_ca_bundle or True,
+        )
+        resp.raise_for_status()
+        token: str = resp.json()
+        log.info("xray_cloud.authenticated")
+        return token
 
     def __enter__(self) -> XrayCloudExtractor:
         return self
@@ -324,6 +349,20 @@ class XrayCloudExtractor:
             return records, _ok_result(self._run_id, "xray_test_executions", records, watermark)
         except Exception as exc:  # noqa: BLE001
             return records, _fail_result(self._run_id, "xray_test_executions", records, watermark, exc)
+
+    def extract_test_sets(
+        self,
+        project_key: str,
+    ) -> tuple[list[StagingRecord], ExtractorResult]:
+        # Test sets are not exposed via Xray Cloud GraphQL; return empty.
+        return [], _ok_result(self._run_id, "xray_test_sets", [], None)
+
+    def extract_preconditions(
+        self,
+        project_key: str,
+    ) -> tuple[list[StagingRecord], ExtractorResult]:
+        # Preconditions are not exposed via Xray Cloud GraphQL; return empty.
+        return [], _ok_result(self._run_id, "xray_preconditions", [], None)
 
     def extract_test_runs(
         self,

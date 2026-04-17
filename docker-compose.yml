@@ -47,5 +47,25 @@ services:
       - ./scripts:/app/scripts
     command: ["test"]   # passed as CMD to entrypoint.sh
 
+  # ── Live dry-run against real Jira/Xray ─────────────────────────────────────
+  pipeline-live:
+    profiles: [live]
+    build:
+      context: .
+      target: app
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    env_file:
+      - .env                          # real credentials — gitignored
+    environment:
+      STAGING_DB_DSN:   "DRIVER={ODBC Driver 18 for SQL Server};SERVER=sqlserver,1433;DATABASE=Staging_DB;UID=sa;PWD=Pipeline_Test_P@ss1;TrustServerCertificate=yes;AutoCommit=True"
+      REPORTING_DB_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=sqlserver,1433;DATABASE=Reporting_DB;UID=sa;PWD=Pipeline_Test_P@ss1;TrustServerCertificate=yes;AutoCommit=True"
+      SCHEDULER_DB_URL: "mssql+pyodbc://sa:Pipeline_Test_P%40ss1@sqlserver:1433/Staging_DB?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes"
+    volumes:
+      - ./src:/app/src
+      - ./config:/app/config
+    command: ["dry-run"]
+
 volumes:
   sqlserver_data:

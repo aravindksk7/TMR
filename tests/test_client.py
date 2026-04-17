@@ -135,10 +135,10 @@ class TestAuthHeader:
         c.close()
 
     @respx.mock
-    def test_token_without_prefix_gets_bearer(self):
+    def test_token_without_prefix_gets_basic(self):
         c = ApiClient("https://example.com", "raw-token-value")
         respx.get("https://example.com/test").mock(return_value=httpx.Response(200, json={}))
         c.get("/test")
         req = respx.calls.last.request
-        assert req.headers["Authorization"] == "Bearer raw-token-value"
+        assert req.headers["Authorization"] == "Basic raw-token-value"
         c.close()

@@ -25,6 +25,9 @@ class PipelineSettings(BaseSettings):
     jira_api_version: str = "2"
     # "server" → REST /rest/raven/2.0/   "cloud" → GraphQL xray.cloud.getxray.app
     xray_variant: str = "server"
+    # Xray Cloud OAuth credentials (required when xray_variant=cloud)
+    xray_client_id: str | None = None
+    xray_client_secret: str | None = None
     # Comma-separated Jira project keys, e.g. "PROJ1,PROJ2"
     jira_project_keys: str = ""
 

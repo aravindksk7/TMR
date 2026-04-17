@@ -82,6 +82,8 @@ def _run(
             auth_token=settings.jira_auth_token.get_secret_value(),
             jira_api_version=settings.jira_api_version,
             xray_variant=settings.xray_variant,
+            xray_client_id=settings.xray_client_id,
+            xray_client_secret=settings.xray_client_secret,
             project_keys=settings.project_keys,
             max_results_per_page=settings.max_results_per_page,
             rate_limit_retry_max=settings.rate_limit_retry_max,

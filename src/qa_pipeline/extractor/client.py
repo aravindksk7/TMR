@@ -92,7 +92,7 @@ class ApiClient:
             headers={
                 "Authorization": auth_header,
                 "Accept": "application/json",
-                "Content-Type": "application/json",
+                # Content-Type is set automatically by httpx per-request
             },
             timeout=httpx.Timeout(timeout),
             follow_redirects=True,
@@ -174,27 +174,26 @@ class ApiClient:
         page_size: int = 100,
     ) -> Iterator[list[dict[str, Any]]]:
         """
-        Yield pages from POST /rest/api/3/search (Jira Cloud).
+        Yield pages from POST /rest/api/3/search/jql (Jira Cloud).
 
-        Uses startAt/maxResults/total pagination via the POST body.
-        *body* contains the fixed fields (jql, fields, expand, etc.);
-        ``startAt`` and ``maxResults`` are injected automatically each page.
+        Uses nextPageToken cursor pagination — startAt/total are not
+        available on this endpoint. Stops when nextPageToken is absent.
         """
-        start_at = 0
-        total: int | None = None
+        next_page_token: str | None = None
 
         while True:
-            data = self.post(path, {**body, "startAt": start_at, "maxResults": page_size})
+            request_body = {**body, "maxResults": page_size}
+            if next_page_token:
+                request_body["nextPageToken"] = next_page_token
+
+            data = self.post(path, request_body)
             page: list[dict[str, Any]] = data.get(results_key, [])
-            if total is None:
-                total = data.get("total", len(page))
 
             log.debug(
                 "client.jira_post_page",
                 path=path,
-                start_at=start_at,
                 page_len=len(page),
-                total=total,
+                has_next=bool(data.get("nextPageToken")),
             )
 
             if not page:
@@ -202,8 +201,8 @@ class ApiClient:
 
             yield page
 
-            start_at += len(page)
-            if start_at >= total:
+            next_page_token = data.get("nextPageToken")
+            if not next_page_token:
                 break
 
     def paginate_xray_server(
@@ -249,6 +248,7 @@ class ApiClient:
         variables: dict[str, Any],
         results_path: list[str],
         page_size: int = 100,
+        path: str = "/api/v2/graphql",
     ) -> Iterator[list[dict[str, Any]]]:
         """
         Yield pages from the Xray Cloud GraphQL endpoint.
@@ -262,7 +262,7 @@ class ApiClient:
 
         while True:
             vars_page = {**variables, "limit": page_size, "start": start}
-            data = self.post("/graphql", {"query": query, "variables": vars_page})
+            data = self.post(path, {"query": query, "variables": vars_page})
 
             # drill into {"data": {"getTestExecutions": {"results": [...], "total": N}}}
             node: Any = data.get("data", {})
@@ -326,7 +326,12 @@ class ApiClient:
                 return resp.json()
             except httpx.HTTPStatusError as exc:
                 if not _is_retryable(exc) or attempt >= self._retry_max:
-                    log.error("client.post_failed", path=path, status=exc.response.status_code)
+                    log.error(
+                        "client.post_failed",
+                        path=path,
+                        status=exc.response.status_code,
+                        body=exc.response.text[:500],
+                    )
                     raise
             except (httpx.TimeoutException, httpx.ConnectError) as exc:
                 if attempt >= self._retry_max:

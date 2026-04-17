@@ -8,6 +8,7 @@
 #   integration   — integration tests only
 #   shell         — drop into bash for manual inspection
 #   seed          — initialise DBs and seed dim_date, then exit
+#   dry-run       — init DBs, seed, then run qa-full-load --dry-run against live Jira
 
 set -euo pipefail
 
@@ -130,6 +131,17 @@ case "$CMD" in
     shell)
         info "Dropping into bash shell ..."
         exec bash
+        ;;
+
+    dry-run)
+        info "=== Live dry-run: extract Jira/Xray → stage (no transform) ==="
+        wait_for_sql
+        create_databases
+        init_schema
+        seed_dim_date
+        info "Running qa-full-load --dry-run ..."
+        python -m qa_pipeline.scripts.run_full_load --dry-run
+        info "Dry-run complete."
         ;;
 
     test|*)

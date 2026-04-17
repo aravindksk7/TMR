@@ -135,10 +135,8 @@ class ApiClient:
         **extra_params: Any,
     ) -> Iterator[list[dict[str, Any]]]:
         """
-        Yield pages from a Jira REST endpoint that uses
+        Yield pages from a Jira REST endpoint using GET with
         ``startAt`` / ``maxResults`` / ``total`` pagination.
-
-        Each iteration yields one page (list of dicts).
         """
         start_at = 0
         total: int | None = None
@@ -153,6 +151,48 @@ class ApiClient:
 
             log.debug(
                 "client.jira_page",
+                path=path,
+                start_at=start_at,
+                page_len=len(page),
+                total=total,
+            )
+
+            if not page:
+                break
+
+            yield page
+
+            start_at += len(page)
+            if start_at >= total:
+                break
+
+    def paginate_jira_post(
+        self,
+        path: str,
+        body: dict[str, Any],
+        results_key: str = "issues",
+        page_size: int = 100,
+    ) -> Iterator[list[dict[str, Any]]]:
+        """
+        Yield pages from a Jira REST endpoint using POST with
+        ``startAt`` / ``maxResults`` / ``total`` pagination.
+
+        Used for POST /rest/api/3/search/jql (Jira Cloud, replaces deprecated GET search).
+        *body* contains the fixed request fields (jql, fields, expand, etc.);
+        ``startAt`` and ``maxResults`` are injected automatically each page.
+        """
+        start_at = 0
+        total: int | None = None
+
+        while True:
+            data = self.post(path, {**body, "startAt": start_at, "maxResults": page_size})
+
+            page: list[dict[str, Any]] = data.get(results_key, [])
+            if total is None:
+                total = data.get("total", len(page))
+
+            log.debug(
+                "client.jira_post_page",
                 path=path,
                 start_at=start_at,
                 page_len=len(page),

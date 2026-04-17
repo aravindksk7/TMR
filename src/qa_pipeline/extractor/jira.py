@@ -83,14 +83,15 @@ class JiraExtractor:
         newest_ts: datetime | None = None
 
         try:
-            api_path = f"/rest/api/{self._config.jira_api_version}/search"
-            for page in self._client.paginate_jira(
-                path=api_path,
+            for page in self._client.paginate_jira_post(
+                path="/rest/api/3/search/jql",
+                body={
+                    "jql": jql,
+                    "fields": _ISSUE_FIELDS.split(","),
+                    "expand": ["renderedFields"],
+                },
                 results_key="issues",
                 page_size=self._config.max_results_per_page,
-                jql=jql,
-                fields=_ISSUE_FIELDS,
-                expand="renderedFields",
             ):
                 for issue in page:
                     entity_type = (

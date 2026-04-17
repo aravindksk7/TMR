@@ -84,7 +84,7 @@ class JiraExtractor:
 
         try:
             for page in self._client.paginate_jira_post(
-                path="/rest/api/3/search/jql",
+                path="/rest/api/3/search",
                 body={
                     "jql": jql,
                     "fields": _ISSUE_FIELDS.split(","),

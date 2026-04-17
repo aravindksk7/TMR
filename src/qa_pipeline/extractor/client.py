@@ -174,27 +174,27 @@ class ApiClient:
         page_size: int = 100,
     ) -> Iterator[list[dict[str, Any]]]:
         """
-        Yield pages from POST /rest/api/3/search/jql (Jira Cloud).
+        Yield pages from POST /rest/api/3/search (Jira Cloud).
 
-        Uses cursor-based pagination via ``nextPageToken`` in the response.
+        Uses startAt/maxResults/total pagination via the POST body.
         *body* contains the fixed fields (jql, fields, expand, etc.);
-        ``maxResults`` and ``nextPageToken`` are managed automatically.
+        ``startAt`` and ``maxResults`` are injected automatically each page.
         """
-        next_page_token: str | None = None
+        start_at = 0
+        total: int | None = None
 
         while True:
-            request_body = {**body, "maxResults": page_size}
-            if next_page_token:
-                request_body["nextPageToken"] = next_page_token
-
-            data = self.post(path, request_body)
+            data = self.post(path, {**body, "startAt": start_at, "maxResults": page_size})
             page: list[dict[str, Any]] = data.get(results_key, [])
+            if total is None:
+                total = data.get("total", len(page))
 
             log.debug(
                 "client.jira_post_page",
                 path=path,
+                start_at=start_at,
                 page_len=len(page),
-                has_next=bool(data.get("nextPageToken")),
+                total=total,
             )
 
             if not page:
@@ -202,8 +202,8 @@ class ApiClient:
 
             yield page
 
-            next_page_token = data.get("nextPageToken")
-            if not next_page_token:
+            start_at += len(page)
+            if start_at >= total:
                 break
 
     def paginate_xray_server(

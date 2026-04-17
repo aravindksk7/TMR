@@ -65,6 +65,8 @@ class ApiClient:
         retry_max: int = 5,
         backoff_base_ms: int = 1000,
         timeout: float = 30.0,
+        http_proxy: str | None = None,
+        https_proxy: str | None = None,
     ) -> None:
         self._base_url = base_url.rstrip("/")
         self._retry_max = retry_max
@@ -75,6 +77,13 @@ class ApiClient:
             if auth_token.startswith(("Basic ", "Bearer "))
             else f"Bearer {auth_token}"
         )
+
+        mounts: dict[str, httpx.HTTPTransport] = {}
+        if http_proxy:
+            mounts["http://"] = httpx.HTTPTransport(proxy=http_proxy)
+        if https_proxy:
+            mounts["https://"] = httpx.HTTPTransport(proxy=https_proxy)
+
         self._client = httpx.Client(
             base_url=self._base_url,
             headers={
@@ -84,6 +93,7 @@ class ApiClient:
             },
             timeout=httpx.Timeout(timeout),
             follow_redirects=True,
+            **({"mounts": mounts} if mounts else {}),
         )
 
     # ── Context manager ────────────────────────────────────────────────────────

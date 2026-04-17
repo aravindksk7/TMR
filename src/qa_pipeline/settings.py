@@ -44,6 +44,11 @@ class PipelineSettings(BaseSettings):
     extractor_cron_hour: str = "*/4"   # delta run every 4 h
     full_load_cron_hour: int = 1       # full reload at 01:00 nightly
 
+    # ── Proxy (all optional) ─────────────────────────────────────────────────
+    http_proxy: str | None = None   # e.g. http://proxy.corp.com:8080
+    https_proxy: str | None = None  # e.g. http://proxy.corp.com:8080
+    no_proxy: str | None = None     # comma-separated hosts to bypass
+
     # ── Alerting (all optional) ───────────────────────────────────────────────
     alert_webhook_url: AnyHttpUrl | None = None
     alert_smtp_host: str | None = None

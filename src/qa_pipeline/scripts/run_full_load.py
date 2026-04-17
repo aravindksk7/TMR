@@ -85,6 +85,8 @@ def _run(
             max_results_per_page=settings.max_results_per_page,
             rate_limit_retry_max=settings.rate_limit_retry_max,
             rate_limit_backoff_base_ms=settings.rate_limit_backoff_base_ms,
+            http_proxy=settings.http_proxy,
+            https_proxy=settings.https_proxy,
         )
 
         all_records = []

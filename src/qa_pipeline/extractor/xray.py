@@ -105,6 +105,8 @@ class XrayServerExtractor:
             auth_token=config.auth_token,
             retry_max=config.rate_limit_retry_max,
             backoff_base_ms=config.rate_limit_backoff_base_ms,
+            http_proxy=config.http_proxy,
+            https_proxy=config.https_proxy,
         )
 
     def __enter__(self) -> XrayServerExtractor:
@@ -257,6 +259,8 @@ class XrayCloudExtractor:
             auth_token=config.auth_token,
             retry_max=config.rate_limit_retry_max,
             backoff_base_ms=config.rate_limit_backoff_base_ms,
+            http_proxy=config.http_proxy,
+            https_proxy=config.https_proxy,
         )
 
     def __enter__(self) -> XrayCloudExtractor:

@@ -19,6 +19,8 @@ class ExtractorConfig(BaseModel):
     max_results_per_page: int = 100
     rate_limit_retry_max: int = 5
     rate_limit_backoff_base_ms: int = 1000
+    http_proxy: str | None = None              # e.g. http://proxy.corp.com:8080
+    https_proxy: str | None = None             # e.g. http://proxy.corp.com:8080
 
 
 class ExtractorResult(BaseModel):

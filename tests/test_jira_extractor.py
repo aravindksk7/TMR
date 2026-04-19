@@ -37,7 +37,7 @@ def config():
 class TestExtract:
     @respx.mock
     def test_extracts_issues(self, config, run_id):
-        respx.get("https://jira.example.com/rest/api/3/search").mock(
+        respx.post("https://jira.example.com/rest/api/3/search/jql").mock(
             return_value=httpx.Response(200, json={
                 "issues": [
                     {
@@ -55,9 +55,6 @@ class TestExtract:
                         },
                     }
                 ],
-                "total": 1,
-                "startAt": 0,
-                "maxResults": 50,
             })
         )
         with JiraExtractor(config, run_id) as ext:
@@ -70,7 +67,7 @@ class TestExtract:
 
     @respx.mock
     def test_bug_classified_as_defect(self, config, run_id):
-        respx.get("https://jira.example.com/rest/api/3/search").mock(
+        respx.post("https://jira.example.com/rest/api/3/search/jql").mock(
             return_value=httpx.Response(200, json={
                 "issues": [
                     {
@@ -81,7 +78,6 @@ class TestExtract:
                         },
                     }
                 ],
-                "total": 1, "startAt": 0, "maxResults": 50,
             })
         )
         with JiraExtractor(config, run_id) as ext:
@@ -91,7 +87,7 @@ class TestExtract:
 
     @respx.mock
     def test_returns_failed_result_on_error(self, config, run_id):
-        respx.get("https://jira.example.com/rest/api/3/search").mock(
+        respx.post("https://jira.example.com/rest/api/3/search/jql").mock(
             return_value=httpx.Response(500, json={"error": "server error"})
         )
         with JiraExtractor(config, run_id) as ext:

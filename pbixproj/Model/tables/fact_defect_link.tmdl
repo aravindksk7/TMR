@@ -1,0 +1,66 @@
+table fact_defect_link
+	lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901234
+
+	measure 'Total Defect Links' = COUNTROWS('fact_defect_link')
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901235
+
+	measure 'Open Defects Linked' = CALCULATE(COUNTROWS('fact_defect_link'), 'fact_defect_link'[open_flag] = 1)
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901236
+
+	measure 'Unique Defects' = DISTINCTCOUNT('fact_defect_link'[defect_key])
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901237
+
+	measure 'Impacted Test Runs' = DISTINCTCOUNT('fact_defect_link'[test_run_id])
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901238
+
+	column defect_link_sk
+		dataType: int64
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901239
+		sourceColumn: defect_link_sk
+		isHidden
+
+	column defect_key
+		dataType: string
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901240
+		sourceColumn: defect_key
+
+	column defect_sk
+		dataType: int64
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901241
+		sourceColumn: defect_sk
+		isHidden
+
+	column test_run_id
+		dataType: string
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901242
+		sourceColumn: test_run_id
+
+	column release_sk
+		dataType: int64
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901243
+		sourceColumn: release_sk
+		isHidden
+
+	column link_type
+		dataType: string
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901244
+		sourceColumn: link_type
+
+	column open_flag
+		dataType: boolean
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901245
+		sourceColumn: open_flag
+
+	column linked_at
+		dataType: dateTime
+		lineageTag: f6a7b8c9-d0e1-2345-fabc-345678901246
+		sourceColumn: linked_at
+
+	partition fact_defect_link = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    fact_defect_link = Source{[Schema="dbo", Item="fact_defect_link"]}[Data]
+				in
+				    fact_defect_link

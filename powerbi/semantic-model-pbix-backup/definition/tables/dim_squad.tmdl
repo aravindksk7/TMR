@@ -1,0 +1,27 @@
+table dim_squad
+	lineageTag: 685e1430-b977-4957-9fc3-3672d8c8379b
+
+	column squad_sk
+		dataType: int64
+		lineageTag: 602615a4-1d9b-4283-90c1-c2fd0742ae70
+		sourceColumn: squad_sk
+
+	column squad_name
+		dataType: string
+		lineageTag: 14147776-ed10-40ad-9574-863fbcd46630
+		sourceColumn: squad_name
+
+	column program_sk
+		dataType: int64
+		lineageTag: 50ee4388-81d7-4004-9130-3cd949a0fe8f
+		sourceColumn: program_sk
+
+	partition dim_squad = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_squad = Source{[Schema="dbo", Item="dim_squad"]}[Data]
+				in
+				    dim_squad
+

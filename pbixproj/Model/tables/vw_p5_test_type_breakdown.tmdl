@@ -1,0 +1,64 @@
+table vw_p5_test_type_breakdown
+	lineageTag: 27229455-2e49-420d-aaf9-6824be7d3359
+
+	measure 'P5 Total Runs' = SUM('vw_p5_test_type_breakdown'[total_runs])
+		lineageTag: 4649501d-1a39-4eb9-8c6b-105f86bc489a
+
+	measure 'P5 Passed' = SUM('vw_p5_test_type_breakdown'[passed])
+		lineageTag: 75d63f1d-655b-49eb-9498-27e7b2c39fba
+
+	measure 'P5 Failed' = SUM('vw_p5_test_type_breakdown'[failed])
+		lineageTag: 5a081460-17e4-4ce7-bc10-9e9cf2168c4d
+
+	measure 'P5 Pass Rate %' = AVERAGE('vw_p5_test_type_breakdown'[pass_rate_pct])
+		lineageTag: fc324c9a-bbbf-4d70-b2e3-8be7615d1d6b
+
+	column test_type_name
+		dataType: string
+		lineageTag: 28514137-8365-4bfe-947c-42a35d85da9c
+		sourceColumn: test_type_name
+
+	column squad_name
+		dataType: string
+		lineageTag: 0344219f-abf5-4ad1-a8fd-e8c116d3b0b3
+		sourceColumn: squad_name
+
+	column release_name
+		dataType: string
+		lineageTag: 04b70c28-d2a4-4e62-9877-bd53231b29c0
+		sourceColumn: release_name
+
+	column total_runs
+		dataType: int64
+		lineageTag: 8493f926-dac7-43df-b0dd-623937ad9b45
+		sourceColumn: total_runs
+
+	column passed
+		dataType: int64
+		lineageTag: d5e2123a-cd4d-49bc-87b6-41bfd3fb0f24
+		sourceColumn: passed
+
+	column failed
+		dataType: int64
+		lineageTag: 9c775cfc-3f0b-4d99-bd49-324a2e0fdfe5
+		sourceColumn: failed
+
+	column blocked
+		dataType: int64
+		lineageTag: 61986b04-f42b-498e-ac70-70e66b2fc6f0
+		sourceColumn: blocked
+
+	column pass_rate_pct
+		dataType: decimal
+		lineageTag: 7b335cb8-7199-4a25-abbd-fed0bbf34804
+		sourceColumn: pass_rate_pct
+
+	partition vw_p5_test_type_breakdown = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p5_test_type_breakdown = Source{[Schema="dbo", Item="vw_p5_test_type_breakdown"]}[Data]
+				in
+				    vw_p5_test_type_breakdown
+

@@ -1,0 +1,57 @@
+table dim_test_execution
+	lineageTag: 333ffcfa-a541-4728-992d-63cf2dd6fe09
+
+	column execution_sk
+		dataType: int64
+		lineageTag: 0f3d7824-9492-4d40-80b5-71e2731c3a86
+		sourceColumn: execution_sk
+
+	column execution_key
+		dataType: string
+		lineageTag: bb1f01e2-5d3f-4b6e-9ff7-de332150811a
+		sourceColumn: execution_key
+
+	column summary
+		dataType: string
+		lineageTag: 29ab7965-99b5-4cb2-a07d-0215710b2311
+		sourceColumn: summary
+
+	column status
+		dataType: string
+		lineageTag: 48bc0718-905e-4438-aa55-e5335dc9890a
+		sourceColumn: status
+
+	column test_plan_key
+		dataType: string
+		lineageTag: 10214c18-2757-4c46-b259-10562077b789
+		sourceColumn: test_plan_key
+
+	column environments_json
+		dataType: string
+		lineageTag: 35d65565-742b-460c-b011-aba24369a1fa
+		sourceColumn: environments_json
+
+	column revision
+		dataType: string
+		lineageTag: 7b74c782-38ad-49a4-9656-c0e506b448e3
+		sourceColumn: revision
+
+	column assignee
+		dataType: string
+		lineageTag: 50aa380e-515a-48c9-a58f-4121145cbff3
+		sourceColumn: assignee
+
+	column executed_at
+		dataType: dateTime
+		lineageTag: 053e375c-e522-47ce-bf7a-006857a8a743
+		sourceColumn: executed_at
+
+	partition dim_test_execution = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_test_execution = Source{[Schema="dbo", Item="dim_test_execution"]}[Data]
+				in
+				    dim_test_execution
+

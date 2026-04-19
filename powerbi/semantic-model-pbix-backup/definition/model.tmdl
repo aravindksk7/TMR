@@ -1,0 +1,30 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-AU
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["MCP-PBIModeling"]
+
+ref table dim_program
+ref table dim_date
+ref table dim_squad
+ref table dim_release
+ref table dim_test_type
+ref table dim_issue
+ref table dim_defect
+ref table dim_test
+ref table dim_test_plan
+ref table dim_test_execution
+ref table bridge_squad_user
+ref table fact_test_run
+ref table fact_test_step_result
+ref table fact_requirement_coverage
+ref table vw_qm_quality_effectiveness
+
+ref cultureInfo en-US
+

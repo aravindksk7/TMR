@@ -1,0 +1,114 @@
+table fact_test_run
+	lineageTag: 6cf5da2f-e9bb-4bdc-ba72-dbeba18f5393
+
+	measure 'Total Runs' = COUNTROWS('fact_test_run')
+		lineageTag: d63da718-f1e9-447c-afa3-7b533a78b201
+
+	measure 'Passed Runs' = CALCULATE(COUNTROWS('fact_test_run'), 'fact_test_run'[run_status] = "PASS")
+		lineageTag: c9add60e-f5ea-47cf-ad54-9ada09ef4870
+
+	measure 'Failed Runs' = CALCULATE(COUNTROWS('fact_test_run'), 'fact_test_run'[run_status] = "FAIL")
+		lineageTag: f717f385-4553-4b67-ae08-ec8234513807
+
+	measure 'Blocked Runs' = CALCULATE(COUNTROWS('fact_test_run'), 'fact_test_run'[run_status] = "BLOCKED")
+		lineageTag: e4ad35c5-4422-4693-9e5f-c4f424e2e4a9
+
+	measure 'Pass Rate %' = DIVIDE([Passed Runs], [Total Runs], 0) * 100
+		lineageTag: d1f283f7-6bfc-441c-85e5-246a71b4c3a1
+
+	measure 'Avg Duration (seconds)' = AVERAGE('fact_test_run'[duration_s])
+		lineageTag: d9857779-3c34-4078-9083-73a407044f6c
+
+	measure 'Avg Duration (minutes)' = DIVIDE([Avg Duration (seconds)], 60, BLANK())
+		lineageTag: c8c570be-004a-482c-ba8b-f236fb54f129
+
+	measure 'Total Test Time (hours)' = DIVIDE(SUMX('fact_test_run', 'fact_test_run'[duration_s]), 3600, 0)
+		lineageTag: 9d157257-d9f5-46c4-bbab-f8224ac19e88
+
+	measure 'Pass Rate (formatted)' = FORMAT([Pass Rate %], "0.0") & "%"
+		lineageTag: a255b0bb-78c9-436f-aee2-34b7cf75717a
+
+	measure 'P1 Target Pass Rate %' = 80
+		lineageTag: e9564a36-e47e-4fce-ac49-9b8bab246ac7
+
+	measure 'Pass Rate % Prior Month' = CALCULATE([Pass Rate %], DATEADD('dim_date'[full_date], -1, MONTH))
+		lineageTag: 5e123c1d-2c4d-468c-9b36-cffe804964d9
+
+	measure 'Pass Rate % Change' = [Pass Rate %] - [Pass Rate % Prior Month]
+		lineageTag: 695694c3-5c7d-4afc-88b8-8fbff2a39462
+
+	measure 'Pass Rate % Change (formatted)' = VAR delta = [Pass Rate % Change] RETURN IF(ISBLANK(delta), "-", IF(delta >= 0, "+" & FORMAT(delta, "0.0") & "%", FORMAT(delta, "0.0") & "%"))
+		lineageTag: 94b9eac2-39ec-4269-b13e-c07d9ae47a7f
+
+	measure 'P1 Pass Rate Status' = IF([Pass Rate %] >= [P1 Target Pass Rate %], "On Track", "At Risk")
+		lineageTag: 9ffc4d8c-f60f-4923-8b53-893a13eb730a
+
+	column test_run_id
+		dataType: string
+		lineageTag: 66df8357-f390-4258-940a-c1a4d12933e4
+		sourceColumn: test_run_id
+
+	column release_sk
+		dataType: int64
+		lineageTag: c414b915-9c7c-4d3f-bd6c-e87f0613c7ab
+		sourceColumn: release_sk
+
+	column test_sk
+		dataType: int64
+		lineageTag: c5da66aa-c070-4404-9079-88a4762d7fca
+		sourceColumn: test_sk
+
+	column execution_sk
+		dataType: int64
+		lineageTag: 0383c402-e24e-4604-b86c-90be80c47a55
+		sourceColumn: execution_sk
+
+	column run_status
+		dataType: string
+		lineageTag: 35b7a3fc-d4fb-4378-a59f-705ee2e6321d
+		sourceColumn: run_status
+
+	column started_at
+		dataType: dateTime
+		lineageTag: aae77f7a-571a-4341-9983-841cd7853dba
+		sourceColumn: started_at
+
+	column finished_at
+		dataType: dateTime
+		lineageTag: 0f1d93b4-1d20-49e0-b4bf-fbf2a326e0c8
+		sourceColumn: finished_at
+
+	column duration_s
+		dataType: double
+		lineageTag: 0903950c-1c50-4972-be28-c526530691b6
+		sourceColumn: duration_s
+
+	column executed_by
+		dataType: string
+		lineageTag: 307076b3-adcf-4f36-96ff-14b0190222cd
+		sourceColumn: executed_by
+
+	column assignee
+		dataType: string
+		lineageTag: 799e43d9-fa0d-4e40-98a7-983d9076b99d
+		sourceColumn: assignee
+
+	column comment
+		dataType: string
+		lineageTag: 38889be2-7d0b-418c-8443-9d728bb72f89
+		sourceColumn: comment
+
+	column defect_count
+		dataType: int64
+		lineageTag: e0da4432-32ca-4b7e-8dd0-d0afc5c4a65f
+		sourceColumn: defect_count
+
+	partition fact_test_run = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    fact_test_run = Source{[Schema="dbo", Item="fact_test_run"]}[Data]
+				in
+				    fact_test_run
+

@@ -1,0 +1,79 @@
+table fact_requirement_coverage
+	lineageTag: bb239c45-876c-49a1-a6f2-aa58ecc4f74c
+
+	measure 'Total Requirements' = DISTINCTCOUNT('fact_requirement_coverage'[issue_sk])
+		lineageTag: cdcc6bdc-0b5c-4e18-8554-cb7c6f82f0d3
+
+	measure 'Covered Requirements' = CALCULATE(DISTINCTCOUNT('fact_requirement_coverage'[issue_sk]), 'fact_requirement_coverage'[is_covered] = TRUE())
+		lineageTag: 66c6e271-dafa-4d91-a3dd-31e8a243a062
+
+	measure 'Coverage %' = DIVIDE([Covered Requirements], [Total Requirements], 0) * 100
+		lineageTag: 44e244fc-a373-4ed9-b373-2252321abc99
+
+	measure 'Uncovered Requirements' = [Total Requirements] - [Covered Requirements]
+		lineageTag: 81de0f6a-0329-463f-82ea-d153ae48569d
+
+	column issue_sk
+		dataType: int64
+		lineageTag: 64037560-7107-4175-aca9-9e5a0b65281f
+		sourceColumn: issue_sk
+
+	column release_sk
+		dataType: int64
+		lineageTag: 4eaea33d-2f0c-464c-8485-111aea0b2d94
+		sourceColumn: release_sk
+
+	column total_test_count
+		dataType: int64
+		lineageTag: e9f35ddc-faf3-4d5b-9f82-73ee9651de04
+		sourceColumn: total_test_count
+
+	column passing_test_count
+		dataType: int64
+		lineageTag: 9b589967-7c13-42c3-8f15-d8fd9b91648f
+		sourceColumn: passing_test_count
+
+	column failing_test_count
+		dataType: int64
+		lineageTag: 0f971a7f-07c1-4bdb-8ecd-a7f8a6215ffe
+		sourceColumn: failing_test_count
+
+	column blocked_test_count
+		dataType: int64
+		lineageTag: 55042960-3d34-4f58-b0d9-87ac0a98288b
+		sourceColumn: blocked_test_count
+
+	column executing_test_count
+		dataType: int64
+		lineageTag: 93223cec-4a17-414b-82d0-a4aef8d9aac0
+		sourceColumn: executing_test_count
+
+	column todo_test_count
+		dataType: int64
+		lineageTag: 26b901bf-f5da-418d-8c8c-7318e854cf8a
+		sourceColumn: todo_test_count
+
+	column no_coverage_count
+		dataType: int64
+		lineageTag: f84534a7-63a5-4234-9d40-00d22a7bdef7
+		sourceColumn: no_coverage_count
+
+	column coverage_status
+		dataType: string
+		lineageTag: a7d585bd-5591-4ef8-a9cc-f0957b021296
+		sourceColumn: coverage_status
+
+	column is_covered
+		dataType: boolean
+		lineageTag: 3f85d89d-e30e-43ee-bd61-e0fc768dc87d
+		sourceColumn: is_covered
+
+	partition fact_requirement_coverage = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    fact_requirement_coverage = Source{[Schema="dbo", Item="fact_requirement_coverage"]}[Data]
+				in
+				    fact_requirement_coverage
+

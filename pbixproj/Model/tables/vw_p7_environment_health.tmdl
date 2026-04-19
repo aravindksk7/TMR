@@ -1,0 +1,83 @@
+table vw_p7_environment_health
+	lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234567
+
+	measure 'P7 Total Runs' = SUM('vw_p7_environment_health'[total_runs])
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234568
+
+	measure 'P7 Failed Runs' = SUM('vw_p7_environment_health'[failed_runs])
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234569
+
+	measure 'P7 Blocked Runs' = SUM('vw_p7_environment_health'[blocked_runs])
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234570
+
+	measure 'P7 Pass Rate %' = DIVIDE(SUM('vw_p7_environment_health'[total_runs]) - SUM('vw_p7_environment_health'[failed_runs]) - SUM('vw_p7_environment_health'[blocked_runs]), SUM('vw_p7_environment_health'[total_runs]), 0) * 100
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234571
+
+	column environment_name
+		dataType: string
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234572
+		sourceColumn: environment_name
+
+	column environment_type
+		dataType: string
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234573
+		sourceColumn: environment_type
+
+	column criticality
+		dataType: string
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234574
+		sourceColumn: criticality
+
+	column release_name
+		dataType: string
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234575
+		sourceColumn: release_name
+
+	column squad_name
+		dataType: string
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234576
+		sourceColumn: squad_name
+
+	column root_cause_name
+		dataType: string
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234577
+		sourceColumn: root_cause_name
+
+	column root_cause_category
+		dataType: string
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234578
+		sourceColumn: root_cause_category
+
+	column execution_date
+		dataType: dateTime
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234579
+		sourceColumn: execution_date
+
+	column total_runs
+		dataType: int64
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234580
+		sourceColumn: total_runs
+
+	column failed_runs
+		dataType: int64
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234581
+		sourceColumn: failed_runs
+
+	column blocked_runs
+		dataType: int64
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234582
+		sourceColumn: blocked_runs
+
+	column pass_rate_pct
+		dataType: decimal
+		lineageTag: c9d0e1f2-a3b4-5678-cdef-678901234583
+		sourceColumn: pass_rate_pct
+
+	partition vw_p7_environment_health = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p7_environment_health = Source{[Schema="dbo", Item="vw_p7_environment_health"]}[Data]
+				in
+				    vw_p7_environment_health

@@ -37,7 +37,7 @@ query GetTestExecutions($projectKey: String!, $limit: Int!, $start: Int!) {
     results {
       issueId
       jira(fields: ["key","summary","status","assignee","created","updated",
-                    "customfield_10300","customfield_10301","customfield_10302"])
+                    "fixVersions","customfield_10300","customfield_10301","customfield_10302"])
     }
   }
 }
@@ -52,9 +52,13 @@ query GetTestRuns($testExecIssueId: String!, $limit: Int!, $start: Int!) {
       status { name }
       startedOn
       finishedOn
-      assignee { accountId displayName }
+      assignee { accountId displayName email }
       comment
-      defects { issueId jira(fields: ["key"]) }
+      defects {
+        issueId
+        jira(fields: ["key","summary","status","priority","issuetype",
+                      "customfield_10200","labels"])
+      }
       evidence { filename }
       steps {
         id
@@ -63,7 +67,13 @@ query GetTestRuns($testExecIssueId: String!, $limit: Int!, $start: Int!) {
         actualResult
         evidence { filename }
       }
-      test { issueId jira(fields: ["key","summary","customfield_10100"]) }
+      test {
+        issueId
+        testType { name }
+        jira(fields: ["key","summary","status","assignee","customfield_10100",
+                      "fixVersions","labels"])
+      }
+      customFields { id name value }
     }
   }
 }
@@ -80,7 +90,22 @@ query GetTests($projectKey: String!, $limit: Int!, $start: Int!) {
       gherkin
       unstructured
       jira(fields: ["key","summary","status","assignee","created","updated",
-                    "customfield_10101","customfield_10103","customfield_10104"])
+                    "fixVersions","components","labels",
+                    "customfield_10100","customfield_10101",
+                    "customfield_10103","customfield_10104"])
+    }
+  }
+}
+"""
+
+_GQL_TEST_PLANS = """
+query GetTestPlans($projectKey: String!, $limit: Int!, $start: Int!) {
+  getTestPlans(projectKey: $projectKey, limit: $limit, start: $start) {
+    total
+    results {
+      issueId
+      jira(fields: ["key","summary","status","assignee","created","updated",
+                    "fixVersions","customfield_10200","customfield_10201"])
     }
   }
 }
@@ -349,6 +374,33 @@ class XrayCloudExtractor:
             return records, _ok_result(self._run_id, "xray_test_executions", records, watermark)
         except Exception as exc:  # noqa: BLE001
             return records, _fail_result(self._run_id, "xray_test_executions", records, watermark, exc)
+
+    def extract_test_plans(
+        self,
+        project_key: str,
+        watermark: datetime | None = None,
+    ) -> tuple[list[StagingRecord], ExtractorResult]:
+        records: list[StagingRecord] = []
+        try:
+            for page in self._client.paginate_xray_cloud_graphql(
+                query=_GQL_TEST_PLANS,
+                variables={"projectKey": project_key},
+                results_path=["getTestPlans", "results"],
+                page_size=self._config.max_results_per_page,
+            ):
+                for item in page:
+                    key = item.get("issueId", "")
+                    records.append(
+                        StagingRecord(
+                            run_id=self._run_id,
+                            source_key=key,
+                            entity_type="xray_test_plan",
+                            raw_json=item,
+                        )
+                    )
+            return records, _ok_result(self._run_id, "xray_test_plans", records, watermark)
+        except Exception as exc:  # noqa: BLE001
+            return records, _fail_result(self._run_id, "xray_test_plans", records, watermark, exc)
 
     def extract_test_sets(
         self,

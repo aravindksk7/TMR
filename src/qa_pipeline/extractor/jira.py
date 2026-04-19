@@ -28,9 +28,11 @@ _DEFECT_TYPES = frozenset({"Bug", "Defect"})
 # Fields requested from Jira (keeps response size bounded)
 _ISSUE_FIELDS = (
     "summary,description,status,issuetype,priority,assignee,reporter,"
-    "created,updated,resolutiondate,labels,components,fixVersionions,"
+    "created,updated,resolutiondate,labels,components,versions,fixVersions,"
     "customfield_10200,customfield_10201,"   # program_name, squad_name
-    "parent,subtasks,issuelinks,versions,fixVersions,"
+    "customfield_10202,customfield_10203,"   # application_name, root_cause
+    "customfield_10204,customfield_10205,"   # severity, business_area
+    "parent,subtasks,issuelinks,"
     "customfield_10014"                       # epic link (classic projects)
 )
 
@@ -132,6 +134,51 @@ class JiraExtractor:
                 records_extracted=len(records),
                 watermark_before=watermark,
                 watermark_after=newest_ts,
+                status="failed",
+                error_message=str(exc),
+            )
+
+    def extract_versions(self) -> tuple[list[StagingRecord], ExtractorResult]:
+        """
+        Pull all fix versions (releases) for each configured project.
+
+        Calls GET /rest/api/3/project/{key}/versions for each project key.
+        Returns StagingRecord objects with entity_type="jira_version".
+        """
+        records: list[StagingRecord] = []
+        try:
+            for project_key in self._config.project_keys:
+                api_ver = getattr(self._config, "jira_api_version", "3")
+                path = f"/rest/api/{api_ver}/project/{project_key}/versions"
+                resp = self._client.get(path)
+                versions: list[dict] = resp if isinstance(resp, list) else []
+                for version in versions:
+                    version["_project_key"] = project_key
+                    records.append(
+                        StagingRecord(
+                            run_id=self._run_id,
+                            source_key=str(version.get("id", version.get("name", ""))),
+                            entity_type="jira_version",
+                            raw_json=version,
+                        )
+                    )
+            log.info("jira.extract_versions_done", records=len(records))
+            return records, ExtractorResult(
+                run_id=self._run_id,
+                run_type="full",
+                entity_type="jira_versions",
+                records_extracted=len(records),
+                watermark_before=None,
+                status="success",
+            )
+        except Exception as exc:  # noqa: BLE001
+            log.error("jira.extract_versions_failed", error=str(exc))
+            return records, ExtractorResult(
+                run_id=self._run_id,
+                run_type="full",
+                entity_type="jira_versions",
+                records_extracted=len(records),
+                watermark_before=None,
                 status="failed",
                 error_message=str(exc),
             )

@@ -1,0 +1,77 @@
+table dim_issue
+	lineageTag: 381c8eec-1201-497e-91cf-cbc0a3172f07
+
+	column issue_sk
+		dataType: int64
+		lineageTag: 672ce3cd-e121-45c8-a30e-f309302abfa8
+		sourceColumn: issue_sk
+
+	column issue_key
+		dataType: string
+		lineageTag: 6af41627-fbbb-483f-b51e-be540b110f9c
+		sourceColumn: issue_key
+
+	column issue_type
+		dataType: string
+		lineageTag: 9c6fa2a6-a15d-43cb-877c-a70e426534f9
+		sourceColumn: issue_type
+
+	column summary
+		dataType: string
+		lineageTag: 3f2b4878-0de2-4d87-91b7-2a6f54ac4f43
+		sourceColumn: summary
+
+	column status
+		dataType: string
+		lineageTag: 6b1219f4-b4be-4d06-8fca-1d218976c7d1
+		sourceColumn: status
+
+	column priority
+		dataType: string
+		lineageTag: 6a2e09dd-e789-4544-9d67-c3ee9fc065f3
+		sourceColumn: priority
+
+	column program_sk
+		dataType: int64
+		lineageTag: ac648916-b7ba-458f-8ce9-afb4be73bf60
+		sourceColumn: program_sk
+
+	column squad_sk
+		dataType: int64
+		lineageTag: 92cbefdf-6d88-486b-8343-23cb19504c46
+		sourceColumn: squad_sk
+
+	column reporter
+		dataType: string
+		lineageTag: 0ee3a14b-c5ea-4fd7-accb-b0dd390b73cf
+		sourceColumn: reporter
+
+	column assignee
+		dataType: string
+		lineageTag: a5c53fcb-1921-4d7a-a2ab-d89b2a72f54c
+		sourceColumn: assignee
+
+	column created_at
+		dataType: dateTime
+		lineageTag: afc1cfd3-47d4-4fc1-9f63-e211e2bbd18c
+		sourceColumn: created_at
+
+	column updated_at
+		dataType: dateTime
+		lineageTag: 7fda16a0-1873-4fbe-bf36-0fb007847c78
+		sourceColumn: updated_at
+
+	column resolution_date
+		dataType: dateTime
+		lineageTag: 348165dd-510b-4557-9701-36e39c80f50c
+		sourceColumn: resolution_date
+
+	partition dim_issue = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_issue = Source{[Schema="dbo", Item="dim_issue"]}[Data]
+				in
+				    dim_issue
+

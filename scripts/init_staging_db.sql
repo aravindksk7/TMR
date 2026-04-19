@@ -32,6 +32,17 @@ GO
 
 -- Staging tables (one per entity type)
 
+IF OBJECT_ID('stg_jira_versions', 'U') IS NULL
+CREATE TABLE stg_jira_versions (
+    id         BIGINT           IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    run_id     UNIQUEIDENTIFIER NOT NULL,
+    source_key NVARCHAR(100)    NOT NULL,
+    raw_json   NVARCHAR(MAX)    NOT NULL,
+    loaded_at  DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT uq_stg_jira_versions UNIQUE (run_id, source_key)
+);
+GO
+
 IF OBJECT_ID('stg_jira_issues', 'U') IS NULL
 CREATE TABLE stg_jira_issues (
     id         BIGINT           IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -95,6 +106,17 @@ CREATE TABLE stg_xray_test_step_results (
     raw_json   NVARCHAR(MAX)    NOT NULL,
     loaded_at  DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
     CONSTRAINT uq_stg_xray_test_step_results UNIQUE (run_id, source_key)
+);
+GO
+
+IF OBJECT_ID('stg_xray_test_plans', 'U') IS NULL
+CREATE TABLE stg_xray_test_plans (
+    id         BIGINT           IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    run_id     UNIQUEIDENTIFIER NOT NULL,
+    source_key NVARCHAR(100)    NOT NULL,
+    raw_json   NVARCHAR(MAX)    NOT NULL,
+    loaded_at  DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT uq_stg_xray_test_plans UNIQUE (run_id, source_key)
 );
 GO
 

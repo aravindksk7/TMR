@@ -1,0 +1,37 @@
+table dim_release
+	lineageTag: 6a6d4ba6-3fad-40d2-b736-bf2f3db840a9
+
+	column release_sk
+		dataType: int64
+		lineageTag: 3fe13be2-2466-4bd7-a74a-8bd627e7bdfe
+		sourceColumn: release_sk
+
+	column release_name
+		dataType: string
+		lineageTag: 53a2a0cb-2d51-4833-9d96-f084680a6002
+		sourceColumn: release_name
+
+	column release_date
+		dataType: dateTime
+		lineageTag: 53f5005e-b53b-4772-9c1f-cfda5b7e7542
+		sourceColumn: release_date
+
+	column release_date_sk
+		dataType: int64
+		lineageTag: 6ea7b860-cae6-46b9-b39d-c3422091401d
+		sourceColumn: release_date_sk
+
+	column is_released
+		dataType: boolean
+		lineageTag: dc7ee724-501a-49dc-a7ef-dfe5966f9ec1
+		sourceColumn: is_released
+
+	partition dim_release = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_release = Source{[Schema="dbo", Item="dim_release"]}[Data]
+				in
+				    dim_release
+

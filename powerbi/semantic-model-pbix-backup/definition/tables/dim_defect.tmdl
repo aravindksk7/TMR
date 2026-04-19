@@ -1,0 +1,84 @@
+table dim_defect
+	lineageTag: 6c436db5-617e-4192-aef6-576a4fab72e8
+
+	measure 'Total Defects' = COUNTROWS('dim_defect')
+		lineageTag: ed269e0a-a3ef-4f02-b419-9b735dfeeea1
+
+	measure 'Open Defects' = CALCULATE(COUNTROWS('dim_defect'), NOT 'dim_defect'[status] IN {"Closed", "Done", "Resolved", "Won't Fix"})
+		lineageTag: 1ea0f379-de13-475a-a255-a143d5608b8d
+
+	measure 'Critical Defects' = CALCULATE(COUNTROWS('dim_defect'), 'dim_defect'[severity] = "Critical")
+		lineageTag: 32dc796b-eca7-4bc5-a9ff-b75a3ac495bf
+
+	measure 'Open + Critical Defects' = [Open Defects] + [Critical Defects]
+		lineageTag: 8521b932-d4ca-4d56-a4e9-5eea798f7a6e
+
+	column defect_sk
+		dataType: int64
+		lineageTag: 6fb5f3f0-f8a6-44e3-be22-475f95285e2c
+		sourceColumn: defect_sk
+
+	column defect_key
+		dataType: string
+		lineageTag: 44f292fb-8b89-4386-bd21-3b7e91f0e39e
+		sourceColumn: defect_key
+
+	column summary
+		dataType: string
+		lineageTag: d7ce5945-5c66-48a7-9239-17d23950ad00
+		sourceColumn: summary
+
+	column status
+		dataType: string
+		lineageTag: 41197456-8c19-40da-b129-a0d03000df71
+		sourceColumn: status
+
+	column priority
+		dataType: string
+		lineageTag: 3f0b6fb2-c756-4a0d-a4fe-430f5cf3c621
+		sourceColumn: priority
+
+	column severity
+		dataType: string
+		lineageTag: a682e85e-08cf-4d11-ac31-4a5b1818d628
+		sourceColumn: severity
+
+	column squad_sk
+		dataType: int64
+		lineageTag: c401e985-bd40-46e5-8443-e1a27cfa1f8b
+		sourceColumn: squad_sk
+
+	column reporter
+		dataType: string
+		lineageTag: a2756fed-94ab-4586-9792-c7fcecfa5ab6
+		sourceColumn: reporter
+
+	column assignee
+		dataType: string
+		lineageTag: d41fb11a-02b3-44f1-831b-18b6dc0812f9
+		sourceColumn: assignee
+
+	column created_at
+		dataType: dateTime
+		lineageTag: ff6d2a14-8308-4d1a-83ab-a1b4a8cf346d
+		sourceColumn: created_at
+
+	column resolved_at
+		dataType: dateTime
+		lineageTag: eb96b499-a4fb-4c7e-a86c-af9567517466
+		sourceColumn: resolved_at
+
+	column resolution_date
+		dataType: dateTime
+		lineageTag: 0904a593-29b3-4290-b0d9-70694e950e16
+		sourceColumn: resolution_date
+
+	partition dim_defect = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_defect = Source{[Schema="dbo", Item="dim_defect"]}[Data]
+				in
+				    dim_defect
+

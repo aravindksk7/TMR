@@ -1,0 +1,123 @@
+table vw_qm_quality_effectiveness
+	lineageTag: f1a2b3c4-d5e6-4789-abcd-1234567890ef
+
+	measure 'QM Defect Leakage Rate %' = AVERAGE('vw_qm_quality_effectiveness'[defect_leakage_rate_pct])
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000001
+
+	measure 'QM Defect Removal Efficiency %' = AVERAGE('vw_qm_quality_effectiveness'[defect_removal_efficiency_pct])
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000002
+
+	measure 'QM Requirements Without Tests %' = AVERAGE('vw_qm_quality_effectiveness'[requirements_without_tests_pct])
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000003
+
+	measure 'QM Avg Resolution Hours' = AVERAGE('vw_qm_quality_effectiveness'[avg_resolution_hours])
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000004
+
+	column release_name
+		dataType: string
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000101
+		sourceColumn: release_name
+
+	column total_defects
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000102
+		sourceColumn: total_defects
+
+	column resolved_defects
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000103
+		sourceColumn: resolved_defects
+
+	column reopened_defects
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000104
+		sourceColumn: reopened_defects
+
+	column leakage_defects
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000105
+		sourceColumn: leakage_defects
+
+	column critical_defects
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000106
+		sourceColumn: critical_defects
+
+	column avg_resolution_hours
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000107
+		sourceColumn: avg_resolution_hours
+
+	column total_requirements
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000108
+		sourceColumn: total_requirements
+
+	column covered_requirements
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000109
+		sourceColumn: covered_requirements
+
+	column requirements_without_tests
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000110
+		sourceColumn: requirements_without_tests
+
+	column total_runs
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000111
+		sourceColumn: total_runs
+
+	column failed_runs
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000112
+		sourceColumn: failed_runs
+
+	column failed_runs_without_defect
+		dataType: int64
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000113
+		sourceColumn: failed_runs_without_defect
+
+	column defect_resolution_rate_pct
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000114
+		sourceColumn: defect_resolution_rate_pct
+
+	column defect_reopen_rate_pct
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000115
+		sourceColumn: defect_reopen_rate_pct
+
+	column defect_leakage_rate_pct
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000116
+		sourceColumn: defect_leakage_rate_pct
+
+	column defect_removal_efficiency_pct
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000117
+		sourceColumn: defect_removal_efficiency_pct
+
+	column requirement_coverage_pct
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000118
+		sourceColumn: requirement_coverage_pct
+
+	column requirements_without_tests_pct
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000119
+		sourceColumn: requirements_without_tests_pct
+
+	column failed_runs_without_defect_pct
+		dataType: decimal
+		lineageTag: 9a1b2c3d-4e5f-4789-abcd-000000000120
+		sourceColumn: failed_runs_without_defect_pct
+
+	partition vw_qm_quality_effectiveness = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_qm_quality_effectiveness = Source{[Schema="dbo", Item="vw_qm_quality_effectiveness"]}[Data]
+				in
+				    vw_qm_quality_effectiveness

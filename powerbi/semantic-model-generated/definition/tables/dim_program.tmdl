@@ -1,0 +1,27 @@
+table dim_program
+	lineageTag: 3ca592db-0f7e-4c79-8e2a-0c227ddd840a
+
+	column program_sk
+		dataType: int64
+		lineageTag: 064b0e27-47f0-4e9e-b811-7ba16ff4f228
+		sourceColumn: program_sk
+
+	column program_name
+		dataType: string
+		lineageTag: 3c5bded4-472f-4679-90af-497fbe8788d7
+		sourceColumn: program_name
+
+	column description
+		dataType: string
+		lineageTag: 8a3c71ff-6b7e-4fb3-bc0a-a4313abc2ff0
+		sourceColumn: description
+
+	partition dim_program = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_program = Source{[Schema="dbo", Item="dim_program"]}[Data]
+				in
+				    dim_program
+

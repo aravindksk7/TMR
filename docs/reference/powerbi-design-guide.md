@@ -20,6 +20,7 @@
 12. [Publishing to Power BI Report Server](#12-publishing-to-power-bi-report-server)
 13. [Scheduled Refresh](#13-scheduled-refresh)
 14. [Troubleshooting](#14-troubleshooting)
+15. [Industry-Aligned Quality Metrics](#15-industry-aligned-quality-metrics)
 
 ---
 
@@ -75,10 +76,14 @@ In the Navigator, select all of the following and click **Load**:
 
 **Views (pre-aggregated — use for each specific report page):**
 - `vw_p1_qa_health_by_release`
+- `vw_p2_defect_density`
 - `vw_p3_requirement_coverage`
 - `vw_p4_execution_trend`
 - `vw_p5_test_type_breakdown`
 - `vw_p6_test_run_detail`
+- `vw_p7_environment_health`
+- `vw_p8_release_snapshot`
+- `vw_qm_quality_effectiveness` (governance scorecard)
 
 > **Tip:** Load both the base tables and the views. Base tables power cross-page slicers (Release, Squad, Date). Views power the individual report visuals — they are already aggregated and optimise query performance.
 
@@ -854,6 +859,85 @@ resp = httpx.post(
 ---
 
 ## 14. Troubleshooting
+
+---
+
+## 15. Industry-Aligned Quality Metrics
+
+This section introduces an implementation-ready governance layer aligned to commonly used enterprise QA benchmarks (test effectiveness, traceability completeness, and defect containment quality).
+
+For KPI definitions, ownership, and threshold baselines, use the companion reference: [Quality Metric Catalog](quality-metric-catalog.md).
+
+### 15.1 Load the supporting governance view
+
+In Navigator, load:
+
+- `vw_qm_quality_effectiveness`
+
+This view is built for release-level quality governance and should be used for scorecards/management pages.
+
+### 15.2 Recommended KPIs (from vw_qm_quality_effectiveness)
+
+| KPI | Source Column | Interpretation |
+|-----|---------------|----------------|
+| Defect Resolution Rate % | `defect_resolution_rate_pct` | Share of defects resolved out of total identified defects |
+| Defect Reopen Rate % | `defect_reopen_rate_pct` | Share of reopened defects out of resolved defects |
+| Defect Leakage Rate % | `defect_leakage_rate_pct` | Share of leakage-flagged defects out of total defects |
+| Defect Removal Efficiency % | `defect_removal_efficiency_pct` | Percentage of defects removed before leakage |
+| Requirement Coverage % | `requirement_coverage_pct` | Covered requirements over total requirements |
+| Requirements Without Tests % | `requirements_without_tests_pct` | Uncovered-by-test requirements ratio |
+| Failed Runs Without Defect % | `failed_runs_without_defect_pct` | Potential traceability gap indicator |
+| Avg Resolution Hours | `avg_resolution_hours` | Mean time to defect resolution |
+
+### 15.3 Optional DAX wrappers for scorecards
+
+If you prefer all report visuals to use DAX measures rather than direct numeric columns, create these measures:
+
+```dax
+Defect Leakage Rate % =
+AVERAGE('vw_qm_quality_effectiveness'[defect_leakage_rate_pct])
+
+Defect Removal Efficiency % =
+AVERAGE('vw_qm_quality_effectiveness'[defect_removal_efficiency_pct])
+
+Requirements Without Tests % =
+AVERAGE('vw_qm_quality_effectiveness'[requirements_without_tests_pct])
+
+Failed Runs Without Defect % =
+AVERAGE('vw_qm_quality_effectiveness'[failed_runs_without_defect_pct])
+
+Avg Resolution Hours =
+AVERAGE('vw_qm_quality_effectiveness'[avg_resolution_hours])
+```
+
+### 15.4 Recommended governance page layout
+
+Create a page called **P9 - Quality Effectiveness** with:
+
+1. KPI cards:
+    - Defect Leakage Rate %
+    - Defect Removal Efficiency %
+    - Requirements Without Tests %
+    - Avg Resolution Hours
+2. Clustered column chart by `release_name`:
+    - `defect_resolution_rate_pct`
+    - `defect_reopen_rate_pct`
+3. Table by `release_name`:
+    - total_defects
+    - leakage_defects
+    - total_requirements
+    - requirements_without_tests
+    - failed_runs_without_defect
+4. Conditional formatting rules:
+    - Leakage Rate: Green <= 5, Amber 5-10, Red > 10
+    - Reopen Rate: Green <= 8, Amber 8-15, Red > 15
+    - Requirements Without Tests %: Green <= 3, Amber 3-8, Red > 8
+
+### 15.5 Governance rollout notes
+
+- Start by publishing P9 as an internal QA leadership page.
+- Confirm leakage and reopen status values are populated consistently by source systems.
+- Calibrate thresholds per program/release train after 2-3 monthly cycles.
 
 ### "Data source credentials are invalid"
 

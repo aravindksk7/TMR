@@ -1,0 +1,42 @@
+table fact_test_step_result
+	lineageTag: e273b9cb-a27c-4a99-b363-6c2c9f43dc4c
+
+	column step_result_id
+		dataType: string
+		lineageTag: d1e031f2-86d2-43e1-a8bf-925ae47e490f
+		sourceColumn: step_result_id
+
+	column test_run_id
+		dataType: string
+		lineageTag: 59c75968-ad1a-463a-b9d3-56b1263fd226
+		sourceColumn: test_run_id
+
+	column step_order
+		dataType: int64
+		lineageTag: 1d708db7-f6e0-4182-b707-e61409b0260f
+		sourceColumn: step_order
+
+	column step_status
+		dataType: string
+		lineageTag: c8d51fa1-a3f7-45e2-b58e-b3f084140a9d
+		sourceColumn: step_status
+
+	column actual_result
+		dataType: string
+		lineageTag: 8ad01a64-9d2b-4904-973b-7e85f326ee8e
+		sourceColumn: actual_result
+
+	column comment
+		dataType: string
+		lineageTag: 888dc5d7-619e-4376-b363-afd45bfd3011
+		sourceColumn: comment
+
+	partition fact_test_step_result = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    fact_test_step_result = Source{[Schema="dbo", Item="fact_test_step_result"]}[Data]
+				in
+				    fact_test_step_result
+

@@ -12,9 +12,11 @@ from pydantic import BaseModel, field_validator
 EntityType = Literal[
     "jira_issue",
     "jira_defect",
+    "jira_version",
     "xray_test",
     "xray_test_run",
     "xray_test_execution",
+    "xray_test_plan",
     "xray_test_step_result",
     "xray_test_set",
     "xray_precondition",

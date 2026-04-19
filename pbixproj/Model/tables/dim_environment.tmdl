@@ -1,0 +1,32 @@
+table dim_environment
+	lineageTag: b2c3d4e5-f6a7-8901-bcde-f12345678901
+
+	column environment_sk
+		dataType: int64
+		lineageTag: b2c3d4e5-f6a7-8901-bcde-f12345678902
+		sourceColumn: environment_sk
+		isHidden
+
+	column environment_name
+		dataType: string
+		lineageTag: b2c3d4e5-f6a7-8901-bcde-f12345678903
+		sourceColumn: environment_name
+
+	column environment_type
+		dataType: string
+		lineageTag: b2c3d4e5-f6a7-8901-bcde-f12345678904
+		sourceColumn: environment_type
+
+	column criticality
+		dataType: string
+		lineageTag: b2c3d4e5-f6a7-8901-bcde-f12345678905
+		sourceColumn: criticality
+
+	partition dim_environment = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_environment = Source{[Schema="dbo", Item="dim_environment"]}[Data]
+				in
+				    dim_environment

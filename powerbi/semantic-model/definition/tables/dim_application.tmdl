@@ -1,0 +1,38 @@
+table dim_application
+	lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+	column application_sk
+		dataType: int64
+		lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567891
+		sourceColumn: application_sk
+		isHidden
+
+	column application_name
+		dataType: string
+		lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567892
+		sourceColumn: application_name
+
+	column platform
+		dataType: string
+		lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567893
+		sourceColumn: platform
+
+	column program_sk
+		dataType: int64
+		lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567894
+		sourceColumn: program_sk
+		isHidden
+
+	column is_active
+		dataType: boolean
+		lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567895
+		sourceColumn: is_active
+
+	partition dim_application = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_application = Source{[Schema="dbo", Item="dim_application"]}[Data]
+				in
+				    dim_application

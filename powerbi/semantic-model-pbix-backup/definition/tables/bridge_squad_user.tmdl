@@ -1,0 +1,27 @@
+table bridge_squad_user
+	lineageTag: 86876b02-eb4d-441f-9f63-245b2ec57766
+
+	column squad_sk
+		dataType: int64
+		lineageTag: 3f799393-b73b-4ebf-8510-67338668bfed
+		sourceColumn: squad_sk
+
+	column user_email
+		dataType: string
+		lineageTag: 17689c51-c633-4b0c-aa4b-a94bcb34e45a
+		sourceColumn: user_email
+
+	column role
+		dataType: string
+		lineageTag: 55cd1571-3ad5-45cf-bc74-a15fd015807c
+		sourceColumn: role
+
+	partition bridge_squad_user = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    bridge_squad_user = Source{[Schema="dbo", Item="bridge_squad_user"]}[Data]
+				in
+				    bridge_squad_user
+

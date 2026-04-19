@@ -1,0 +1,33 @@
+table dim_status
+	lineageTag: c3d4e5f6-a7b8-9012-cdef-012345678901
+
+	column status_sk
+		dataType: int64
+		lineageTag: c3d4e5f6-a7b8-9012-cdef-012345678902
+		sourceColumn: status_sk
+		isHidden
+
+	column status_name
+		dataType: string
+		lineageTag: c3d4e5f6-a7b8-9012-cdef-012345678903
+		sourceColumn: status_name
+
+	column status_category
+		dataType: string
+		lineageTag: c3d4e5f6-a7b8-9012-cdef-012345678904
+		sourceColumn: status_category
+
+	column sort_order
+		dataType: int64
+		lineageTag: c3d4e5f6-a7b8-9012-cdef-012345678905
+		sourceColumn: sort_order
+		isHidden
+
+	partition dim_status = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_status = Source{[Schema="dbo", Item="dim_status"]}[Data]
+				in
+				    dim_status

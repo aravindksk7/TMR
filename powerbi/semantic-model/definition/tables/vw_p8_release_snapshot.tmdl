@@ -1,0 +1,113 @@
+table vw_p8_release_snapshot
+	lineageTag: d0e1f2a3-b4c5-6789-defa-789012345678
+
+	measure 'P8 Pass Rate %' = DIVIDE(SUM('vw_p8_release_snapshot'[passed_tests]), SUM('vw_p8_release_snapshot'[executed_tests]), 0) * 100
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345679
+
+	measure 'P8 Coverage Rate %' = DIVIDE(SUM('vw_p8_release_snapshot'[covered_requirements]), SUM('vw_p8_release_snapshot'[total_requirements]), 0) * 100
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345680
+
+	measure 'P8 Automation Rate %' = DIVIDE(SUM('vw_p8_release_snapshot'[automated_executions]), SUM('vw_p8_release_snapshot'[executed_tests]), 0) * 100
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345681
+
+	measure 'P8 Open Critical Defects' = SUM('vw_p8_release_snapshot'[open_critical_defects])
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345682
+
+	column snapshot_date
+		dataType: dateTime
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345683
+		sourceColumn: snapshot_date
+
+	column year
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345684
+		sourceColumn: year
+
+	column month
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345685
+		sourceColumn: month
+
+	column release_name
+		dataType: string
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345686
+		sourceColumn: release_name
+
+	column release_date
+		dataType: dateTime
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345687
+		sourceColumn: release_date
+
+	column release_status
+		dataType: string
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345688
+		sourceColumn: release_status
+
+	column squad_name
+		dataType: string
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345689
+		sourceColumn: squad_name
+
+	column total_tests
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345690
+		sourceColumn: total_tests
+
+	column executed_tests
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345691
+		sourceColumn: executed_tests
+
+	column passed_tests
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345692
+		sourceColumn: passed_tests
+
+	column failed_tests
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345693
+		sourceColumn: failed_tests
+
+	column blocked_tests
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345694
+		sourceColumn: blocked_tests
+
+	column not_run_tests
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345695
+		sourceColumn: not_run_tests
+
+	column automated_executions
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345696
+		sourceColumn: automated_executions
+
+	column covered_requirements
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345697
+		sourceColumn: covered_requirements
+
+	column total_requirements
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345698
+		sourceColumn: total_requirements
+
+	column open_critical_defects
+		dataType: int64
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345699
+		sourceColumn: open_critical_defects
+
+	column avg_duration_s
+		dataType: double
+		lineageTag: d0e1f2a3-b4c5-6789-defa-789012345700
+		sourceColumn: avg_duration_s
+
+	partition vw_p8_release_snapshot = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p8_release_snapshot = Source{[Schema="dbo", Item="vw_p8_release_snapshot"]}[Data]
+				in
+				    vw_p8_release_snapshot

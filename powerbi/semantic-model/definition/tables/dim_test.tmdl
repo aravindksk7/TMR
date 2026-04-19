@@ -1,0 +1,72 @@
+table dim_test
+	lineageTag: a352a56a-a7cc-4a40-b707-52819d7522a9
+
+	column test_sk
+		dataType: int64
+		lineageTag: a67f2df8-f8f2-4c3d-96ae-4c3593b83a4e
+		sourceColumn: test_sk
+
+	column test_key
+		dataType: string
+		lineageTag: 5fc28e59-946d-4b5f-a4ce-2a537dcea402
+		sourceColumn: test_key
+
+	column summary
+		dataType: string
+		lineageTag: 5c38ee61-490a-4530-bdf5-8d533fe3b640
+		sourceColumn: summary
+
+	column status
+		dataType: string
+		lineageTag: 53e7b86f-f806-4bff-ad4c-620176b2ba7d
+		sourceColumn: status
+
+	column test_type_sk
+		dataType: int64
+		lineageTag: d422f2ee-6430-47d4-ab12-79e5c2be645a
+		sourceColumn: test_type_sk
+
+	column repository_path
+		dataType: string
+		lineageTag: 7d3321d1-99c4-4433-a0e7-7ef0425b9c9a
+		sourceColumn: repository_path
+
+	column gherkin_definition
+		dataType: string
+		lineageTag: c244126a-d23a-4a3a-9bcc-fa85f1fef4c0
+		sourceColumn: gherkin_definition
+
+	column generic_definition
+		dataType: string
+		lineageTag: 070c594a-8f5f-42d4-a5f6-b901330ab235
+		sourceColumn: generic_definition
+
+	column squad_sk
+		dataType: int64
+		lineageTag: 60ff2491-038b-42a1-a2c8-b309e30fe1ae
+		sourceColumn: squad_sk
+
+	column assignee
+		dataType: string
+		lineageTag: 5579bad9-ade2-404b-958a-5b55ef8b080f
+		sourceColumn: assignee
+
+	column created_at
+		dataType: dateTime
+		lineageTag: 1a29784d-3e3d-4504-b4ef-eb79f31cf69f
+		sourceColumn: created_at
+
+	column updated_at
+		dataType: dateTime
+		lineageTag: bbb363b4-d199-4757-be77-58112ffd1739
+		sourceColumn: updated_at
+
+	partition dim_test = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_test = Source{[Schema="dbo", Item="dim_test"]}[Data]
+				in
+				    dim_test
+

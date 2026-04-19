@@ -1,0 +1,44 @@
+table dim_tester
+	lineageTag: e5f6a7b8-c9d0-1234-efab-234567890123
+
+	column tester_sk
+		dataType: int64
+		lineageTag: e5f6a7b8-c9d0-1234-efab-234567890124
+		sourceColumn: tester_sk
+		isHidden
+
+	column tester_id
+		dataType: string
+		lineageTag: e5f6a7b8-c9d0-1234-efab-234567890125
+		sourceColumn: tester_id
+		isHidden
+
+	column tester_name
+		dataType: string
+		lineageTag: e5f6a7b8-c9d0-1234-efab-234567890126
+		sourceColumn: tester_name
+
+	column email
+		dataType: string
+		lineageTag: e5f6a7b8-c9d0-1234-efab-234567890127
+		sourceColumn: email
+
+	column team_name
+		dataType: string
+		lineageTag: e5f6a7b8-c9d0-1234-efab-234567890128
+		sourceColumn: team_name
+
+	column is_active
+		dataType: boolean
+		lineageTag: e5f6a7b8-c9d0-1234-efab-234567890129
+		sourceColumn: is_active
+		isHidden
+
+	partition dim_tester = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_tester = Source{[Schema="dbo", Item="dim_tester"]}[Data]
+				in
+				    dim_tester

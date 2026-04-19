@@ -15,6 +15,7 @@ Jira / Xray  ──►  qa-pipeline (Python)  ──►  SQL Server  ──►  
 |-----------|-------|
 | Install the pipeline from scratch | [Implementation Guide](docs/reference/implementation-guide.md) |
 | Build the Power BI dashboards | [Power BI Design Guide](docs/reference/powerbi-design-guide.md) |
+| Review governance KPI definitions | [Quality Metric Catalog](docs/reference/quality-metric-catalog.md) |
 | Add a Jira project to the pipeline | [How-to: Add a Jira Project](docs/how-to/01-add-jira-project.md) |
 | Map custom Jira fields | [How-to: Map Custom Fields](docs/how-to/02-map-custom-fields.md) |
 | Run the pipeline manually | [How-to: Run Pipeline Manually](docs/how-to/03-run-pipeline-manually.md) |
@@ -32,7 +33,7 @@ Jira / Xray  ──►  qa-pipeline (Python)  ──►  SQL Server  ──►  
 | Source | Jira Server / DC / Cloud + Xray | Issues, tests, executions, results |
 | Pipeline | Python 3.11, httpx, pyodbc, APScheduler | Extract → Stage → Transform |
 | Storage | SQL Server 2019+ | `Staging_DB` (raw JSON) + `Reporting_DB` (star schema) |
-| Reporting | Power BI Desktop + Report Server | 6 dashboard pages (P1–P6) |
+| Reporting | Power BI Desktop + Report Server | 8 dashboard pages (P1–P8) |
 
 **Default schedule:**
 - Delta run every **4 hours** — incremental, watermark-based

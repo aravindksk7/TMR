@@ -30,8 +30,10 @@ log = structlog.get_logger(__name__)
 _TABLE_MAP: dict[str, str] = {
     "jira_issue":             "stg_jira_issues",
     "jira_defect":            "stg_jira_defects",
+    "jira_version":           "stg_jira_versions",
     "xray_test":              "stg_xray_tests",
     "xray_test_execution":    "stg_xray_test_executions",
+    "xray_test_plan":         "stg_xray_test_plans",
     "xray_test_run":          "stg_xray_test_runs",
     "xray_test_step_result":  "stg_xray_test_step_results",
     "xray_test_set":          "stg_xray_test_sets",

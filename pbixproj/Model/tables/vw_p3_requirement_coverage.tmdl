@@ -1,0 +1,91 @@
+table vw_p3_requirement_coverage
+	lineageTag: 42e140ac-b8cb-4ea7-b129-2b168be154a6
+
+	measure 'P3 Total Requirements' = DISTINCTCOUNT('vw_p3_requirement_coverage'[issue_key])
+		lineageTag: a84b7f47-e991-402b-a8ea-a49011d00317
+
+	measure 'P3 Covered Requirements' = CALCULATE(DISTINCTCOUNT('vw_p3_requirement_coverage'[issue_key]), 'vw_p3_requirement_coverage'[is_covered] = TRUE())
+		lineageTag: 6e30d368-a02b-4cc9-83e4-263b0724f944
+
+	measure 'P3 Coverage %' = DIVIDE([P3 Covered Requirements], [P3 Total Requirements], 0) * 100
+		lineageTag: 5dc9c361-53cd-490b-a33f-43626c15fbfd
+
+	column issue_key
+		dataType: string
+		lineageTag: 50456851-877e-4254-9b6a-0aade257c254
+		sourceColumn: issue_key
+
+	column requirement_summary
+		dataType: string
+		lineageTag: 2908ac48-a9a2-4d80-8c89-efeefd2fd3cf
+		sourceColumn: requirement_summary
+
+	column issue_type
+		dataType: string
+		lineageTag: 7b4ae24d-9ad7-445a-8e0e-694aa453a132
+		sourceColumn: issue_type
+
+	column priority
+		dataType: string
+		lineageTag: b8dad91e-1207-4126-a9a7-354a244517db
+		sourceColumn: priority
+
+	column squad_name
+		dataType: string
+		lineageTag: 9038f77e-630e-4016-a62b-196fc8c8fed5
+		sourceColumn: squad_name
+
+	column release_name
+		dataType: string
+		lineageTag: 76fc6bed-4fdb-4971-adf0-ec849d17abbd
+		sourceColumn: release_name
+
+	column total_test_count
+		dataType: int64
+		lineageTag: cd53638c-dfaa-4d43-8392-d78e6e860a3a
+		sourceColumn: total_test_count
+
+	column passing_test_count
+		dataType: int64
+		lineageTag: e196d3b0-8801-4baf-9679-216b883d51b2
+		sourceColumn: passing_test_count
+
+	column failing_test_count
+		dataType: int64
+		lineageTag: 199c264a-f2de-42a9-8182-dbbbe05a1e7f
+		sourceColumn: failing_test_count
+
+	column blocked_test_count
+		dataType: int64
+		lineageTag: 1a16122f-3958-438e-af24-0fdde6a3bac2
+		sourceColumn: blocked_test_count
+
+	column todo_test_count
+		dataType: int64
+		lineageTag: 93ca52f8-01b1-4602-92ed-369a74548bef
+		sourceColumn: todo_test_count
+
+	column no_coverage_count
+		dataType: int64
+		lineageTag: 487f0260-b829-4317-9f0b-de0d29a5fdaa
+		sourceColumn: no_coverage_count
+
+	column coverage_status
+		dataType: string
+		lineageTag: 9bd52a60-e546-4017-8181-880d54283676
+		sourceColumn: coverage_status
+
+	column is_covered
+		dataType: boolean
+		lineageTag: b44dbbc0-424d-462b-90b7-3747527923c4
+		sourceColumn: is_covered
+
+	partition vw_p3_requirement_coverage = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p3_requirement_coverage = Source{[Schema="dbo", Item="vw_p3_requirement_coverage"]}[Data]
+				in
+				    vw_p3_requirement_coverage
+

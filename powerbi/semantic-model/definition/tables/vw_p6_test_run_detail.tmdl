@@ -1,0 +1,102 @@
+table vw_p6_test_run_detail
+	lineageTag: c1196c64-dd78-4b1e-b0a3-08f7660f32b1
+
+	column test_run_id
+		dataType: string
+		lineageTag: f152d700-4928-4050-8a43-4c1397a94424
+		sourceColumn: test_run_id
+
+	column test_key
+		dataType: string
+		lineageTag: 1a13abb3-34e8-414d-a939-0effa47ecf3d
+		sourceColumn: test_key
+
+	column test_summary
+		dataType: string
+		lineageTag: 9d97dfa1-3c9c-4728-8b4e-c42b973e873f
+		sourceColumn: test_summary
+
+	column test_type_name
+		dataType: string
+		lineageTag: 63819109-9d54-41c6-adcc-63114f299342
+		sourceColumn: test_type_name
+
+	column execution_key
+		dataType: string
+		lineageTag: 42112eb9-11dc-4ba9-aad8-020070c6c84c
+		sourceColumn: execution_key
+
+	column execution_summary
+		dataType: string
+		lineageTag: 315bd38a-9861-4f1e-a93e-9b0c412bbbdf
+		sourceColumn: execution_summary
+
+	column environments_json
+		dataType: string
+		lineageTag: 612319e7-a5b6-49ae-84f1-c19727911b53
+		sourceColumn: environments_json
+
+	column revision
+		dataType: string
+		lineageTag: 22cb1dcc-5065-4040-9efd-5c549605cc3b
+		sourceColumn: revision
+
+	column release_name
+		dataType: string
+		lineageTag: 2049fb51-8d0f-42ff-88c8-b9f14286b189
+		sourceColumn: release_name
+
+	column squad_name
+		dataType: string
+		lineageTag: 6e99f5e8-ce1d-44af-88c7-9a5aec952845
+		sourceColumn: squad_name
+
+	column run_status
+		dataType: string
+		lineageTag: 325c1b2c-c23f-435f-b705-1c6ac9dbd289
+		sourceColumn: run_status
+
+	column started_at
+		dataType: dateTime
+		lineageTag: 0a706a76-8f19-4b8e-b892-248ae89b1392
+		sourceColumn: started_at
+
+	column finished_at
+		dataType: dateTime
+		lineageTag: 42e140ac-b8cb-4ea7-b129-2b168be154a7
+		sourceColumn: finished_at
+
+	column duration_s
+		dataType: double
+		lineageTag: a84b7f47-e991-402b-a8ea-a49011d00318
+		sourceColumn: duration_s
+
+	column executed_by
+		dataType: string
+		lineageTag: 6e30d368-a02b-4cc9-83e4-263b0724f945
+		sourceColumn: executed_by
+
+	column assignee
+		dataType: string
+		lineageTag: 5dc9c361-53cd-490b-a33f-43626c15fbd0
+		sourceColumn: assignee
+
+	column comment
+		dataType: string
+		lineageTag: 50456851-877e-4254-9b6a-0aade257c255
+		sourceColumn: comment
+
+	column defect_count
+		dataType: int64
+		lineageTag: 2908ac48-a9a2-4d80-8c89-efeefd2fd3d0
+		sourceColumn: defect_count
+
+	partition vw_p6_test_run_detail = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p6_test_run_detail = Source{[Schema="dbo", Item="vw_p6_test_run_detail"]}[Data]
+				in
+				    vw_p6_test_run_detail
+

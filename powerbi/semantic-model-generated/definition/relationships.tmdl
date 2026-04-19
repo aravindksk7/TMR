@@ -1,0 +1,49 @@
+relationship rel_fact_run_release
+	fromColumn: fact_test_run.release_sk
+	toColumn: dim_release.release_sk
+
+relationship rel_fact_run_test
+	fromColumn: fact_test_run.test_sk
+	toColumn: dim_test.test_sk
+
+relationship rel_fact_run_execution
+	fromColumn: fact_test_run.execution_sk
+	toColumn: dim_test_execution.execution_sk
+
+relationship rel_step_result_run
+	fromColumn: fact_test_step_result.test_run_id
+	toColumn: fact_test_run.test_run_id
+
+relationship rel_req_coverage_issue
+	fromColumn: fact_requirement_coverage.issue_sk
+	toColumn: dim_issue.issue_sk
+
+relationship rel_req_coverage_release
+	isActive: false
+	fromColumn: fact_requirement_coverage.release_sk
+	toColumn: dim_release.release_sk
+
+relationship rel_test_test_type
+	fromColumn: dim_test.test_type_sk
+	toColumn: dim_test_type.test_type_sk
+
+relationship rel_test_squad
+	fromColumn: dim_test.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_defect_squad
+	fromColumn: dim_defect.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_issue_squad
+	fromColumn: dim_issue.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_squad_program
+	fromColumn: dim_squad.program_sk
+	toColumn: dim_program.program_sk
+
+relationship rel_bridge_squad
+	fromColumn: bridge_squad_user.squad_sk
+	toColumn: dim_squad.squad_sk
+

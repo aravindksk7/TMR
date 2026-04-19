@@ -1,0 +1,2853 @@
+{
+  "name": "QA-Pipeline-Report",
+  "compatibilityLevel": 1600,
+  "model": {
+    "culture": "en-US",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "sourceQueryCulture": "en-AU",
+    "cultures": [
+      {
+        "name": "en-US"
+      }
+    ],
+    "annotations": [
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "1"
+      },
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"MCP-PBIModeling\"]"
+      }
+    ],
+    "tables": [
+      {
+        "name": "bridge_squad_user",
+        "lineageTag": "86876b02-eb4d-441f-9f63-245b2ec57766",
+        "columns": [
+          {
+            "name": "squad_sk",
+            "lineageTag": "3f799393-b73b-4ebf-8510-67338668bfed",
+            "dataType": "int64",
+            "sourceColumn": "squad_sk"
+          },
+          {
+            "name": "user_email",
+            "lineageTag": "17689c51-c633-4b0c-aa4b-a94bcb34e45a",
+            "dataType": "string",
+            "sourceColumn": "user_email"
+          },
+          {
+            "name": "role",
+            "lineageTag": "55cd1571-3ad5-45cf-bc74-a15fd015807c",
+            "dataType": "string",
+            "sourceColumn": "role"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "bridge_squad_user",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    bridge_squad_user = Source{[Schema=\"dbo\", Item=\"bridge_squad_user\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    bridge_squad_user"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_application",
+        "lineageTag": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "columns": [
+          {
+            "name": "application_sk",
+            "lineageTag": "a1b2c3d4-e5f6-7890-abcd-ef1234567891",
+            "dataType": "int64",
+            "sourceColumn": "application_sk",
+            "isHidden": true
+          },
+          {
+            "name": "application_name",
+            "lineageTag": "a1b2c3d4-e5f6-7890-abcd-ef1234567892",
+            "dataType": "string",
+            "sourceColumn": "application_name"
+          },
+          {
+            "name": "platform",
+            "lineageTag": "a1b2c3d4-e5f6-7890-abcd-ef1234567893",
+            "dataType": "string",
+            "sourceColumn": "platform"
+          },
+          {
+            "name": "program_sk",
+            "lineageTag": "a1b2c3d4-e5f6-7890-abcd-ef1234567894",
+            "dataType": "int64",
+            "sourceColumn": "program_sk",
+            "isHidden": true
+          },
+          {
+            "name": "is_active",
+            "lineageTag": "a1b2c3d4-e5f6-7890-abcd-ef1234567895",
+            "dataType": "boolean",
+            "sourceColumn": "is_active"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_application",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_application = Source{[Schema=\"dbo\", Item=\"dim_application\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_application"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_date",
+        "lineageTag": "ffd0d634-65e6-4f35-ab4b-a3aad9db56c3",
+        "columns": [
+          {
+            "name": "date_sk",
+            "lineageTag": "2103b9b4-da83-47a0-aef1-0e8b91f5deb8",
+            "dataType": "int64",
+            "sourceColumn": "date_sk"
+          },
+          {
+            "name": "full_date",
+            "lineageTag": "ff531201-e30e-4679-8a2a-ab69c37e77b5",
+            "dataType": "dateTime",
+            "sourceColumn": "full_date"
+          },
+          {
+            "name": "year",
+            "lineageTag": "73fe7ec8-a108-4a88-b905-8869f1462d64",
+            "dataType": "int64",
+            "sourceColumn": "year"
+          },
+          {
+            "name": "quarter",
+            "lineageTag": "411942c8-6cc6-478f-ac98-827362b4e5cb",
+            "dataType": "int64",
+            "sourceColumn": "quarter"
+          },
+          {
+            "name": "month",
+            "lineageTag": "a73c10cd-fce4-4395-9ce6-b31269b4659e",
+            "dataType": "int64",
+            "sourceColumn": "month"
+          },
+          {
+            "name": "month_name",
+            "lineageTag": "331e25dd-21c7-4aad-903c-535d825d8c37",
+            "dataType": "string",
+            "sourceColumn": "month_name"
+          },
+          {
+            "name": "week_of_year",
+            "lineageTag": "f99cfdff-588d-4e26-baa8-66d9ee0ecb56",
+            "dataType": "int64",
+            "sourceColumn": "week_of_year"
+          },
+          {
+            "name": "day_of_month",
+            "lineageTag": "d2a2645a-a51e-482c-a0e7-c58be1d5c1dc",
+            "dataType": "int64",
+            "sourceColumn": "day_of_month"
+          },
+          {
+            "name": "day_of_week",
+            "lineageTag": "d5a07079-06a4-47f7-9d1f-f6431dd942c5",
+            "dataType": "int64",
+            "sourceColumn": "day_of_week"
+          },
+          {
+            "name": "day_name",
+            "lineageTag": "d7ba668b-e62b-46bd-bbb8-f39a10d147ee",
+            "dataType": "string",
+            "sourceColumn": "day_name"
+          },
+          {
+            "name": "is_weekend",
+            "lineageTag": "554b6a8c-9384-4a08-a296-bba9074187f3",
+            "dataType": "boolean",
+            "sourceColumn": "is_weekend"
+          },
+          {
+            "name": "fiscal_year",
+            "lineageTag": "6c9b3a53-f9d7-4980-8010-20ece2af7990",
+            "dataType": "int64",
+            "sourceColumn": "fiscal_year"
+          },
+          {
+            "name": "fiscal_quarter",
+            "lineageTag": "fdc40da2-6848-42ca-ab39-49178c802fdf",
+            "dataType": "int64",
+            "sourceColumn": "fiscal_quarter"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_date",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_date = Source{[Schema=\"dbo\", Item=\"dim_date\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_date"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_defect",
+        "lineageTag": "6c436db5-617e-4192-aef6-576a4fab72e8",
+        "measures": [
+          {
+            "name": "Total Defects",
+            "expression": "COUNTROWS('dim_defect')",
+            "lineageTag": "ed269e0a-a3ef-4f02-b419-9b735dfeeea1"
+          },
+          {
+            "name": "Open Defects",
+            "expression": "CALCULATE(COUNTROWS('dim_defect'), NOT 'dim_defect'[status] IN {\"Closed\", \"Done\", \"Resolved\", \"Won't Fix\"})",
+            "lineageTag": "1ea0f379-de13-475a-a255-a143d5608b8d"
+          },
+          {
+            "name": "Critical Defects",
+            "expression": "CALCULATE(COUNTROWS('dim_defect'), 'dim_defect'[severity] = \"Critical\" || 'dim_defect'[priority] IN {\"P0\", \"P1\", \"Highest\"})",
+            "lineageTag": "32dc796b-eca7-4bc5-a9ff-b75a3ac495bf"
+          },
+          {
+            "name": "Open Critical Defects",
+            "expression": "CALCULATE(COUNTROWS('dim_defect'), NOT 'dim_defect'[status] IN {\"Closed\", \"Done\", \"Resolved\", \"Won't Fix\"}, 'dim_defect'[severity] = \"Critical\" || 'dim_defect'[priority] IN {\"P0\", \"P1\", \"Highest\"})",
+            "lineageTag": "8521b932-d4ca-4d56-a4e9-5eea798f7a6e"
+          }
+        ],
+        "columns": [
+          {
+            "name": "defect_sk",
+            "lineageTag": "6fb5f3f0-f8a6-44e3-be22-475f95285e2c",
+            "dataType": "int64",
+            "sourceColumn": "defect_sk",
+            "isHidden": true
+          },
+          {
+            "name": "defect_key",
+            "lineageTag": "44f292fb-8b89-4386-bd21-3b7e91f0e39e",
+            "dataType": "string",
+            "sourceColumn": "defect_key"
+          },
+          {
+            "name": "summary",
+            "lineageTag": "d7ce5945-5c66-48a7-9239-17d23950ad00",
+            "dataType": "string",
+            "sourceColumn": "summary"
+          },
+          {
+            "name": "status",
+            "lineageTag": "41197456-8c19-40da-b129-a0d03000df71",
+            "dataType": "string",
+            "sourceColumn": "status"
+          },
+          {
+            "name": "priority",
+            "lineageTag": "3f0b6fb2-c756-4a0d-a4fe-430f5cf3c621",
+            "dataType": "string",
+            "sourceColumn": "priority"
+          },
+          {
+            "name": "severity",
+            "lineageTag": "a682e85e-08cf-4d11-ac31-4a5b1818d628",
+            "dataType": "string",
+            "sourceColumn": "severity"
+          },
+          {
+            "name": "squad_sk",
+            "lineageTag": "c401e985-bd40-46e5-8443-e1a27cfa1f8b",
+            "dataType": "int64",
+            "sourceColumn": "squad_sk",
+            "isHidden": true
+          },
+          {
+            "name": "application_sk",
+            "lineageTag": "c401e985-bd40-46e5-8443-e1a27cfa1f8c",
+            "dataType": "int64",
+            "sourceColumn": "application_sk",
+            "isHidden": true
+          },
+          {
+            "name": "reporter",
+            "lineageTag": "a2756fed-94ab-4586-9792-c7fcecfa5ab6",
+            "dataType": "string",
+            "sourceColumn": "reporter"
+          },
+          {
+            "name": "assignee",
+            "lineageTag": "d41fb11a-02b3-44f1-831b-18b6dc0812f9",
+            "dataType": "string",
+            "sourceColumn": "assignee"
+          },
+          {
+            "name": "created_at",
+            "lineageTag": "ff6d2a14-8308-4d1a-83ab-a1b4a8cf346d",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at"
+          },
+          {
+            "name": "resolved_at",
+            "lineageTag": "eb96b499-a4fb-4c7e-a86c-af9567517466",
+            "dataType": "dateTime",
+            "sourceColumn": "resolved_at"
+          },
+          {
+            "name": "critical_flag",
+            "lineageTag": "0904a593-29b3-4290-b0d9-70694e950e16",
+            "dataType": "boolean",
+            "sourceColumn": "critical_flag"
+          },
+          {
+            "name": "leakage_flag",
+            "lineageTag": "0904a593-29b3-4290-b0d9-70694e950e17",
+            "dataType": "boolean",
+            "sourceColumn": "leakage_flag"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_defect",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_defect = Source{[Schema=\"dbo\", Item=\"dim_defect\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_defect"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_environment",
+        "lineageTag": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "columns": [
+          {
+            "name": "environment_sk",
+            "lineageTag": "b2c3d4e5-f6a7-8901-bcde-f12345678902",
+            "dataType": "int64",
+            "sourceColumn": "environment_sk",
+            "isHidden": true
+          },
+          {
+            "name": "environment_name",
+            "lineageTag": "b2c3d4e5-f6a7-8901-bcde-f12345678903",
+            "dataType": "string",
+            "sourceColumn": "environment_name"
+          },
+          {
+            "name": "environment_type",
+            "lineageTag": "b2c3d4e5-f6a7-8901-bcde-f12345678904",
+            "dataType": "string",
+            "sourceColumn": "environment_type"
+          },
+          {
+            "name": "criticality",
+            "lineageTag": "b2c3d4e5-f6a7-8901-bcde-f12345678905",
+            "dataType": "string",
+            "sourceColumn": "criticality"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_environment",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_environment = Source{[Schema=\"dbo\", Item=\"dim_environment\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_environment"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_issue",
+        "lineageTag": "381c8eec-1201-497e-91cf-cbc0a3172f07",
+        "columns": [
+          {
+            "name": "issue_sk",
+            "lineageTag": "672ce3cd-e121-45c8-a30e-f309302abfa8",
+            "dataType": "int64",
+            "sourceColumn": "issue_sk"
+          },
+          {
+            "name": "issue_key",
+            "lineageTag": "6af41627-fbbb-483f-b51e-be540b110f9c",
+            "dataType": "string",
+            "sourceColumn": "issue_key"
+          },
+          {
+            "name": "issue_type",
+            "lineageTag": "9c6fa2a6-a15d-43cb-877c-a70e426534f9",
+            "dataType": "string",
+            "sourceColumn": "issue_type"
+          },
+          {
+            "name": "summary",
+            "lineageTag": "3f2b4878-0de2-4d87-91b7-2a6f54ac4f43",
+            "dataType": "string",
+            "sourceColumn": "summary"
+          },
+          {
+            "name": "status",
+            "lineageTag": "6b1219f4-b4be-4d06-8fca-1d218976c7d1",
+            "dataType": "string",
+            "sourceColumn": "status"
+          },
+          {
+            "name": "priority",
+            "lineageTag": "6a2e09dd-e789-4544-9d67-c3ee9fc065f3",
+            "dataType": "string",
+            "sourceColumn": "priority"
+          },
+          {
+            "name": "program_sk",
+            "lineageTag": "ac648916-b7ba-458f-8ce9-afb4be73bf60",
+            "dataType": "int64",
+            "sourceColumn": "program_sk"
+          },
+          {
+            "name": "squad_sk",
+            "lineageTag": "92cbefdf-6d88-486b-8343-23cb19504c46",
+            "dataType": "int64",
+            "sourceColumn": "squad_sk"
+          },
+          {
+            "name": "reporter",
+            "lineageTag": "0ee3a14b-c5ea-4fd7-accb-b0dd390b73cf",
+            "dataType": "string",
+            "sourceColumn": "reporter"
+          },
+          {
+            "name": "assignee",
+            "lineageTag": "a5c53fcb-1921-4d7a-a2ab-d89b2a72f54c",
+            "dataType": "string",
+            "sourceColumn": "assignee"
+          },
+          {
+            "name": "created_at",
+            "lineageTag": "afc1cfd3-47d4-4fc1-9f63-e211e2bbd18c",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at"
+          },
+          {
+            "name": "updated_at",
+            "lineageTag": "7fda16a0-1873-4fbe-bf36-0fb007847c78",
+            "dataType": "dateTime",
+            "sourceColumn": "updated_at"
+          },
+          {
+            "name": "resolution_date",
+            "lineageTag": "348165dd-510b-4557-9701-36e39c80f50c",
+            "dataType": "dateTime",
+            "sourceColumn": "resolution_date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_issue",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_issue = Source{[Schema=\"dbo\", Item=\"dim_issue\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_issue"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_program",
+        "lineageTag": "3ca592db-0f7e-4c79-8e2a-0c227ddd840a",
+        "columns": [
+          {
+            "name": "program_sk",
+            "lineageTag": "064b0e27-47f0-4e9e-b811-7ba16ff4f228",
+            "dataType": "int64",
+            "sourceColumn": "program_sk"
+          },
+          {
+            "name": "program_name",
+            "lineageTag": "3c5bded4-472f-4679-90af-497fbe8788d7",
+            "dataType": "string",
+            "sourceColumn": "program_name"
+          },
+          {
+            "name": "description",
+            "lineageTag": "8a3c71ff-6b7e-4fb3-bc0a-a4313abc2ff0",
+            "dataType": "string",
+            "sourceColumn": "description"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_program",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_program = Source{[Schema=\"dbo\", Item=\"dim_program\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_program"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_release",
+        "lineageTag": "6a6d4ba6-3fad-40d2-b736-bf2f3db840a9",
+        "columns": [
+          {
+            "name": "release_sk",
+            "lineageTag": "3fe13be2-2466-4bd7-a74a-8bd627e7bdfe",
+            "dataType": "int64",
+            "sourceColumn": "release_sk"
+          },
+          {
+            "name": "release_name",
+            "lineageTag": "53a2a0cb-2d51-4833-9d96-f084680a6002",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "release_date",
+            "lineageTag": "53f5005e-b53b-4772-9c1f-cfda5b7e7542",
+            "dataType": "dateTime",
+            "sourceColumn": "release_date"
+          },
+          {
+            "name": "release_date_sk",
+            "lineageTag": "6ea7b860-cae6-46b9-b39d-c3422091401d",
+            "dataType": "int64",
+            "sourceColumn": "release_date_sk"
+          },
+          {
+            "name": "is_released",
+            "lineageTag": "dc7ee724-501a-49dc-a7ef-dfe5966f9ec1",
+            "dataType": "boolean",
+            "sourceColumn": "is_released"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_release",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_release = Source{[Schema=\"dbo\", Item=\"dim_release\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_release"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_root_cause",
+        "lineageTag": "d4e5f6a7-b8c9-0123-defa-123456789012",
+        "columns": [
+          {
+            "name": "root_cause_sk",
+            "lineageTag": "d4e5f6a7-b8c9-0123-defa-123456789013",
+            "dataType": "int64",
+            "sourceColumn": "root_cause_sk",
+            "isHidden": true
+          },
+          {
+            "name": "root_cause_name",
+            "lineageTag": "d4e5f6a7-b8c9-0123-defa-123456789014",
+            "dataType": "string",
+            "sourceColumn": "root_cause_name"
+          },
+          {
+            "name": "root_cause_category",
+            "lineageTag": "d4e5f6a7-b8c9-0123-defa-123456789015",
+            "dataType": "string",
+            "sourceColumn": "root_cause_category"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_root_cause",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_root_cause = Source{[Schema=\"dbo\", Item=\"dim_root_cause\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_root_cause"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_squad",
+        "lineageTag": "685e1430-b977-4957-9fc3-3672d8c8379b",
+        "columns": [
+          {
+            "name": "squad_sk",
+            "lineageTag": "602615a4-1d9b-4283-90c1-c2fd0742ae70",
+            "dataType": "int64",
+            "sourceColumn": "squad_sk"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "14147776-ed10-40ad-9574-863fbcd46630",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "program_sk",
+            "lineageTag": "50ee4388-81d7-4004-9130-3cd949a0fe8f",
+            "dataType": "int64",
+            "sourceColumn": "program_sk"
+          },
+          {
+            "name": "application_sk",
+            "lineageTag": "50ee4388-81d7-4004-9130-3cd949a0fe9f",
+            "dataType": "int64",
+            "sourceColumn": "application_sk",
+            "isHidden": true
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_squad",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_squad = Source{[Schema=\"dbo\", Item=\"dim_squad\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_squad"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_status",
+        "lineageTag": "c3d4e5f6-a7b8-9012-cdef-012345678901",
+        "columns": [
+          {
+            "name": "status_sk",
+            "lineageTag": "c3d4e5f6-a7b8-9012-cdef-012345678902",
+            "dataType": "int64",
+            "sourceColumn": "status_sk",
+            "isHidden": true
+          },
+          {
+            "name": "status_name",
+            "lineageTag": "c3d4e5f6-a7b8-9012-cdef-012345678903",
+            "dataType": "string",
+            "sourceColumn": "status_name"
+          },
+          {
+            "name": "status_category",
+            "lineageTag": "c3d4e5f6-a7b8-9012-cdef-012345678904",
+            "dataType": "string",
+            "sourceColumn": "status_category"
+          },
+          {
+            "name": "sort_order",
+            "lineageTag": "c3d4e5f6-a7b8-9012-cdef-012345678905",
+            "dataType": "int64",
+            "sourceColumn": "sort_order",
+            "isHidden": true
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_status",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_status = Source{[Schema=\"dbo\", Item=\"dim_status\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_status"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_test",
+        "lineageTag": "a352a56a-a7cc-4a40-b707-52819d7522a9",
+        "columns": [
+          {
+            "name": "test_sk",
+            "lineageTag": "a67f2df8-f8f2-4c3d-96ae-4c3593b83a4e",
+            "dataType": "int64",
+            "sourceColumn": "test_sk"
+          },
+          {
+            "name": "test_key",
+            "lineageTag": "5fc28e59-946d-4b5f-a4ce-2a537dcea402",
+            "dataType": "string",
+            "sourceColumn": "test_key"
+          },
+          {
+            "name": "summary",
+            "lineageTag": "5c38ee61-490a-4530-bdf5-8d533fe3b640",
+            "dataType": "string",
+            "sourceColumn": "summary"
+          },
+          {
+            "name": "status",
+            "lineageTag": "53e7b86f-f806-4bff-ad4c-620176b2ba7d",
+            "dataType": "string",
+            "sourceColumn": "status"
+          },
+          {
+            "name": "test_type_sk",
+            "lineageTag": "d422f2ee-6430-47d4-ab12-79e5c2be645a",
+            "dataType": "int64",
+            "sourceColumn": "test_type_sk"
+          },
+          {
+            "name": "repository_path",
+            "lineageTag": "7d3321d1-99c4-4433-a0e7-7ef0425b9c9a",
+            "dataType": "string",
+            "sourceColumn": "repository_path"
+          },
+          {
+            "name": "gherkin_definition",
+            "lineageTag": "c244126a-d23a-4a3a-9bcc-fa85f1fef4c0",
+            "dataType": "string",
+            "sourceColumn": "gherkin_definition"
+          },
+          {
+            "name": "generic_definition",
+            "lineageTag": "070c594a-8f5f-42d4-a5f6-b901330ab235",
+            "dataType": "string",
+            "sourceColumn": "generic_definition"
+          },
+          {
+            "name": "squad_sk",
+            "lineageTag": "60ff2491-038b-42a1-a2c8-b309e30fe1ae",
+            "dataType": "int64",
+            "sourceColumn": "squad_sk"
+          },
+          {
+            "name": "assignee",
+            "lineageTag": "5579bad9-ade2-404b-958a-5b55ef8b080f",
+            "dataType": "string",
+            "sourceColumn": "assignee"
+          },
+          {
+            "name": "created_at",
+            "lineageTag": "1a29784d-3e3d-4504-b4ef-eb79f31cf69f",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at"
+          },
+          {
+            "name": "updated_at",
+            "lineageTag": "bbb363b4-d199-4757-be77-58112ffd1739",
+            "dataType": "dateTime",
+            "sourceColumn": "updated_at"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_test",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_test = Source{[Schema=\"dbo\", Item=\"dim_test\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_test"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_test_execution",
+        "lineageTag": "333ffcfa-a541-4728-992d-63cf2dd6fe09",
+        "columns": [
+          {
+            "name": "execution_sk",
+            "lineageTag": "0f3d7824-9492-4d40-80b5-71e2731c3a86",
+            "dataType": "int64",
+            "sourceColumn": "execution_sk"
+          },
+          {
+            "name": "execution_key",
+            "lineageTag": "bb1f01e2-5d3f-4b6e-9ff7-de332150811a",
+            "dataType": "string",
+            "sourceColumn": "execution_key"
+          },
+          {
+            "name": "summary",
+            "lineageTag": "29ab7965-99b5-4cb2-a07d-0215710b2311",
+            "dataType": "string",
+            "sourceColumn": "summary"
+          },
+          {
+            "name": "status",
+            "lineageTag": "48bc0718-905e-4438-aa55-e5335dc9890a",
+            "dataType": "string",
+            "sourceColumn": "status"
+          },
+          {
+            "name": "test_plan_key",
+            "lineageTag": "10214c18-2757-4c46-b259-10562077b789",
+            "dataType": "string",
+            "sourceColumn": "test_plan_key"
+          },
+          {
+            "name": "environments_json",
+            "lineageTag": "35d65565-742b-460c-b011-aba24369a1fa",
+            "dataType": "string",
+            "sourceColumn": "environments_json"
+          },
+          {
+            "name": "revision",
+            "lineageTag": "7b74c782-38ad-49a4-9656-c0e506b448e3",
+            "dataType": "string",
+            "sourceColumn": "revision"
+          },
+          {
+            "name": "assignee",
+            "lineageTag": "50aa380e-515a-48c9-a58f-4121145cbff3",
+            "dataType": "string",
+            "sourceColumn": "assignee"
+          },
+          {
+            "name": "executed_at",
+            "lineageTag": "053e375c-e522-47ce-bf7a-006857a8a743",
+            "dataType": "dateTime",
+            "sourceColumn": "executed_at"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_test_execution",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_test_execution = Source{[Schema=\"dbo\", Item=\"dim_test_execution\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_test_execution"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_test_plan",
+        "lineageTag": "b1d19709-4d38-4ec6-ad66-595fe3fd47e3",
+        "columns": [
+          {
+            "name": "test_plan_sk",
+            "lineageTag": "f272a776-8157-414c-8a38-bda667eaedef",
+            "dataType": "int64",
+            "sourceColumn": "test_plan_sk"
+          },
+          {
+            "name": "test_plan_key",
+            "lineageTag": "21ebd8e8-5712-4d44-8150-a89638222164",
+            "dataType": "string",
+            "sourceColumn": "test_plan_key"
+          },
+          {
+            "name": "summary",
+            "lineageTag": "69166c04-5ed8-4f0d-ad77-128433454367",
+            "dataType": "string",
+            "sourceColumn": "summary"
+          },
+          {
+            "name": "status",
+            "lineageTag": "deee2e9c-5791-4567-b996-e112fc3e38db",
+            "dataType": "string",
+            "sourceColumn": "status"
+          },
+          {
+            "name": "squad_sk",
+            "lineageTag": "1d20c9e8-eb33-4442-aadd-7cbf88bca9b5",
+            "dataType": "int64",
+            "sourceColumn": "squad_sk"
+          },
+          {
+            "name": "assignee",
+            "lineageTag": "77faa371-be64-4d7b-b641-41961bb6c5a1",
+            "dataType": "string",
+            "sourceColumn": "assignee"
+          },
+          {
+            "name": "created_at",
+            "lineageTag": "87663f0c-6e88-416c-ba66-44a6ddf6702a",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at"
+          },
+          {
+            "name": "updated_at",
+            "lineageTag": "516283cf-704f-47e8-9414-7f3db33e1bbd",
+            "dataType": "dateTime",
+            "sourceColumn": "updated_at"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_test_plan",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_test_plan = Source{[Schema=\"dbo\", Item=\"dim_test_plan\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_test_plan"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_test_type",
+        "lineageTag": "7d34d380-8398-4394-bcd2-e75c232a0cb7",
+        "columns": [
+          {
+            "name": "test_type_sk",
+            "lineageTag": "8ee485b5-99ed-4a55-b473-10ff15debb76",
+            "dataType": "int64",
+            "sourceColumn": "test_type_sk"
+          },
+          {
+            "name": "test_type_name",
+            "lineageTag": "63ce3491-205f-4838-ba43-0e7e14a412b9",
+            "dataType": "string",
+            "sourceColumn": "test_type_name"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_test_type",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_test_type = Source{[Schema=\"dbo\", Item=\"dim_test_type\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_test_type"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_tester",
+        "lineageTag": "e5f6a7b8-c9d0-1234-efab-234567890123",
+        "columns": [
+          {
+            "name": "tester_sk",
+            "lineageTag": "e5f6a7b8-c9d0-1234-efab-234567890124",
+            "dataType": "int64",
+            "sourceColumn": "tester_sk",
+            "isHidden": true
+          },
+          {
+            "name": "tester_id",
+            "lineageTag": "e5f6a7b8-c9d0-1234-efab-234567890125",
+            "dataType": "string",
+            "sourceColumn": "tester_id",
+            "isHidden": true
+          },
+          {
+            "name": "tester_name",
+            "lineageTag": "e5f6a7b8-c9d0-1234-efab-234567890126",
+            "dataType": "string",
+            "sourceColumn": "tester_name"
+          },
+          {
+            "name": "email",
+            "lineageTag": "e5f6a7b8-c9d0-1234-efab-234567890127",
+            "dataType": "string",
+            "sourceColumn": "email"
+          },
+          {
+            "name": "team_name",
+            "lineageTag": "e5f6a7b8-c9d0-1234-efab-234567890128",
+            "dataType": "string",
+            "sourceColumn": "team_name"
+          },
+          {
+            "name": "is_active",
+            "lineageTag": "e5f6a7b8-c9d0-1234-efab-234567890129",
+            "dataType": "boolean",
+            "sourceColumn": "is_active",
+            "isHidden": true
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_tester",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    dim_tester = Source{[Schema=\"dbo\", Item=\"dim_tester\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    dim_tester"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_cycle_snapshot",
+        "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012345",
+        "measures": [
+          {
+            "name": "Snapshot Pass Rate %",
+            "expression": "DIVIDE(SUM('fact_cycle_snapshot'[passed_tests]), SUM('fact_cycle_snapshot'[executed_tests]), 0) * 100",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012346"
+          },
+          {
+            "name": "Snapshot Coverage %",
+            "expression": "DIVIDE(SUM('fact_cycle_snapshot'[covered_requirements]), SUM('fact_cycle_snapshot'[total_requirements]), 0) * 100",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012347"
+          },
+          {
+            "name": "Snapshot Automation Rate %",
+            "expression": "DIVIDE(SUM('fact_cycle_snapshot'[automated_executions]), SUM('fact_cycle_snapshot'[executed_tests]), 0) * 100",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012348"
+          },
+          {
+            "name": "Snapshot Open Critical Defects",
+            "expression": "SUM('fact_cycle_snapshot'[open_critical_defects])",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012349"
+          }
+        ],
+        "columns": [
+          {
+            "name": "snapshot_sk",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012350",
+            "dataType": "int64",
+            "sourceColumn": "snapshot_sk",
+            "isHidden": true
+          },
+          {
+            "name": "snapshot_date_sk",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012351",
+            "dataType": "int64",
+            "sourceColumn": "snapshot_date_sk",
+            "isHidden": true
+          },
+          {
+            "name": "release_sk",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012352",
+            "dataType": "int64",
+            "sourceColumn": "release_sk",
+            "isHidden": true
+          },
+          {
+            "name": "squad_sk",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012353",
+            "dataType": "int64",
+            "sourceColumn": "squad_sk",
+            "isHidden": true
+          },
+          {
+            "name": "total_tests",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012354",
+            "dataType": "int64",
+            "sourceColumn": "total_tests"
+          },
+          {
+            "name": "executed_tests",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012355",
+            "dataType": "int64",
+            "sourceColumn": "executed_tests"
+          },
+          {
+            "name": "passed_tests",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012356",
+            "dataType": "int64",
+            "sourceColumn": "passed_tests"
+          },
+          {
+            "name": "failed_tests",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012357",
+            "dataType": "int64",
+            "sourceColumn": "failed_tests"
+          },
+          {
+            "name": "blocked_tests",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012358",
+            "dataType": "int64",
+            "sourceColumn": "blocked_tests"
+          },
+          {
+            "name": "not_run_tests",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012359",
+            "dataType": "int64",
+            "sourceColumn": "not_run_tests"
+          },
+          {
+            "name": "automated_executions",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012360",
+            "dataType": "int64",
+            "sourceColumn": "automated_executions"
+          },
+          {
+            "name": "covered_requirements",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012361",
+            "dataType": "int64",
+            "sourceColumn": "covered_requirements"
+          },
+          {
+            "name": "total_requirements",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012362",
+            "dataType": "int64",
+            "sourceColumn": "total_requirements"
+          },
+          {
+            "name": "open_critical_defects",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012363",
+            "dataType": "int64",
+            "sourceColumn": "open_critical_defects"
+          },
+          {
+            "name": "avg_duration_s",
+            "lineageTag": "a7b8c9d0-e1f2-3456-abcd-456789012364",
+            "dataType": "double",
+            "sourceColumn": "avg_duration_s"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_cycle_snapshot",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    fact_cycle_snapshot = Source{[Schema=\"dbo\", Item=\"fact_cycle_snapshot\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    fact_cycle_snapshot"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_defect_link",
+        "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901234",
+        "measures": [
+          {
+            "name": "Total Defect Links",
+            "expression": "COUNTROWS('fact_defect_link')",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901235"
+          },
+          {
+            "name": "Open Defects Linked",
+            "expression": "CALCULATE(COUNTROWS('fact_defect_link'), 'fact_defect_link'[open_flag] = 1)",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901236"
+          },
+          {
+            "name": "Unique Defects",
+            "expression": "DISTINCTCOUNT('fact_defect_link'[defect_key])",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901237"
+          },
+          {
+            "name": "Impacted Test Runs",
+            "expression": "DISTINCTCOUNT('fact_defect_link'[test_run_id])",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901238"
+          }
+        ],
+        "columns": [
+          {
+            "name": "defect_link_sk",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901239",
+            "dataType": "int64",
+            "sourceColumn": "defect_link_sk",
+            "isHidden": true
+          },
+          {
+            "name": "defect_key",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901240",
+            "dataType": "string",
+            "sourceColumn": "defect_key"
+          },
+          {
+            "name": "defect_sk",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901241",
+            "dataType": "int64",
+            "sourceColumn": "defect_sk",
+            "isHidden": true
+          },
+          {
+            "name": "test_run_id",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901242",
+            "dataType": "string",
+            "sourceColumn": "test_run_id"
+          },
+          {
+            "name": "release_sk",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901243",
+            "dataType": "int64",
+            "sourceColumn": "release_sk",
+            "isHidden": true
+          },
+          {
+            "name": "link_type",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901244",
+            "dataType": "string",
+            "sourceColumn": "link_type"
+          },
+          {
+            "name": "open_flag",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901245",
+            "dataType": "boolean",
+            "sourceColumn": "open_flag"
+          },
+          {
+            "name": "linked_at",
+            "lineageTag": "f6a7b8c9-d0e1-2345-fabc-345678901246",
+            "dataType": "dateTime",
+            "sourceColumn": "linked_at"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_defect_link",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    fact_defect_link = Source{[Schema=\"dbo\", Item=\"fact_defect_link\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    fact_defect_link"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_requirement_coverage",
+        "lineageTag": "bb239c45-876c-49a1-a6f2-aa58ecc4f74c",
+        "measures": [
+          {
+            "name": "Total Requirements",
+            "expression": "DISTINCTCOUNT('fact_requirement_coverage'[issue_sk])",
+            "lineageTag": "cdcc6bdc-0b5c-4e18-8554-cb7c6f82f0d3"
+          },
+          {
+            "name": "Covered Requirements",
+            "expression": "CALCULATE(DISTINCTCOUNT('fact_requirement_coverage'[issue_sk]), 'fact_requirement_coverage'[is_covered] = TRUE())",
+            "lineageTag": "66c6e271-dafa-4d91-a3dd-31e8a243a062"
+          },
+          {
+            "name": "Coverage %",
+            "expression": "DIVIDE([Covered Requirements], [Total Requirements], 0) * 100",
+            "lineageTag": "44e244fc-a373-4ed9-b373-2252321abc99"
+          },
+          {
+            "name": "Uncovered Requirements",
+            "expression": "[Total Requirements] - [Covered Requirements]",
+            "lineageTag": "81de0f6a-0329-463f-82ea-d153ae48569d"
+          }
+        ],
+        "columns": [
+          {
+            "name": "issue_sk",
+            "lineageTag": "64037560-7107-4175-aca9-9e5a0b65281f",
+            "dataType": "int64",
+            "sourceColumn": "issue_sk"
+          },
+          {
+            "name": "release_sk",
+            "lineageTag": "4eaea33d-2f0c-464c-8485-111aea0b2d94",
+            "dataType": "int64",
+            "sourceColumn": "release_sk"
+          },
+          {
+            "name": "total_test_count",
+            "lineageTag": "e9f35ddc-faf3-4d5b-9f82-73ee9651de04",
+            "dataType": "int64",
+            "sourceColumn": "total_test_count"
+          },
+          {
+            "name": "passing_test_count",
+            "lineageTag": "9b589967-7c13-42c3-8f15-d8fd9b91648f",
+            "dataType": "int64",
+            "sourceColumn": "passing_test_count"
+          },
+          {
+            "name": "failing_test_count",
+            "lineageTag": "0f971a7f-07c1-4bdb-8ecd-a7f8a6215ffe",
+            "dataType": "int64",
+            "sourceColumn": "failing_test_count"
+          },
+          {
+            "name": "blocked_test_count",
+            "lineageTag": "55042960-3d34-4f58-b0d9-87ac0a98288b",
+            "dataType": "int64",
+            "sourceColumn": "blocked_test_count"
+          },
+          {
+            "name": "executing_test_count",
+            "lineageTag": "93223cec-4a17-414b-82d0-a4aef8d9aac0",
+            "dataType": "int64",
+            "sourceColumn": "executing_test_count"
+          },
+          {
+            "name": "todo_test_count",
+            "lineageTag": "26b901bf-f5da-418d-8c8c-7318e854cf8a",
+            "dataType": "int64",
+            "sourceColumn": "todo_test_count"
+          },
+          {
+            "name": "no_coverage_count",
+            "lineageTag": "f84534a7-63a5-4234-9d40-00d22a7bdef7",
+            "dataType": "int64",
+            "sourceColumn": "no_coverage_count"
+          },
+          {
+            "name": "coverage_status",
+            "lineageTag": "a7d585bd-5591-4ef8-a9cc-f0957b021296",
+            "dataType": "string",
+            "sourceColumn": "coverage_status"
+          },
+          {
+            "name": "is_covered",
+            "lineageTag": "3f85d89d-e30e-43ee-bd61-e0fc768dc87d",
+            "dataType": "boolean",
+            "sourceColumn": "is_covered"
+          },
+          {
+            "name": "partial_coverage_flag",
+            "lineageTag": "3f85d89d-e30e-43ee-bd61-e0fc768dc87e",
+            "dataType": "boolean",
+            "sourceColumn": "partial_coverage_flag"
+          },
+          {
+            "name": "failed_coverage_flag",
+            "lineageTag": "3f85d89d-e30e-43ee-bd61-e0fc768dc87f",
+            "dataType": "boolean",
+            "sourceColumn": "failed_coverage_flag"
+          },
+          {
+            "name": "latest_execution_date_sk",
+            "lineageTag": "3f85d89d-e30e-43ee-bd61-e0fc768dc880",
+            "dataType": "int64",
+            "sourceColumn": "latest_execution_date_sk",
+            "isHidden": true
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_requirement_coverage",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    fact_requirement_coverage = Source{[Schema=\"dbo\", Item=\"fact_requirement_coverage\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    fact_requirement_coverage"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_test_run",
+        "lineageTag": "6cf5da2f-e9bb-4bdc-ba72-dbeba18f5393",
+        "measures": [
+          {
+            "name": "Total Runs",
+            "expression": "COUNTROWS('fact_test_run')",
+            "lineageTag": "d63da718-f1e9-447c-afa3-7b533a78b201"
+          },
+          {
+            "name": "Passed Runs",
+            "expression": "CALCULATE(COUNTROWS('fact_test_run'), 'fact_test_run'[run_status] = \"PASS\")",
+            "lineageTag": "c9add60e-f5ea-47cf-ad54-9ada09ef4870"
+          },
+          {
+            "name": "Failed Runs",
+            "expression": "CALCULATE(COUNTROWS('fact_test_run'), 'fact_test_run'[run_status] = \"FAIL\")",
+            "lineageTag": "f717f385-4553-4b67-ae08-ec8234513807"
+          },
+          {
+            "name": "Blocked Runs",
+            "expression": "CALCULATE(COUNTROWS('fact_test_run'), 'fact_test_run'[run_status] = \"BLOCKED\")",
+            "lineageTag": "e4ad35c5-4422-4693-9e5f-c4f424e2e4a9"
+          },
+          {
+            "name": "Pass Rate %",
+            "expression": "DIVIDE([Passed Runs], [Total Runs], 0) * 100",
+            "formatString": "0.0",
+            "lineageTag": "d1f283f7-6bfc-441c-85e5-246a71b4c3a1"
+          },
+          {
+            "name": "Avg Duration (seconds)",
+            "expression": "AVERAGE('fact_test_run'[duration_s])",
+            "lineageTag": "d9857779-3c34-4078-9083-73a407044f6c"
+          },
+          {
+            "name": "Avg Duration (minutes)",
+            "expression": "DIVIDE([Avg Duration (seconds)], 60, BLANK())",
+            "lineageTag": "c8c570be-004a-482c-ba8b-f236fb54f129"
+          },
+          {
+            "name": "Total Test Time (hours)",
+            "expression": "DIVIDE(SUMX('fact_test_run', 'fact_test_run'[duration_s]), 3600, 0)",
+            "lineageTag": "9d157257-d9f5-46c4-bbab-f8224ac19e88"
+          },
+          {
+            "name": "Pass Rate (formatted)",
+            "expression": "FORMAT([Pass Rate %], \"0.0\") & \"%\"",
+            "lineageTag": "a255b0bb-78c9-436f-aee2-34b7cf75717a"
+          },
+          {
+            "name": "P1 Target Pass Rate %",
+            "expression": "80",
+            "lineageTag": "e9564a36-e47e-4fce-ac49-9b8bab246ac7"
+          },
+          {
+            "name": "Pass Rate % Prior Month",
+            "expression": "CALCULATE([Pass Rate %], DATEADD('dim_date'[full_date], -1, MONTH))",
+            "lineageTag": "5e123c1d-2c4d-468c-9b36-cffe804964d9"
+          },
+          {
+            "name": "Pass Rate % Change",
+            "expression": "[Pass Rate %] - [Pass Rate % Prior Month]",
+            "lineageTag": "695694c3-5c7d-4afc-88b8-8fbff2a39462"
+          },
+          {
+            "name": "Pass Rate % Change (formatted)",
+            "expression": "VAR delta = [Pass Rate % Change] RETURN IF(ISBLANK(delta), \"-\", IF(delta >= 0, \"+\" & FORMAT(delta, \"0.0\") & \"%\", FORMAT(delta, \"0.0\") & \"%\"))",
+            "lineageTag": "94b9eac2-39ec-4269-b13e-c07d9ae47a7f"
+          },
+          {
+            "name": "P1 Pass Rate Status",
+            "expression": "IF([Pass Rate %] >= [P1 Target Pass Rate %], \"On Track\", \"At Risk\")",
+            "lineageTag": "9ffc4d8c-f60f-4923-8b53-893a13eb730a"
+          },
+          {
+            "name": "Automated Runs",
+            "expression": "CALCULATE(COUNTROWS('fact_test_run'), 'fact_test_run'[is_automated] = TRUE())",
+            "lineageTag": "b9a8c7d6-e5f4-3a2b-1c0d-ef9876543210"
+          },
+          {
+            "name": "Automation Rate %",
+            "expression": "DIVIDE([Automated Runs], [Total Runs], 0) * 100",
+            "lineageTag": "b9a8c7d6-e5f4-3a2b-1c0d-ef9876543211"
+          }
+        ],
+        "columns": [
+          {
+            "name": "test_run_id",
+            "lineageTag": "66df8357-f390-4258-940a-c1a4d12933e4",
+            "dataType": "string",
+            "sourceColumn": "test_run_id"
+          },
+          {
+            "name": "release_sk",
+            "lineageTag": "c414b915-9c7c-4d3f-bd6c-e87f0613c7ab",
+            "dataType": "int64",
+            "sourceColumn": "release_sk"
+          },
+          {
+            "name": "test_sk",
+            "lineageTag": "c5da66aa-c070-4404-9079-88a4762d7fca",
+            "dataType": "int64",
+            "sourceColumn": "test_sk"
+          },
+          {
+            "name": "execution_sk",
+            "lineageTag": "0383c402-e24e-4604-b86c-90be80c47a55",
+            "dataType": "int64",
+            "sourceColumn": "execution_sk"
+          },
+          {
+            "name": "run_status",
+            "lineageTag": "35b7a3fc-d4fb-4378-a59f-705ee2e6321d",
+            "dataType": "string",
+            "sourceColumn": "run_status"
+          },
+          {
+            "name": "started_at",
+            "lineageTag": "aae77f7a-571a-4341-9983-841cd7853dba",
+            "dataType": "dateTime",
+            "sourceColumn": "started_at"
+          },
+          {
+            "name": "finished_at",
+            "lineageTag": "0f1d93b4-1d20-49e0-b4bf-fbf2a326e0c8",
+            "dataType": "dateTime",
+            "sourceColumn": "finished_at"
+          },
+          {
+            "name": "duration_s",
+            "lineageTag": "0903950c-1c50-4972-be28-c526530691b6",
+            "dataType": "double",
+            "sourceColumn": "duration_s"
+          },
+          {
+            "name": "executed_by",
+            "lineageTag": "307076b3-adcf-4f36-96ff-14b0190222cd",
+            "dataType": "string",
+            "sourceColumn": "executed_by"
+          },
+          {
+            "name": "assignee",
+            "lineageTag": "799e43d9-fa0d-4e40-98a7-983d9076b99d",
+            "dataType": "string",
+            "sourceColumn": "assignee"
+          },
+          {
+            "name": "comment",
+            "lineageTag": "38889be2-7d0b-418c-8443-9d728bb72f89",
+            "dataType": "string",
+            "sourceColumn": "comment"
+          },
+          {
+            "name": "defect_count",
+            "lineageTag": "e0da4432-32ca-4b7e-8dd0-d0afc5c4a65f",
+            "dataType": "int64",
+            "sourceColumn": "defect_count"
+          },
+          {
+            "name": "environment_sk",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345678",
+            "dataType": "int64",
+            "sourceColumn": "environment_sk",
+            "isHidden": true
+          },
+          {
+            "name": "tester_sk",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345679",
+            "dataType": "int64",
+            "sourceColumn": "tester_sk",
+            "isHidden": true
+          },
+          {
+            "name": "status_sk",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345680",
+            "dataType": "int64",
+            "sourceColumn": "status_sk",
+            "isHidden": true
+          },
+          {
+            "name": "root_cause_sk",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345681",
+            "dataType": "int64",
+            "sourceColumn": "root_cause_sk",
+            "isHidden": true
+          },
+          {
+            "name": "date_sk",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345682",
+            "dataType": "int64",
+            "sourceColumn": "date_sk",
+            "isHidden": true
+          },
+          {
+            "name": "run_sequence",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345683",
+            "dataType": "int64",
+            "sourceColumn": "run_sequence"
+          },
+          {
+            "name": "is_automated",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345684",
+            "dataType": "boolean",
+            "sourceColumn": "is_automated"
+          },
+          {
+            "name": "is_blocked",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345685",
+            "dataType": "boolean",
+            "sourceColumn": "is_blocked"
+          },
+          {
+            "name": "block_reason",
+            "lineageTag": "f1e2d3c4-b5a6-7890-fabc-def012345686",
+            "dataType": "string",
+            "sourceColumn": "block_reason"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_test_run",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    fact_test_run = Source{[Schema=\"dbo\", Item=\"fact_test_run\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    fact_test_run"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_test_step_result",
+        "lineageTag": "e273b9cb-a27c-4a99-b363-6c2c9f43dc4c",
+        "columns": [
+          {
+            "name": "step_result_id",
+            "lineageTag": "d1e031f2-86d2-43e1-a8bf-925ae47e490f",
+            "dataType": "string",
+            "sourceColumn": "step_result_id"
+          },
+          {
+            "name": "test_run_id",
+            "lineageTag": "59c75968-ad1a-463a-b9d3-56b1263fd226",
+            "dataType": "string",
+            "sourceColumn": "test_run_id"
+          },
+          {
+            "name": "step_order",
+            "lineageTag": "1d708db7-f6e0-4182-b707-e61409b0260f",
+            "dataType": "int64",
+            "sourceColumn": "step_order"
+          },
+          {
+            "name": "step_status",
+            "lineageTag": "c8d51fa1-a3f7-45e2-b58e-b3f084140a9d",
+            "dataType": "string",
+            "sourceColumn": "step_status"
+          },
+          {
+            "name": "actual_result",
+            "lineageTag": "8ad01a64-9d2b-4904-973b-7e85f326ee8e",
+            "dataType": "string",
+            "sourceColumn": "actual_result"
+          },
+          {
+            "name": "comment",
+            "lineageTag": "888dc5d7-619e-4376-b363-afd45bfd3011",
+            "dataType": "string",
+            "sourceColumn": "comment"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_test_step_result",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    fact_test_step_result = Source{[Schema=\"dbo\", Item=\"fact_test_step_result\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    fact_test_step_result"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p1_qa_health_by_release",
+        "lineageTag": "61986b04-f42b-498e-ac70-70e66b2fc6ed",
+        "measures": [
+          {
+            "name": "P1 Total Runs",
+            "expression": "SUM('vw_p1_qa_health_by_release'[total_runs])",
+            "lineageTag": "7b335cb8-7199-4a25-abbd-fed0bbf34803"
+          },
+          {
+            "name": "P1 Passed",
+            "expression": "SUM('vw_p1_qa_health_by_release'[passed])",
+            "lineageTag": "c1196c64-dd78-4b1e-b0a3-08f7660f32b0"
+          },
+          {
+            "name": "P1 Failed",
+            "expression": "SUM('vw_p1_qa_health_by_release'[failed])",
+            "lineageTag": "f152d700-4928-4050-8a43-4c1397a94423"
+          },
+          {
+            "name": "P1 Blocked",
+            "expression": "SUM('vw_p1_qa_health_by_release'[blocked])",
+            "lineageTag": "1a13abb3-34e8-414d-a939-0effa47ecf3b"
+          },
+          {
+            "name": "P1 Pass Rate %",
+            "expression": "DIVIDE(SUM('vw_p1_qa_health_by_release'[passed]), SUM('vw_p1_qa_health_by_release'[total_runs]), 0) * 100",
+            "formatString": "0.0",
+            "lineageTag": "1a13abb3-34e8-414d-a939-0effa47ecf3c"
+          },
+          {
+            "name": "P1 Automation Rate %",
+            "expression": "DIVIDE(SUM('vw_p1_qa_health_by_release'[automated_runs]), SUM('vw_p1_qa_health_by_release'[total_runs]), 0) * 100",
+            "formatString": "0.0",
+            "lineageTag": "1a13abb3-34e8-414d-a939-0effa47ecf3d"
+          }
+        ],
+        "columns": [
+          {
+            "name": "release_name",
+            "lineageTag": "9d97dfa1-3c9c-4728-8b4e-c42b973e873e",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "release_date",
+            "lineageTag": "63819109-9d54-41c6-adcc-63114f299341",
+            "dataType": "dateTime",
+            "sourceColumn": "release_date"
+          },
+          {
+            "name": "release_status",
+            "lineageTag": "63819109-9d54-41c6-adcc-63114f299342",
+            "dataType": "string",
+            "sourceColumn": "release_status"
+          },
+          {
+            "name": "total_runs",
+            "lineageTag": "42112eb9-11dc-4ba9-aad8-020070c6c85d",
+            "dataType": "int64",
+            "sourceColumn": "total_runs"
+          },
+          {
+            "name": "passed",
+            "lineageTag": "315bd38a-9861-4f1e-a93e-9b0c412bbbde",
+            "dataType": "int64",
+            "sourceColumn": "passed"
+          },
+          {
+            "name": "failed",
+            "lineageTag": "612319e7-a5b6-49ae-84f1-c19727911b52",
+            "dataType": "int64",
+            "sourceColumn": "failed"
+          },
+          {
+            "name": "blocked",
+            "lineageTag": "22cb1dcc-5065-4040-9efd-5c549605cc3a",
+            "dataType": "int64",
+            "sourceColumn": "blocked"
+          },
+          {
+            "name": "executing",
+            "lineageTag": "2049fb51-8d0f-42ff-88c8-b9f14286b188",
+            "dataType": "int64",
+            "sourceColumn": "executing"
+          },
+          {
+            "name": "todo",
+            "lineageTag": "6e99f5e8-ce1d-44af-88c7-9a5aec952844",
+            "dataType": "int64",
+            "sourceColumn": "todo"
+          },
+          {
+            "name": "aborted",
+            "lineageTag": "325c1b2c-c23f-435f-b705-1c6ac9dbd288",
+            "dataType": "int64",
+            "sourceColumn": "aborted"
+          },
+          {
+            "name": "automated_runs",
+            "lineageTag": "325c1b2c-c23f-435f-b705-1c6ac9dbd289",
+            "dataType": "int64",
+            "sourceColumn": "automated_runs"
+          },
+          {
+            "name": "pass_rate_pct",
+            "lineageTag": "0a706a76-8f19-4b8e-b892-248ae89b1391",
+            "dataType": "decimal",
+            "sourceColumn": "pass_rate_pct"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p1_qa_health_by_release",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p1_qa_health_by_release = Source{[Schema=\"dbo\", Item=\"vw_p1_qa_health_by_release\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p1_qa_health_by_release"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p2_defect_density",
+        "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123456",
+        "measures": [
+          {
+            "name": "P2 Total Defects",
+            "expression": "SUM('vw_p2_defect_density'[total_defects])",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123457"
+          },
+          {
+            "name": "P2 Open Defects",
+            "expression": "SUM('vw_p2_defect_density'[open_defects])",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123458"
+          },
+          {
+            "name": "P2 Critical Defects",
+            "expression": "SUM('vw_p2_defect_density'[critical_defects])",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123459"
+          },
+          {
+            "name": "P2 Impacted Runs",
+            "expression": "SUM('vw_p2_defect_density'[impacted_runs])",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123460"
+          }
+        ],
+        "columns": [
+          {
+            "name": "release_name",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123461",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123462",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "severity",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123463",
+            "dataType": "string",
+            "sourceColumn": "severity"
+          },
+          {
+            "name": "priority",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123464",
+            "dataType": "string",
+            "sourceColumn": "priority"
+          },
+          {
+            "name": "defect_status",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123465",
+            "dataType": "string",
+            "sourceColumn": "defect_status"
+          },
+          {
+            "name": "total_defects",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123466",
+            "dataType": "int64",
+            "sourceColumn": "total_defects"
+          },
+          {
+            "name": "open_defects",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123467",
+            "dataType": "int64",
+            "sourceColumn": "open_defects"
+          },
+          {
+            "name": "critical_defects",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123468",
+            "dataType": "int64",
+            "sourceColumn": "critical_defects"
+          },
+          {
+            "name": "impacted_runs",
+            "lineageTag": "b8c9d0e1-f2a3-4567-bcde-567890123469",
+            "dataType": "int64",
+            "sourceColumn": "impacted_runs"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p2_defect_density",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p2_defect_density = Source{[Schema=\"dbo\", Item=\"vw_p2_defect_density\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p2_defect_density"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p3_requirement_coverage",
+        "lineageTag": "42e140ac-b8cb-4ea7-b129-2b168be154a6",
+        "measures": [
+          {
+            "name": "P3 Total Requirements",
+            "expression": "DISTINCTCOUNT('vw_p3_requirement_coverage'[issue_key])",
+            "lineageTag": "a84b7f47-e991-402b-a8ea-a49011d00317"
+          },
+          {
+            "name": "P3 Covered Requirements",
+            "expression": "CALCULATE(DISTINCTCOUNT('vw_p3_requirement_coverage'[issue_key]), 'vw_p3_requirement_coverage'[is_covered] = TRUE())",
+            "lineageTag": "6e30d368-a02b-4cc9-83e4-263b0724f944"
+          },
+          {
+            "name": "P3 Coverage %",
+            "expression": "DIVIDE([P3 Covered Requirements], [P3 Total Requirements], 0) * 100",
+            "lineageTag": "5dc9c361-53cd-490b-a33f-43626c15fbfd"
+          }
+        ],
+        "columns": [
+          {
+            "name": "issue_key",
+            "lineageTag": "50456851-877e-4254-9b6a-0aade257c254",
+            "dataType": "string",
+            "sourceColumn": "issue_key"
+          },
+          {
+            "name": "requirement_summary",
+            "lineageTag": "2908ac48-a9a2-4d80-8c89-efeefd2fd3cf",
+            "dataType": "string",
+            "sourceColumn": "requirement_summary"
+          },
+          {
+            "name": "issue_type",
+            "lineageTag": "7b4ae24d-9ad7-445a-8e0e-694aa453a132",
+            "dataType": "string",
+            "sourceColumn": "issue_type"
+          },
+          {
+            "name": "priority",
+            "lineageTag": "b8dad91e-1207-4126-a9a7-354a244517db",
+            "dataType": "string",
+            "sourceColumn": "priority"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "9038f77e-630e-4016-a62b-196fc8c8fed5",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "release_name",
+            "lineageTag": "76fc6bed-4fdb-4971-adf0-ec849d17abbd",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "total_test_count",
+            "lineageTag": "cd53638c-dfaa-4d43-8392-d78e6e860a3a",
+            "dataType": "int64",
+            "sourceColumn": "total_test_count"
+          },
+          {
+            "name": "passing_test_count",
+            "lineageTag": "e196d3b0-8801-4baf-9679-216b883d51b2",
+            "dataType": "int64",
+            "sourceColumn": "passing_test_count"
+          },
+          {
+            "name": "failing_test_count",
+            "lineageTag": "199c264a-f2de-42a9-8182-dbbbe05a1e7f",
+            "dataType": "int64",
+            "sourceColumn": "failing_test_count"
+          },
+          {
+            "name": "blocked_test_count",
+            "lineageTag": "1a16122f-3958-438e-af24-0fdde6a3bac2",
+            "dataType": "int64",
+            "sourceColumn": "blocked_test_count"
+          },
+          {
+            "name": "todo_test_count",
+            "lineageTag": "93ca52f8-01b1-4602-92ed-369a74548bef",
+            "dataType": "int64",
+            "sourceColumn": "todo_test_count"
+          },
+          {
+            "name": "no_coverage_count",
+            "lineageTag": "487f0260-b829-4317-9f0b-de0d29a5fdaa",
+            "dataType": "int64",
+            "sourceColumn": "no_coverage_count"
+          },
+          {
+            "name": "coverage_status",
+            "lineageTag": "9bd52a60-e546-4017-8181-880d54283676",
+            "dataType": "string",
+            "sourceColumn": "coverage_status"
+          },
+          {
+            "name": "is_covered",
+            "lineageTag": "b44dbbc0-424d-462b-90b7-3747527923c4",
+            "dataType": "boolean",
+            "sourceColumn": "is_covered"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p3_requirement_coverage",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p3_requirement_coverage = Source{[Schema=\"dbo\", Item=\"vw_p3_requirement_coverage\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p3_requirement_coverage"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p4_execution_trend",
+        "lineageTag": "6e663798-f95c-4445-bccd-b69dfcb7a7ec",
+        "measures": [
+          {
+            "name": "P4 Total Runs",
+            "expression": "SUM('vw_p4_execution_trend'[total_runs])",
+            "lineageTag": "5b4b5f23-b39c-406e-bd71-fbbb58121151"
+          },
+          {
+            "name": "P4 Passed",
+            "expression": "SUM('vw_p4_execution_trend'[passed])",
+            "lineageTag": "931b351f-4a58-445f-b702-c6a49e223322"
+          },
+          {
+            "name": "P4 Failed",
+            "expression": "SUM('vw_p4_execution_trend'[failed])",
+            "lineageTag": "20c99ee3-6aed-4e4f-87f0-85d7a9892550"
+          },
+          {
+            "name": "P4 Avg Duration (s)",
+            "expression": "AVERAGE('vw_p4_execution_trend'[avg_duration_s])",
+            "lineageTag": "fdcd312b-2c51-46a7-92f9-55eda2d3b8ad"
+          }
+        ],
+        "columns": [
+          {
+            "name": "run_date",
+            "lineageTag": "ceff1d2d-4d21-4fbb-b2f3-3e0a37698949",
+            "dataType": "dateTime",
+            "sourceColumn": "run_date"
+          },
+          {
+            "name": "date_sk",
+            "lineageTag": "adde9b42-e51e-47d8-b099-0b02ea713d2c",
+            "dataType": "int64",
+            "sourceColumn": "date_sk"
+          },
+          {
+            "name": "year",
+            "lineageTag": "776290a3-56a1-4047-9103-5de8a479157e",
+            "dataType": "int64",
+            "sourceColumn": "year"
+          },
+          {
+            "name": "month",
+            "lineageTag": "9af2dfef-9796-4154-bbcd-5d739afdde8a",
+            "dataType": "int64",
+            "sourceColumn": "month"
+          },
+          {
+            "name": "week_of_year",
+            "lineageTag": "f14bad6b-77a4-45e1-bfcb-1a96a421d2c2",
+            "dataType": "int64",
+            "sourceColumn": "week_of_year"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "9d8eec4f-98b5-4ae1-adeb-8725d516199a",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "release_name",
+            "lineageTag": "4fce96d9-f86e-4921-a29a-c005171045a3",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "total_runs",
+            "lineageTag": "c8eb394f-f3db-400f-b96d-8abe629a624a",
+            "dataType": "int64",
+            "sourceColumn": "total_runs"
+          },
+          {
+            "name": "passed",
+            "lineageTag": "e5753011-9119-4ea4-82c4-13ccb411016c",
+            "dataType": "int64",
+            "sourceColumn": "passed"
+          },
+          {
+            "name": "failed",
+            "lineageTag": "af1884da-eb99-4b06-a3f0-2559e2ed2f63",
+            "dataType": "int64",
+            "sourceColumn": "failed"
+          },
+          {
+            "name": "avg_duration_s",
+            "lineageTag": "2d0a5f20-0e16-4bdd-8eb8-df076843b039",
+            "dataType": "double",
+            "sourceColumn": "avg_duration_s"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p4_execution_trend",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p4_execution_trend = Source{[Schema=\"dbo\", Item=\"vw_p4_execution_trend\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p4_execution_trend"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p5_test_type_breakdown",
+        "lineageTag": "27229455-2e49-420d-aaf9-6824be7d3359",
+        "measures": [
+          {
+            "name": "P5 Total Runs",
+            "expression": "SUM('vw_p5_test_type_breakdown'[total_runs])",
+            "lineageTag": "4649501d-1a39-4eb9-8c6b-105f86bc489a"
+          },
+          {
+            "name": "P5 Passed",
+            "expression": "SUM('vw_p5_test_type_breakdown'[passed])",
+            "lineageTag": "75d63f1d-655b-49eb-9498-27e7b2c39fba"
+          },
+          {
+            "name": "P5 Failed",
+            "expression": "SUM('vw_p5_test_type_breakdown'[failed])",
+            "lineageTag": "5a081460-17e4-4ce7-bc10-9e9cf2168c4d"
+          },
+          {
+            "name": "P5 Pass Rate %",
+            "expression": "AVERAGE('vw_p5_test_type_breakdown'[pass_rate_pct])",
+            "lineageTag": "fc324c9a-bbbf-4d70-b2e3-8be7615d1d6b"
+          }
+        ],
+        "columns": [
+          {
+            "name": "test_type_name",
+            "lineageTag": "28514137-8365-4bfe-947c-42a35d85da9c",
+            "dataType": "string",
+            "sourceColumn": "test_type_name"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "0344219f-abf5-4ad1-a8fd-e8c116d3b0b3",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "release_name",
+            "lineageTag": "04b70c28-d2a4-4e62-9877-bd53231b29c0",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "total_runs",
+            "lineageTag": "8493f926-dac7-43df-b0dd-623937ad9b45",
+            "dataType": "int64",
+            "sourceColumn": "total_runs"
+          },
+          {
+            "name": "passed",
+            "lineageTag": "d5e2123a-cd4d-49bc-87b6-41bfd3fb0f24",
+            "dataType": "int64",
+            "sourceColumn": "passed"
+          },
+          {
+            "name": "failed",
+            "lineageTag": "9c775cfc-3f0b-4d99-bd49-324a2e0fdfe5",
+            "dataType": "int64",
+            "sourceColumn": "failed"
+          },
+          {
+            "name": "blocked",
+            "lineageTag": "61986b04-f42b-498e-ac70-70e66b2fc6f0",
+            "dataType": "int64",
+            "sourceColumn": "blocked"
+          },
+          {
+            "name": "pass_rate_pct",
+            "lineageTag": "7b335cb8-7199-4a25-abbd-fed0bbf34804",
+            "dataType": "decimal",
+            "sourceColumn": "pass_rate_pct"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p5_test_type_breakdown",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p5_test_type_breakdown = Source{[Schema=\"dbo\", Item=\"vw_p5_test_type_breakdown\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p5_test_type_breakdown"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p6_test_run_detail",
+        "lineageTag": "c1196c64-dd78-4b1e-b0a3-08f7660f32b1",
+        "columns": [
+          {
+            "name": "test_run_id",
+            "lineageTag": "f152d700-4928-4050-8a43-4c1397a94424",
+            "dataType": "string",
+            "sourceColumn": "test_run_id"
+          },
+          {
+            "name": "test_key",
+            "lineageTag": "1a13abb3-34e8-414d-a939-0effa47ecf3d",
+            "dataType": "string",
+            "sourceColumn": "test_key"
+          },
+          {
+            "name": "test_summary",
+            "lineageTag": "9d97dfa1-3c9c-4728-8b4e-c42b973e873f",
+            "dataType": "string",
+            "sourceColumn": "test_summary"
+          },
+          {
+            "name": "test_type_name",
+            "lineageTag": "63819109-9d54-41c6-adcc-63114f299342",
+            "dataType": "string",
+            "sourceColumn": "test_type_name"
+          },
+          {
+            "name": "execution_key",
+            "lineageTag": "42112eb9-11dc-4ba9-aad8-020070c6c84c",
+            "dataType": "string",
+            "sourceColumn": "execution_key"
+          },
+          {
+            "name": "execution_summary",
+            "lineageTag": "315bd38a-9861-4f1e-a93e-9b0c412bbbdf",
+            "dataType": "string",
+            "sourceColumn": "execution_summary"
+          },
+          {
+            "name": "environments_json",
+            "lineageTag": "612319e7-a5b6-49ae-84f1-c19727911b53",
+            "dataType": "string",
+            "sourceColumn": "environments_json"
+          },
+          {
+            "name": "revision",
+            "lineageTag": "22cb1dcc-5065-4040-9efd-5c549605cc3b",
+            "dataType": "string",
+            "sourceColumn": "revision"
+          },
+          {
+            "name": "release_name",
+            "lineageTag": "2049fb51-8d0f-42ff-88c8-b9f14286b189",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "6e99f5e8-ce1d-44af-88c7-9a5aec952845",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "run_status",
+            "lineageTag": "325c1b2c-c23f-435f-b705-1c6ac9dbd289",
+            "dataType": "string",
+            "sourceColumn": "run_status"
+          },
+          {
+            "name": "started_at",
+            "lineageTag": "0a706a76-8f19-4b8e-b892-248ae89b1392",
+            "dataType": "dateTime",
+            "sourceColumn": "started_at"
+          },
+          {
+            "name": "finished_at",
+            "lineageTag": "42e140ac-b8cb-4ea7-b129-2b168be154a7",
+            "dataType": "dateTime",
+            "sourceColumn": "finished_at"
+          },
+          {
+            "name": "duration_s",
+            "lineageTag": "a84b7f47-e991-402b-a8ea-a49011d00318",
+            "dataType": "double",
+            "sourceColumn": "duration_s"
+          },
+          {
+            "name": "executed_by",
+            "lineageTag": "6e30d368-a02b-4cc9-83e4-263b0724f945",
+            "dataType": "string",
+            "sourceColumn": "executed_by"
+          },
+          {
+            "name": "assignee",
+            "lineageTag": "5dc9c361-53cd-490b-a33f-43626c15fbd0",
+            "dataType": "string",
+            "sourceColumn": "assignee"
+          },
+          {
+            "name": "comment",
+            "lineageTag": "50456851-877e-4254-9b6a-0aade257c255",
+            "dataType": "string",
+            "sourceColumn": "comment"
+          },
+          {
+            "name": "defect_count",
+            "lineageTag": "2908ac48-a9a2-4d80-8c89-efeefd2fd3d0",
+            "dataType": "int64",
+            "sourceColumn": "defect_count"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p6_test_run_detail",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p6_test_run_detail = Source{[Schema=\"dbo\", Item=\"vw_p6_test_run_detail\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p6_test_run_detail"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p7_environment_health",
+        "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234567",
+        "measures": [
+          {
+            "name": "P7 Total Runs",
+            "expression": "SUM('vw_p7_environment_health'[total_runs])",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234568"
+          },
+          {
+            "name": "P7 Failed Runs",
+            "expression": "SUM('vw_p7_environment_health'[failed_runs])",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234569"
+          },
+          {
+            "name": "P7 Blocked Runs",
+            "expression": "SUM('vw_p7_environment_health'[blocked_runs])",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234570"
+          },
+          {
+            "name": "P7 Pass Rate %",
+            "expression": "DIVIDE(SUM('vw_p7_environment_health'[total_runs]) - SUM('vw_p7_environment_health'[failed_runs]) - SUM('vw_p7_environment_health'[blocked_runs]), SUM('vw_p7_environment_health'[total_runs]), 0) * 100",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234571"
+          }
+        ],
+        "columns": [
+          {
+            "name": "environment_name",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234572",
+            "dataType": "string",
+            "sourceColumn": "environment_name"
+          },
+          {
+            "name": "environment_type",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234573",
+            "dataType": "string",
+            "sourceColumn": "environment_type"
+          },
+          {
+            "name": "criticality",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234574",
+            "dataType": "string",
+            "sourceColumn": "criticality"
+          },
+          {
+            "name": "release_name",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234575",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234576",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "root_cause_name",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234577",
+            "dataType": "string",
+            "sourceColumn": "root_cause_name"
+          },
+          {
+            "name": "root_cause_category",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234578",
+            "dataType": "string",
+            "sourceColumn": "root_cause_category"
+          },
+          {
+            "name": "execution_date",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234579",
+            "dataType": "dateTime",
+            "sourceColumn": "execution_date"
+          },
+          {
+            "name": "total_runs",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234580",
+            "dataType": "int64",
+            "sourceColumn": "total_runs"
+          },
+          {
+            "name": "failed_runs",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234581",
+            "dataType": "int64",
+            "sourceColumn": "failed_runs"
+          },
+          {
+            "name": "blocked_runs",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234582",
+            "dataType": "int64",
+            "sourceColumn": "blocked_runs"
+          },
+          {
+            "name": "pass_rate_pct",
+            "lineageTag": "c9d0e1f2-a3b4-5678-cdef-678901234583",
+            "dataType": "decimal",
+            "sourceColumn": "pass_rate_pct"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p7_environment_health",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p7_environment_health = Source{[Schema=\"dbo\", Item=\"vw_p7_environment_health\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p7_environment_health"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_p8_release_snapshot",
+        "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345678",
+        "measures": [
+          {
+            "name": "P8 Pass Rate %",
+            "expression": "DIVIDE(SUM('vw_p8_release_snapshot'[passed_tests]), SUM('vw_p8_release_snapshot'[executed_tests]), 0) * 100",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345679"
+          },
+          {
+            "name": "P8 Coverage Rate %",
+            "expression": "DIVIDE(SUM('vw_p8_release_snapshot'[covered_requirements]), SUM('vw_p8_release_snapshot'[total_requirements]), 0) * 100",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345680"
+          },
+          {
+            "name": "P8 Automation Rate %",
+            "expression": "DIVIDE(SUM('vw_p8_release_snapshot'[automated_executions]), SUM('vw_p8_release_snapshot'[executed_tests]), 0) * 100",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345681"
+          },
+          {
+            "name": "P8 Open Critical Defects",
+            "expression": "SUM('vw_p8_release_snapshot'[open_critical_defects])",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345682"
+          }
+        ],
+        "columns": [
+          {
+            "name": "snapshot_date",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345683",
+            "dataType": "dateTime",
+            "sourceColumn": "snapshot_date"
+          },
+          {
+            "name": "year",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345684",
+            "dataType": "int64",
+            "sourceColumn": "year"
+          },
+          {
+            "name": "month",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345685",
+            "dataType": "int64",
+            "sourceColumn": "month"
+          },
+          {
+            "name": "release_name",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345686",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "release_date",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345687",
+            "dataType": "dateTime",
+            "sourceColumn": "release_date"
+          },
+          {
+            "name": "release_status",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345688",
+            "dataType": "string",
+            "sourceColumn": "release_status"
+          },
+          {
+            "name": "squad_name",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345689",
+            "dataType": "string",
+            "sourceColumn": "squad_name"
+          },
+          {
+            "name": "total_tests",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345690",
+            "dataType": "int64",
+            "sourceColumn": "total_tests"
+          },
+          {
+            "name": "executed_tests",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345691",
+            "dataType": "int64",
+            "sourceColumn": "executed_tests"
+          },
+          {
+            "name": "passed_tests",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345692",
+            "dataType": "int64",
+            "sourceColumn": "passed_tests"
+          },
+          {
+            "name": "failed_tests",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345693",
+            "dataType": "int64",
+            "sourceColumn": "failed_tests"
+          },
+          {
+            "name": "blocked_tests",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345694",
+            "dataType": "int64",
+            "sourceColumn": "blocked_tests"
+          },
+          {
+            "name": "not_run_tests",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345695",
+            "dataType": "int64",
+            "sourceColumn": "not_run_tests"
+          },
+          {
+            "name": "automated_executions",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345696",
+            "dataType": "int64",
+            "sourceColumn": "automated_executions"
+          },
+          {
+            "name": "covered_requirements",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345697",
+            "dataType": "int64",
+            "sourceColumn": "covered_requirements"
+          },
+          {
+            "name": "total_requirements",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345698",
+            "dataType": "int64",
+            "sourceColumn": "total_requirements"
+          },
+          {
+            "name": "open_critical_defects",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345699",
+            "dataType": "int64",
+            "sourceColumn": "open_critical_defects"
+          },
+          {
+            "name": "avg_duration_s",
+            "lineageTag": "d0e1f2a3-b4c5-6789-defa-789012345700",
+            "dataType": "double",
+            "sourceColumn": "avg_duration_s"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_p8_release_snapshot",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_p8_release_snapshot = Source{[Schema=\"dbo\", Item=\"vw_p8_release_snapshot\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_p8_release_snapshot"
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_qm_quality_effectiveness",
+        "lineageTag": "f1a2b3c4-d5e6-4789-abcd-1234567890ef",
+        "measures": [
+          {
+            "name": "QM Defect Leakage Rate %",
+            "expression": "AVERAGE('vw_qm_quality_effectiveness'[defect_leakage_rate_pct])",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000001"
+          },
+          {
+            "name": "QM Defect Removal Efficiency %",
+            "expression": "AVERAGE('vw_qm_quality_effectiveness'[defect_removal_efficiency_pct])",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000002"
+          },
+          {
+            "name": "QM Requirements Without Tests %",
+            "expression": "AVERAGE('vw_qm_quality_effectiveness'[requirements_without_tests_pct])",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000003"
+          },
+          {
+            "name": "QM Avg Resolution Hours",
+            "expression": "AVERAGE('vw_qm_quality_effectiveness'[avg_resolution_hours])",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000004"
+          }
+        ],
+        "columns": [
+          {
+            "name": "release_name",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000101",
+            "dataType": "string",
+            "sourceColumn": "release_name"
+          },
+          {
+            "name": "total_defects",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000102",
+            "dataType": "int64",
+            "sourceColumn": "total_defects"
+          },
+          {
+            "name": "resolved_defects",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000103",
+            "dataType": "int64",
+            "sourceColumn": "resolved_defects"
+          },
+          {
+            "name": "reopened_defects",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000104",
+            "dataType": "int64",
+            "sourceColumn": "reopened_defects"
+          },
+          {
+            "name": "leakage_defects",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000105",
+            "dataType": "int64",
+            "sourceColumn": "leakage_defects"
+          },
+          {
+            "name": "critical_defects",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000106",
+            "dataType": "int64",
+            "sourceColumn": "critical_defects"
+          },
+          {
+            "name": "avg_resolution_hours",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000107",
+            "dataType": "decimal",
+            "sourceColumn": "avg_resolution_hours"
+          },
+          {
+            "name": "total_requirements",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000108",
+            "dataType": "int64",
+            "sourceColumn": "total_requirements"
+          },
+          {
+            "name": "covered_requirements",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000109",
+            "dataType": "int64",
+            "sourceColumn": "covered_requirements"
+          },
+          {
+            "name": "requirements_without_tests",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000110",
+            "dataType": "int64",
+            "sourceColumn": "requirements_without_tests"
+          },
+          {
+            "name": "total_runs",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000111",
+            "dataType": "int64",
+            "sourceColumn": "total_runs"
+          },
+          {
+            "name": "failed_runs",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000112",
+            "dataType": "int64",
+            "sourceColumn": "failed_runs"
+          },
+          {
+            "name": "failed_runs_without_defect",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000113",
+            "dataType": "int64",
+            "sourceColumn": "failed_runs_without_defect"
+          },
+          {
+            "name": "defect_resolution_rate_pct",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000114",
+            "dataType": "decimal",
+            "sourceColumn": "defect_resolution_rate_pct"
+          },
+          {
+            "name": "defect_reopen_rate_pct",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000115",
+            "dataType": "decimal",
+            "sourceColumn": "defect_reopen_rate_pct"
+          },
+          {
+            "name": "defect_leakage_rate_pct",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000116",
+            "dataType": "decimal",
+            "sourceColumn": "defect_leakage_rate_pct"
+          },
+          {
+            "name": "defect_removal_efficiency_pct",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000117",
+            "dataType": "decimal",
+            "sourceColumn": "defect_removal_efficiency_pct"
+          },
+          {
+            "name": "requirement_coverage_pct",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000118",
+            "dataType": "decimal",
+            "sourceColumn": "requirement_coverage_pct"
+          },
+          {
+            "name": "requirements_without_tests_pct",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000119",
+            "dataType": "decimal",
+            "sourceColumn": "requirements_without_tests_pct"
+          },
+          {
+            "name": "failed_runs_without_defect_pct",
+            "lineageTag": "9a1b2c3d-4e5f-4789-abcd-000000000120",
+            "dataType": "decimal",
+            "sourceColumn": "failed_runs_without_defect_pct"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_qm_quality_effectiveness",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n\t\t\t\t    Source = Sql.Database(\"127.0.0.1,1433\", \"Reporting_DB\"),\n\t\t\t\t    vw_qm_quality_effectiveness = Source{[Schema=\"dbo\", Item=\"vw_qm_quality_effectiveness\"]}[Data]\n\t\t\t\tin\n\t\t\t\t    vw_qm_quality_effectiveness"
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "rel_fact_run_release",
+        "fromTable": "fact_test_run",
+        "fromColumn": "release_sk",
+        "toTable": "dim_release",
+        "toColumn": "release_sk"
+      },
+      {
+        "name": "rel_fact_run_test",
+        "fromTable": "fact_test_run",
+        "fromColumn": "test_sk",
+        "toTable": "dim_test",
+        "toColumn": "test_sk"
+      },
+      {
+        "name": "rel_fact_run_execution",
+        "fromTable": "fact_test_run",
+        "fromColumn": "execution_sk",
+        "toTable": "dim_test_execution",
+        "toColumn": "execution_sk"
+      },
+      {
+        "name": "rel_fact_run_environment",
+        "fromTable": "fact_test_run",
+        "fromColumn": "environment_sk",
+        "toTable": "dim_environment",
+        "toColumn": "environment_sk"
+      },
+      {
+        "name": "rel_fact_run_tester",
+        "fromTable": "fact_test_run",
+        "fromColumn": "tester_sk",
+        "toTable": "dim_tester",
+        "toColumn": "tester_sk"
+      },
+      {
+        "name": "rel_fact_run_status",
+        "fromTable": "fact_test_run",
+        "fromColumn": "status_sk",
+        "toTable": "dim_status",
+        "toColumn": "status_sk"
+      },
+      {
+        "name": "rel_fact_run_root_cause",
+        "fromTable": "fact_test_run",
+        "fromColumn": "root_cause_sk",
+        "toTable": "dim_root_cause",
+        "toColumn": "root_cause_sk"
+      },
+      {
+        "name": "rel_fact_run_date",
+        "fromTable": "fact_test_run",
+        "fromColumn": "date_sk",
+        "toTable": "dim_date",
+        "toColumn": "date_sk"
+      },
+      {
+        "name": "rel_step_result_run",
+        "fromTable": "fact_test_step_result",
+        "fromColumn": "test_run_id",
+        "toTable": "fact_test_run",
+        "toColumn": "test_run_id"
+      },
+      {
+        "name": "rel_req_coverage_issue",
+        "fromTable": "fact_requirement_coverage",
+        "fromColumn": "issue_sk",
+        "toTable": "dim_issue",
+        "toColumn": "issue_sk"
+      },
+      {
+        "name": "rel_req_coverage_release",
+        "fromTable": "fact_requirement_coverage",
+        "fromColumn": "release_sk",
+        "toTable": "dim_release",
+        "toColumn": "release_sk"
+      },
+      {
+        "name": "rel_req_coverage_date",
+        "isActive": false,
+        "fromTable": "fact_requirement_coverage",
+        "fromColumn": "latest_execution_date_sk",
+        "toTable": "dim_date",
+        "toColumn": "date_sk"
+      },
+      {
+        "name": "rel_defect_link_release",
+        "fromTable": "fact_defect_link",
+        "fromColumn": "release_sk",
+        "toTable": "dim_release",
+        "toColumn": "release_sk"
+      },
+      {
+        "name": "rel_defect_link_defect",
+        "fromTable": "fact_defect_link",
+        "fromColumn": "defect_sk",
+        "toTable": "dim_defect",
+        "toColumn": "defect_sk"
+      },
+      {
+        "name": "rel_cycle_snapshot_release",
+        "fromTable": "fact_cycle_snapshot",
+        "fromColumn": "release_sk",
+        "toTable": "dim_release",
+        "toColumn": "release_sk"
+      },
+      {
+        "name": "rel_cycle_snapshot_squad",
+        "fromTable": "fact_cycle_snapshot",
+        "fromColumn": "squad_sk",
+        "toTable": "dim_squad",
+        "toColumn": "squad_sk"
+      },
+      {
+        "name": "rel_cycle_snapshot_date",
+        "isActive": false,
+        "fromTable": "fact_cycle_snapshot",
+        "fromColumn": "snapshot_date_sk",
+        "toTable": "dim_date",
+        "toColumn": "date_sk"
+      },
+      {
+        "name": "rel_test_test_type",
+        "fromTable": "dim_test",
+        "fromColumn": "test_type_sk",
+        "toTable": "dim_test_type",
+        "toColumn": "test_type_sk"
+      },
+      {
+        "name": "rel_test_squad",
+        "isActive": false,
+        "fromTable": "dim_test",
+        "fromColumn": "squad_sk",
+        "toTable": "dim_squad",
+        "toColumn": "squad_sk"
+      },
+      {
+        "name": "rel_defect_squad",
+        "isActive": false,
+        "fromTable": "dim_defect",
+        "fromColumn": "squad_sk",
+        "toTable": "dim_squad",
+        "toColumn": "squad_sk"
+      },
+      {
+        "name": "rel_defect_application",
+        "isActive": false,
+        "fromTable": "dim_defect",
+        "fromColumn": "application_sk",
+        "toTable": "dim_application",
+        "toColumn": "application_sk"
+      },
+      {
+        "name": "rel_issue_squad",
+        "isActive": false,
+        "fromTable": "dim_issue",
+        "fromColumn": "squad_sk",
+        "toTable": "dim_squad",
+        "toColumn": "squad_sk"
+      },
+      {
+        "name": "rel_squad_program",
+        "fromTable": "dim_squad",
+        "fromColumn": "program_sk",
+        "toTable": "dim_program",
+        "toColumn": "program_sk"
+      },
+      {
+        "name": "rel_squad_application",
+        "isActive": false,
+        "fromTable": "dim_squad",
+        "fromColumn": "application_sk",
+        "toTable": "dim_application",
+        "toColumn": "application_sk"
+      },
+      {
+        "name": "rel_application_program",
+        "fromTable": "dim_application",
+        "fromColumn": "program_sk",
+        "toTable": "dim_program",
+        "toColumn": "program_sk"
+      },
+      {
+        "name": "rel_bridge_squad",
+        "fromTable": "bridge_squad_user",
+        "fromColumn": "squad_sk",
+        "toTable": "dim_squad",
+        "toColumn": "squad_sk"
+      },
+      {
+        "name": "rel_release_date",
+        "isActive": false,
+        "fromTable": "dim_release",
+        "fromColumn": "release_date_sk",
+        "toTable": "dim_date",
+        "toColumn": "date_sk"
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+table dim_test_type
+	lineageTag: 7d34d380-8398-4394-bcd2-e75c232a0cb7
+
+	column test_type_sk
+		dataType: int64
+		lineageTag: 8ee485b5-99ed-4a55-b473-10ff15debb76
+		sourceColumn: test_type_sk
+
+	column test_type_name
+		dataType: string
+		lineageTag: 63ce3491-205f-4838-ba43-0e7e14a412b9
+		sourceColumn: test_type_name
+
+	partition dim_test_type = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_test_type = Source{[Schema="dbo", Item="dim_test_type"]}[Data]
+				in
+				    dim_test_type
+

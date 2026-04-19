@@ -1,0 +1,68 @@
+table vw_p2_defect_density
+	lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123456
+
+	measure 'P2 Total Defects' = SUM('vw_p2_defect_density'[total_defects])
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123457
+
+	measure 'P2 Open Defects' = SUM('vw_p2_defect_density'[open_defects])
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123458
+
+	measure 'P2 Critical Defects' = SUM('vw_p2_defect_density'[critical_defects])
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123459
+
+	measure 'P2 Impacted Runs' = SUM('vw_p2_defect_density'[impacted_runs])
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123460
+
+	column release_name
+		dataType: string
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123461
+		sourceColumn: release_name
+
+	column squad_name
+		dataType: string
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123462
+		sourceColumn: squad_name
+
+	column severity
+		dataType: string
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123463
+		sourceColumn: severity
+
+	column priority
+		dataType: string
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123464
+		sourceColumn: priority
+
+	column defect_status
+		dataType: string
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123465
+		sourceColumn: defect_status
+
+	column total_defects
+		dataType: int64
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123466
+		sourceColumn: total_defects
+
+	column open_defects
+		dataType: int64
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123467
+		sourceColumn: open_defects
+
+	column critical_defects
+		dataType: int64
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123468
+		sourceColumn: critical_defects
+
+	column impacted_runs
+		dataType: int64
+		lineageTag: b8c9d0e1-f2a3-4567-bcde-567890123469
+		sourceColumn: impacted_runs
+
+	partition vw_p2_defect_density = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p2_defect_density = Source{[Schema="dbo", Item="vw_p2_defect_density"]}[Data]
+				in
+				    vw_p2_defect_density

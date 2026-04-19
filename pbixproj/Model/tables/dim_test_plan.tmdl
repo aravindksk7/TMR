@@ -1,0 +1,52 @@
+table dim_test_plan
+	lineageTag: b1d19709-4d38-4ec6-ad66-595fe3fd47e3
+
+	column test_plan_sk
+		dataType: int64
+		lineageTag: f272a776-8157-414c-8a38-bda667eaedef
+		sourceColumn: test_plan_sk
+
+	column test_plan_key
+		dataType: string
+		lineageTag: 21ebd8e8-5712-4d44-8150-a89638222164
+		sourceColumn: test_plan_key
+
+	column summary
+		dataType: string
+		lineageTag: 69166c04-5ed8-4f0d-ad77-128433454367
+		sourceColumn: summary
+
+	column status
+		dataType: string
+		lineageTag: deee2e9c-5791-4567-b996-e112fc3e38db
+		sourceColumn: status
+
+	column squad_sk
+		dataType: int64
+		lineageTag: 1d20c9e8-eb33-4442-aadd-7cbf88bca9b5
+		sourceColumn: squad_sk
+
+	column assignee
+		dataType: string
+		lineageTag: 77faa371-be64-4d7b-b641-41961bb6c5a1
+		sourceColumn: assignee
+
+	column created_at
+		dataType: dateTime
+		lineageTag: 87663f0c-6e88-416c-ba66-44a6ddf6702a
+		sourceColumn: created_at
+
+	column updated_at
+		dataType: dateTime
+		lineageTag: 516283cf-704f-47e8-9414-7f3db33e1bbd
+		sourceColumn: updated_at
+
+	partition dim_test_plan = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_test_plan = Source{[Schema="dbo", Item="dim_test_plan"]}[Data]
+				in
+				    dim_test_plan
+

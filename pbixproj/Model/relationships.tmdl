@@ -1,0 +1,116 @@
+relationship rel_fact_run_release
+	fromColumn: fact_test_run.release_sk
+	toColumn: dim_release.release_sk
+
+relationship rel_fact_run_test
+	fromColumn: fact_test_run.test_sk
+	toColumn: dim_test.test_sk
+
+relationship rel_fact_run_execution
+	fromColumn: fact_test_run.execution_sk
+	toColumn: dim_test_execution.execution_sk
+
+relationship rel_fact_run_environment
+	fromColumn: fact_test_run.environment_sk
+	toColumn: dim_environment.environment_sk
+
+relationship rel_fact_run_tester
+	fromColumn: fact_test_run.tester_sk
+	toColumn: dim_tester.tester_sk
+
+relationship rel_fact_run_status
+	fromColumn: fact_test_run.status_sk
+	toColumn: dim_status.status_sk
+
+relationship rel_fact_run_root_cause
+	fromColumn: fact_test_run.root_cause_sk
+	toColumn: dim_root_cause.root_cause_sk
+
+relationship rel_fact_run_date
+	fromColumn: fact_test_run.date_sk
+	toColumn: dim_date.date_sk
+
+relationship rel_step_result_run
+	fromColumn: fact_test_step_result.test_run_id
+	toColumn: fact_test_run.test_run_id
+
+relationship rel_req_coverage_issue
+	fromColumn: fact_requirement_coverage.issue_sk
+	toColumn: dim_issue.issue_sk
+
+relationship rel_req_coverage_release
+	fromColumn: fact_requirement_coverage.release_sk
+	toColumn: dim_release.release_sk
+
+relationship rel_req_coverage_date
+	isActive: false
+	fromColumn: fact_requirement_coverage.latest_execution_date_sk
+	toColumn: dim_date.date_sk
+
+relationship rel_defect_link_release
+	fromColumn: fact_defect_link.release_sk
+	toColumn: dim_release.release_sk
+
+relationship rel_defect_link_defect
+	fromColumn: fact_defect_link.defect_sk
+	toColumn: dim_defect.defect_sk
+
+relationship rel_cycle_snapshot_release
+	fromColumn: fact_cycle_snapshot.release_sk
+	toColumn: dim_release.release_sk
+
+relationship rel_cycle_snapshot_squad
+	fromColumn: fact_cycle_snapshot.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_cycle_snapshot_date
+	isActive: false
+	fromColumn: fact_cycle_snapshot.snapshot_date_sk
+	toColumn: dim_date.date_sk
+
+relationship rel_test_test_type
+	fromColumn: dim_test.test_type_sk
+	toColumn: dim_test_type.test_type_sk
+
+relationship rel_test_squad
+	isActive: false
+	fromColumn: dim_test.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_defect_squad
+	isActive: false
+	fromColumn: dim_defect.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_defect_application
+	isActive: false
+	fromColumn: dim_defect.application_sk
+	toColumn: dim_application.application_sk
+
+relationship rel_issue_squad
+	isActive: false
+	fromColumn: dim_issue.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_squad_program
+	fromColumn: dim_squad.program_sk
+	toColumn: dim_program.program_sk
+
+relationship rel_squad_application
+	isActive: false
+	fromColumn: dim_squad.application_sk
+	toColumn: dim_application.application_sk
+
+relationship rel_application_program
+	fromColumn: dim_application.program_sk
+	toColumn: dim_program.program_sk
+
+relationship rel_bridge_squad
+	fromColumn: bridge_squad_user.squad_sk
+	toColumn: dim_squad.squad_sk
+
+relationship rel_release_date
+	isActive: false
+	fromColumn: dim_release.release_date_sk
+	toColumn: dim_date.date_sk
+

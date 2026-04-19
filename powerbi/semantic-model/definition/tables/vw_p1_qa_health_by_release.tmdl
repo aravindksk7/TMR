@@ -1,0 +1,91 @@
+table vw_p1_qa_health_by_release
+	lineageTag: 61986b04-f42b-498e-ac70-70e66b2fc6ed
+
+	measure 'P1 Total Runs' = SUM('vw_p1_qa_health_by_release'[total_runs])
+		lineageTag: 7b335cb8-7199-4a25-abbd-fed0bbf34803
+
+	measure 'P1 Passed' = SUM('vw_p1_qa_health_by_release'[passed])
+		lineageTag: c1196c64-dd78-4b1e-b0a3-08f7660f32b0
+
+	measure 'P1 Failed' = SUM('vw_p1_qa_health_by_release'[failed])
+		lineageTag: f152d700-4928-4050-8a43-4c1397a94423
+
+	measure 'P1 Blocked' = SUM('vw_p1_qa_health_by_release'[blocked])
+		lineageTag: 1a13abb3-34e8-414d-a939-0effa47ecf3b
+
+	measure 'P1 Pass Rate %' = DIVIDE(SUM('vw_p1_qa_health_by_release'[passed]), SUM('vw_p1_qa_health_by_release'[total_runs]), 0) * 100
+		lineageTag: 1a13abb3-34e8-414d-a939-0effa47ecf3c
+		formatString: 0.0
+
+	measure 'P1 Automation Rate %' = DIVIDE(SUM('vw_p1_qa_health_by_release'[automated_runs]), SUM('vw_p1_qa_health_by_release'[total_runs]), 0) * 100
+		lineageTag: 1a13abb3-34e8-414d-a939-0effa47ecf3d
+		formatString: 0.0
+
+	column release_name
+		dataType: string
+		lineageTag: 9d97dfa1-3c9c-4728-8b4e-c42b973e873e
+		sourceColumn: release_name
+
+	column release_date
+		dataType: dateTime
+		lineageTag: 63819109-9d54-41c6-adcc-63114f299341
+		sourceColumn: release_date
+
+	column release_status
+		dataType: string
+		lineageTag: 63819109-9d54-41c6-adcc-63114f299342
+		sourceColumn: release_status
+
+	column total_runs
+		dataType: int64
+		lineageTag: 42112eb9-11dc-4ba9-aad8-020070c6c85d
+		sourceColumn: total_runs
+
+	column passed
+		dataType: int64
+		lineageTag: 315bd38a-9861-4f1e-a93e-9b0c412bbbde
+		sourceColumn: passed
+
+	column failed
+		dataType: int64
+		lineageTag: 612319e7-a5b6-49ae-84f1-c19727911b52
+		sourceColumn: failed
+
+	column blocked
+		dataType: int64
+		lineageTag: 22cb1dcc-5065-4040-9efd-5c549605cc3a
+		sourceColumn: blocked
+
+	column executing
+		dataType: int64
+		lineageTag: 2049fb51-8d0f-42ff-88c8-b9f14286b188
+		sourceColumn: executing
+
+	column todo
+		dataType: int64
+		lineageTag: 6e99f5e8-ce1d-44af-88c7-9a5aec952844
+		sourceColumn: todo
+
+	column aborted
+		dataType: int64
+		lineageTag: 325c1b2c-c23f-435f-b705-1c6ac9dbd288
+		sourceColumn: aborted
+
+	column automated_runs
+		dataType: int64
+		lineageTag: 325c1b2c-c23f-435f-b705-1c6ac9dbd289
+		sourceColumn: automated_runs
+
+	column pass_rate_pct
+		dataType: decimal
+		lineageTag: 0a706a76-8f19-4b8e-b892-248ae89b1391
+		sourceColumn: pass_rate_pct
+
+	partition vw_p1_qa_health_by_release = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p1_qa_health_by_release = Source{[Schema="dbo", Item="vw_p1_qa_health_by_release"]}[Data]
+				in
+				    vw_p1_qa_health_by_release

@@ -11,7 +11,18 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from qa_pipeline.models.transformer import TransformerConfig
-from qa_pipeline.transformer.transformer import Transformer, _account, _parse_ts, _nested_key
+from qa_pipeline.transformer.transformer import (
+    Transformer,
+    _account,
+    _parse_ts,
+    _nested_key,
+    _parse_date,
+    _date_to_sk,
+    _nested_dict,
+    _first_component,
+    _extract_select,
+    _extract_custom_field,
+)
 
 
 # ── Utility function tests ─────────────────────────────────────────────────────
@@ -148,6 +159,106 @@ class TestTransformerRun:
 
         assert len(result.warnings) == 1
         assert result.warnings[0].source_key == "QA-1"
+
+
+class TestParseDate:
+    def test_iso_date_string(self):
+        from datetime import date
+        d = _parse_date("2024-06-15")
+        assert d == date(2024, 6, 15)
+
+    def test_datetime_string_truncates(self):
+        from datetime import date
+        d = _parse_date("2024-06-15T12:00:00Z")
+        assert d == date(2024, 6, 15)
+
+    def test_none_returns_none(self):
+        assert _parse_date(None) is None
+
+    def test_empty_string_returns_none(self):
+        assert _parse_date("") is None
+
+    def test_invalid_returns_none(self):
+        assert _parse_date("not-a-date") is None
+
+
+class TestDateToSk:
+    def test_date_object(self):
+        from datetime import date
+        assert _date_to_sk(date(2024, 6, 15)) == 20240615
+
+    def test_datetime_object(self):
+        from datetime import datetime, timezone
+        assert _date_to_sk(datetime(2024, 6, 15, 12, 0, tzinfo=timezone.utc)) == 20240615
+
+    def test_none_returns_none(self):
+        assert _date_to_sk(None) is None
+
+
+class TestNestedDict:
+    def test_happy_path(self):
+        payload = {"a": {"b": {"c": "val"}}}
+        assert _nested_dict(payload, ["a", "b"]) == {"c": "val"}
+
+    def test_missing_key_returns_none(self):
+        assert _nested_dict({}, ["a", "b"]) is None
+
+    def test_non_dict_node_returns_none(self):
+        payload = {"a": "string"}
+        assert _nested_dict(payload, ["a", "b"]) is None
+
+
+class TestFirstComponent:
+    def test_list_of_dicts(self):
+        assert _first_component([{"name": "Auth"}, {"name": "Core"}]) == "Auth"
+
+    def test_list_of_strings(self):
+        assert _first_component(["Auth", "Core"]) == "Auth"
+
+    def test_empty_list_returns_none(self):
+        assert _first_component([]) is None
+
+    def test_none_returns_none(self):
+        assert _first_component(None) is None
+
+
+class TestExtractSelect:
+    def test_dict_with_value_key(self):
+        assert _extract_select({"value": "Manual"}) == "Manual"
+
+    def test_dict_with_name_key(self):
+        assert _extract_select({"name": "Regression"}) == "Regression"
+
+    def test_string_passthrough(self):
+        assert _extract_select("Automated") == "Automated"
+
+    def test_none_returns_none(self):
+        assert _extract_select(None) is None
+
+
+class TestExtractCustomField:
+    def test_finds_matching_name(self):
+        payload = {
+            "customFields": [
+                {"name": "Root Cause", "value": "Environment"},
+                {"name": "Severity", "value": "Critical"},
+            ]
+        }
+        assert _extract_custom_field(payload, "root cause") == "Environment"
+
+    def test_case_insensitive(self):
+        payload = {"customFields": [{"name": "SEVERITY", "value": "High"}]}
+        assert _extract_custom_field(payload, "severity") == "High"
+
+    def test_missing_field_returns_none(self):
+        assert _extract_custom_field({"customFields": []}, "severity") is None
+
+    def test_no_custom_fields_key(self):
+        assert _extract_custom_field({}, "severity") is None
+
+    def test_null_value_returns_none(self):
+        payload = {"customFields": [{"name": "Severity", "value": None}]}
+        assert _extract_custom_field(payload, "severity") is None
 
 
 class TestIterStaging:

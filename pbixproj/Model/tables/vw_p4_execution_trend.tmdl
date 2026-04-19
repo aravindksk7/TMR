@@ -1,0 +1,79 @@
+table vw_p4_execution_trend
+	lineageTag: 6e663798-f95c-4445-bccd-b69dfcb7a7ec
+
+	measure 'P4 Total Runs' = SUM('vw_p4_execution_trend'[total_runs])
+		lineageTag: 5b4b5f23-b39c-406e-bd71-fbbb58121151
+
+	measure 'P4 Passed' = SUM('vw_p4_execution_trend'[passed])
+		lineageTag: 931b351f-4a58-445f-b702-c6a49e223322
+
+	measure 'P4 Failed' = SUM('vw_p4_execution_trend'[failed])
+		lineageTag: 20c99ee3-6aed-4e4f-87f0-85d7a9892550
+
+	measure 'P4 Avg Duration (s)' = AVERAGE('vw_p4_execution_trend'[avg_duration_s])
+		lineageTag: fdcd312b-2c51-46a7-92f9-55eda2d3b8ad
+
+	column run_date
+		dataType: dateTime
+		lineageTag: ceff1d2d-4d21-4fbb-b2f3-3e0a37698949
+		sourceColumn: run_date
+
+	column date_sk
+		dataType: int64
+		lineageTag: adde9b42-e51e-47d8-b099-0b02ea713d2c
+		sourceColumn: date_sk
+
+	column year
+		dataType: int64
+		lineageTag: 776290a3-56a1-4047-9103-5de8a479157e
+		sourceColumn: year
+
+	column month
+		dataType: int64
+		lineageTag: 9af2dfef-9796-4154-bbcd-5d739afdde8a
+		sourceColumn: month
+
+	column week_of_year
+		dataType: int64
+		lineageTag: f14bad6b-77a4-45e1-bfcb-1a96a421d2c2
+		sourceColumn: week_of_year
+
+	column squad_name
+		dataType: string
+		lineageTag: 9d8eec4f-98b5-4ae1-adeb-8725d516199a
+		sourceColumn: squad_name
+
+	column release_name
+		dataType: string
+		lineageTag: 4fce96d9-f86e-4921-a29a-c005171045a3
+		sourceColumn: release_name
+
+	column total_runs
+		dataType: int64
+		lineageTag: c8eb394f-f3db-400f-b96d-8abe629a624a
+		sourceColumn: total_runs
+
+	column passed
+		dataType: int64
+		lineageTag: e5753011-9119-4ea4-82c4-13ccb411016c
+		sourceColumn: passed
+
+	column failed
+		dataType: int64
+		lineageTag: af1884da-eb99-4b06-a3f0-2559e2ed2f63
+		sourceColumn: failed
+
+	column avg_duration_s
+		dataType: double
+		lineageTag: 2d0a5f20-0e16-4bdd-8eb8-df076843b039
+		sourceColumn: avg_duration_s
+
+	partition vw_p4_execution_trend = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    vw_p4_execution_trend = Source{[Schema="dbo", Item="vw_p4_execution_trend"]}[Data]
+				in
+				    vw_p4_execution_trend
+

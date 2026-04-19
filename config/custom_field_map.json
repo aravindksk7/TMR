@@ -18,6 +18,39 @@
       "field_type":      "string"
     },
     {
+      "source_field_id": "customfield_10202",
+      "logical_name":    "application_name",
+      "target_table":    "dim_application",
+      "target_column":   "application_name",
+      "entity_type":     "jira_issue",
+      "field_type":      "string",
+      "_note": "Falls back to components[0].name if this field is absent"
+    },
+    {
+      "source_field_id": "customfield_10203",
+      "logical_name":    "root_cause",
+      "target_table":    "dim_root_cause",
+      "target_column":   "root_cause_name",
+      "entity_type":     "jira_defect",
+      "field_type":      "select_value"
+    },
+    {
+      "source_field_id": "customfield_10204",
+      "logical_name":    "severity",
+      "target_table":    "dim_defect",
+      "target_column":   "severity",
+      "entity_type":     "jira_defect",
+      "field_type":      "select_value"
+    },
+    {
+      "source_field_id": "customfield_10205",
+      "logical_name":    "business_area",
+      "target_table":    "dim_issue",
+      "target_column":   "business_area",
+      "entity_type":     "jira_issue",
+      "field_type":      "string"
+    },
+    {
       "source_field_id": "customfield_10100",
       "logical_name":    "test_type",
       "target_table":    "dim_test",
@@ -60,10 +93,11 @@
     {
       "source_field_id": "customfield_10300",
       "logical_name":    "test_environments",
-      "target_table":    "stg_xray_test_executions",
-      "target_column":   "environments_json",
+      "target_table":    "dim_environment",
+      "target_column":   "environment_name",
       "entity_type":     "xray_test_execution",
-      "field_type":      "array"
+      "field_type":      "array",
+      "_note": "Array of environment name strings; each entry is upserted to dim_environment and the first is linked to fact_test_run.environment_sk"
     },
     {
       "source_field_id": "customfield_10301",

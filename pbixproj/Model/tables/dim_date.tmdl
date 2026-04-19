@@ -1,0 +1,79 @@
+table dim_date
+	lineageTag: ffd0d634-65e6-4f35-ab4b-a3aad9db56c3
+	dataCategory: Time
+
+	column date_sk
+		dataType: int64
+		lineageTag: 2103b9b4-da83-47a0-aef1-0e8b91f5deb8
+		sourceColumn: date_sk
+
+	column full_date
+		dataType: dateTime
+		isUnique
+		lineageTag: ff531201-e30e-4679-8a2a-ab69c37e77b5
+		sourceColumn: full_date
+
+	column year
+		dataType: int64
+		lineageTag: 73fe7ec8-a108-4a88-b905-8869f1462d64
+		sourceColumn: year
+
+	column quarter
+		dataType: int64
+		lineageTag: 411942c8-6cc6-478f-ac98-827362b4e5cb
+		sourceColumn: quarter
+
+	column month
+		dataType: int64
+		lineageTag: a73c10cd-fce4-4395-9ce6-b31269b4659e
+		sourceColumn: month
+
+	column month_name
+		dataType: string
+		lineageTag: 331e25dd-21c7-4aad-903c-535d825d8c37
+		sourceColumn: month_name
+
+	column week_of_year
+		dataType: int64
+		lineageTag: f99cfdff-588d-4e26-baa8-66d9ee0ecb56
+		sourceColumn: week_of_year
+
+	column day_of_month
+		dataType: int64
+		lineageTag: d2a2645a-a51e-482c-a0e7-c58be1d5c1dc
+		sourceColumn: day_of_month
+
+	column day_of_week
+		dataType: int64
+		lineageTag: d5a07079-06a4-47f7-9d1f-f6431dd942c5
+		sourceColumn: day_of_week
+
+	column day_name
+		dataType: string
+		lineageTag: d7ba668b-e62b-46bd-bbb8-f39a10d147ee
+		sourceColumn: day_name
+
+	column is_weekend
+		dataType: boolean
+		lineageTag: 554b6a8c-9384-4a08-a296-bba9074187f3
+		sourceColumn: is_weekend
+
+	column fiscal_year
+		dataType: int64
+		lineageTag: 6c9b3a53-f9d7-4980-8010-20ece2af7990
+		sourceColumn: fiscal_year
+
+	column fiscal_quarter
+		dataType: int64
+		lineageTag: fdc40da2-6848-42ca-ab39-49178c802fdf
+		sourceColumn: fiscal_quarter
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_date = Source{[Schema="dbo", Item="dim_date"]}[Data]
+				in
+				    dim_date
+

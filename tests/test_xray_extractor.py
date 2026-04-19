@@ -57,7 +57,8 @@ class TestBuildXrayExtractor:
         assert isinstance(ext, XrayServerExtractor)
 
     def test_returns_cloud_extractor_for_cloud_variant(self, cloud_config, run_id):
-        ext = build_xray_extractor(cloud_config, run_id)
+        with patch.object(XrayCloudExtractor, "_authenticate", return_value="mock-token"):
+            ext = build_xray_extractor(cloud_config, run_id)
         assert isinstance(ext, XrayCloudExtractor)
 
 

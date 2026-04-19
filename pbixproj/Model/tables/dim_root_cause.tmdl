@@ -1,0 +1,27 @@
+table dim_root_cause
+	lineageTag: d4e5f6a7-b8c9-0123-defa-123456789012
+
+	column root_cause_sk
+		dataType: int64
+		lineageTag: d4e5f6a7-b8c9-0123-defa-123456789013
+		sourceColumn: root_cause_sk
+		isHidden
+
+	column root_cause_name
+		dataType: string
+		lineageTag: d4e5f6a7-b8c9-0123-defa-123456789014
+		sourceColumn: root_cause_name
+
+	column root_cause_category
+		dataType: string
+		lineageTag: d4e5f6a7-b8c9-0123-defa-123456789015
+		sourceColumn: root_cause_category
+
+	partition dim_root_cause = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("127.0.0.1,1433", "Reporting_DB"),
+				    dim_root_cause = Source{[Schema="dbo", Item="dim_root_cause"]}[Data]
+				in
+				    dim_root_cause

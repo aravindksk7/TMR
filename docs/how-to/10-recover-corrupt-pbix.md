@@ -64,12 +64,18 @@ Load the model tables used by dashboards:
 Dimensions:
 - dim_date
 - dim_program
+- dim_application
 - dim_squad
 - dim_release
+- dim_environment
+- dim_status
+- dim_root_cause
+- dim_tester
 - dim_test_type
 - dim_issue
 - dim_defect
 - dim_test
+- dim_test_plan
 - dim_test_execution
 - bridge_squad_user
 
@@ -77,6 +83,19 @@ Facts:
 - fact_test_run
 - fact_test_step_result
 - fact_requirement_coverage
+- fact_defect_link
+- fact_cycle_snapshot
+
+Views:
+- vw_p1_qa_health_by_release
+- vw_p2_defect_density
+- vw_p3_requirement_coverage
+- vw_p4_execution_trend
+- vw_p5_test_type_breakdown
+- vw_p6_test_run_detail
+- vw_p7_environment_health
+- vw_p8_release_snapshot
+- vw_qm_quality_effectiveness
 
 If needed, you can reconstruct from TMDL table definitions in:
 - powerbi/semantic-model/definition/tables
@@ -132,6 +151,20 @@ Check all items:
 - P1 KPIs and trend update with filters.
 - Drill-through to P6 works.
 - No visuals show broken field references.
+
+If you see blocked queries with cyclic reference (for example dim_issue):
+
+1. Close all open Power BI Desktop windows.
+2. Open the latest regenerated template:
+- QA-Pipeline-Report-fixed.pbit
+3. In Data Source settings, clear permissions for both localhost and 127.0.0.1 entries.
+4. Reconnect only with:
+- Server: 127.0.0.1,1433
+- Database: Reporting_DB
+5. Refresh all queries.
+6. If still blocked, regenerate template using:
+- python make_pbit.py
+and reopen the fixed output file.
 
 ---
 

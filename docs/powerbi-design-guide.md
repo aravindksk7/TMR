@@ -58,8 +58,13 @@ In the Navigator, select all of the following and click **Load**:
 **Dimension tables:**
 - `dim_date`
 - `dim_program`
+- `dim_application`
 - `dim_squad`
 - `dim_release`
+- `dim_environment`
+- `dim_status`
+- `dim_root_cause`
+- `dim_tester`
 - `dim_test_type`
 - `dim_issue`
 - `dim_defect`
@@ -72,13 +77,19 @@ In the Navigator, select all of the following and click **Load**:
 - `fact_test_run`
 - `fact_test_step_result`
 - `fact_requirement_coverage`
+- `fact_defect_link`
+- `fact_cycle_snapshot`
 
 **Views (pre-aggregated — use for each specific report page):**
 - `vw_p1_qa_health_by_release`
+- `vw_p2_defect_density`
 - `vw_p3_requirement_coverage`
 - `vw_p4_execution_trend`
 - `vw_p5_test_type_breakdown`
 - `vw_p6_test_run_detail`
+- `vw_p7_environment_health`
+- `vw_p8_release_snapshot`
+- `vw_qm_quality_effectiveness`
 
 > **Tip:** Load both the base tables and the views. Base tables power cross-page slicers (Release, Squad, Date). Views power the individual report visuals — they are already aggregated and optimise query performance.
 
@@ -916,6 +927,19 @@ The gauge minimum/maximum/target must all be set explicitly. Check:
 1. Select the gauge → **Format visual → Gauge axis**.
 2. Set Min: `0`, Max: `100`, Target value: `80`.
 3. If these are bound to measures, ensure the measure returns a scalar value, not a table.
+
+### Queries blocked with "cyclic reference" (for example `dim_issue`)
+
+1. Close all open Power BI Desktop windows.
+2. Open the most recent regenerated template file (`QA-Pipeline-Report-fixed.pbit`).
+3. In **File -> Options and settings -> Data source settings**, clear cached permissions for both `localhost` and `127.0.0.1`.
+4. Reconnect using only:
+    - Server: `127.0.0.1,1433`
+    - Database: `Reporting_DB`
+5. Refresh all queries.
+6. If issue persists, regenerate template:
+    - `python make_pbit.py`
+    - Reopen the regenerated fixed template and refresh again.
 
 ---
 

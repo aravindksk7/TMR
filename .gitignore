@@ -43,3 +43,14 @@ htmlcov/
 
 # mypy
 .mypy_cache/
+
+# Local AI/tool config
+.claude/
+.cursor/
+.kiro/
+.mcp.json
+.opencode.json
+.cursorrules
+.windsurfrules
+CLAUDE.md
+GEMINI.md

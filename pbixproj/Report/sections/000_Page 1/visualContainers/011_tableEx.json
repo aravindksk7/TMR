@@ -1,0 +1,207 @@
+{
+  "id": 12,
+  "x": 0,
+  "y": 496,
+  "z": 0,
+  "width": 1280,
+  "height": 224,
+  "config": {
+    "name": "fbf29d925dc74fdcbc6b",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "tableEx",
+      "projections": {
+        "Values": [
+          {
+            "queryRef": "dim_release.release_name",
+            "active": true
+          },
+          {
+            "queryRef": "vw_p1_qa_health_by_release.Automation Coverage %",
+            "active": true
+          },
+          {
+            "queryRef": "vw_p1_qa_health_by_release.Regression Automation %",
+            "active": true
+          },
+          {
+            "queryRef": "vw_p1_qa_health_by_release.Execution Efficiency %",
+            "active": true
+          },
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Score",
+            "active": true
+          },
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Band",
+            "active": true
+          },
+          {
+            "queryRef": "vw_p1_qa_health_by_release.P1 Total Runs",
+            "active": true
+          },
+          {
+            "queryRef": "vw_p1_qa_health_by_release.P1 Pass Rate %",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "r",
+            "Entity": "dim_release",
+            "Type": 0
+          },
+          {
+            "Name": "v",
+            "Entity": "vw_p1_qa_health_by_release",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "r"
+                }
+              },
+              "Property": "release_name"
+            },
+            "Name": "dim_release.release_name"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "Automation Coverage %"
+            },
+            "Name": "vw_p1_qa_health_by_release.Automation Coverage %"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "Regression Automation %"
+            },
+            "Name": "vw_p1_qa_health_by_release.Regression Automation %"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "Execution Efficiency %"
+            },
+            "Name": "vw_p1_qa_health_by_release.Execution Efficiency %"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "ETMI Score"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Score"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "ETMI Band"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Band"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "P1 Total Runs"
+            },
+            "Name": "vw_p1_qa_health_by_release.P1 Total Runs"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "P1 Pass Rate %"
+            },
+            "Name": "vw_p1_qa_health_by_release.P1 Pass Rate %"
+          }
+        ]
+      },
+      "vcObjects": {
+        "title": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Release ETMI Breakdown'"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "columnHeaders": [
+          {
+            "properties": {
+              "fontColor": {
+                "solid": {
+                  "color": "#252423"
+                }
+              },
+              "backColor": {
+                "solid": {
+                  "color": "#F3F2F1"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

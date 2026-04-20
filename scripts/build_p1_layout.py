@@ -1,7 +1,9 @@
 """
 build_p1_layout.py
-Generates P1 dashboard layout JSON and injects it into the PBIX file.
+Generates P1 | CXO Quality Dashboard layout and injects it into the PBIX file.
 Canvas: 1280 x 720
+
+ETMI = (Automation Coverage % × 0.4) + (Regression Automation % × 0.3) + (Execution Efficiency % × 0.3)
 """
 import json
 import shutil
@@ -11,8 +13,11 @@ import os
 import uuid
 from pathlib import Path
 
-PBIX_IN  = r"C:\TM_PBI\TMR_backup_pre_p1.pbix"
-PBIX_OUT = r"C:\TM_PBI\TMR_p1_dashboard.pbix"
+PBIX_IN  = r"C:\TM_PBI\qa_pipeline\QA-Pipeline-Report.pbix"
+PBIX_OUT = r"C:\TM_PBI\qa_pipeline\QA-Pipeline-Report.pbix"
+
+VIEW  = "vw_p1_qa_health_by_release"
+V_ALI = "v"
 
 # ---------------------------------------------------------------------------
 # Small helpers
@@ -54,7 +59,7 @@ def proto_query(frm: list, select: list):
 # Visual container builders
 # ---------------------------------------------------------------------------
 
-def _container(vid, x, y, z, w, h, config_obj, tab=0, filters="[]", query_obj=None):
+def _container(vid, x, y, z, w, h, config_obj, filters="[]", query_obj=None):
     c = {
         "id": vid,
         "x": x, "y": y, "z": z,
@@ -153,7 +158,7 @@ def slicer_date(vid, x, y, w, h, z=0):
 
 
 # ---- KPI Card ---------------------------------------------------------------
-def card(vid, x, y, w, h, entity, alias, measure_name, title=None, z=0):
+def card(vid, x, y, w, h, entity, alias, measure_name, title=None, font_size=24, z=0):
     pq = proto_query(
         [_from(alias, entity)],
         [_select_meas(alias, entity, measure_name)]
@@ -168,7 +173,7 @@ def card(vid, x, y, w, h, entity, alias, measure_name, title=None, z=0):
             "fontColor": {"solid": {"color": "#605E5C"}}
         }}],
         "labels": [{"properties": {
-            "fontSize": {"expr": {"Literal": {"Value": "24"}}},
+            "fontSize": {"expr": {"Literal": {"Value": str(font_size)}}},
             "color": {"solid": {"color": "#252423"}}
         }}]
     }
@@ -176,118 +181,143 @@ def card(vid, x, y, w, h, entity, alias, measure_name, title=None, z=0):
     return _container(vid, x, y, z, w, h, cfg)
 
 
-# ---- Gauge ------------------------------------------------------------------
-def gauge(vid, x, y, w, h, z=0):
-    alias_f, alias_t = "f", "ft"
+# ---- ETMI Hero Gauge --------------------------------------------------------
+def etmi_gauge(vid, x, y, w, h, z=0):
     pq = proto_query(
-        [_from(alias_f, "fact_test_run"), _from(alias_t, "fact_test_run")],
+        [_from(V_ALI, VIEW), _from("t", VIEW)],
         [
-            {**_meas(alias_f, "Pass Rate %"), "Name": "fact_test_run.Pass Rate %"},
-            {**_meas(alias_t, "P1 Target Pass Rate %"), "Name": "fact_test_run.P1 Target Pass Rate %"},
+            {**_meas(V_ALI, "ETMI Score"),  "Name": f"{VIEW}.ETMI Score"},
+            {**_meas("t",   "ETMI Target"), "Name": f"{VIEW}.ETMI Target"},
         ]
     )
     proj = {
-        "Y": [{"queryRef": "fact_test_run.Pass Rate %", "active": True}],
-        "MaxValue": [{"queryRef": "fact_test_run.P1 Target Pass Rate %", "active": True}],
+        "Y":        [{"queryRef": f"{VIEW}.ETMI Score",  "active": True}],
+        "MaxValue": [{"queryRef": f"{VIEW}.ETMI Target", "active": True}],
     }
     vc_objects = {
         "title": [{"properties": {
             "show": {"expr": {"Literal": {"Value": "true"}}},
-            "text": {"expr": {"Literal": {"Value": "'Pass Rate vs Target'"}}}
+            "text": {"expr": {"Literal": {"Value": "'ETMI Score (0\u2013100)'"}}},
+            "fontSize": {"expr": {"Literal": {"Value": "11"}}},
+            "fontColor": {"solid": {"color": "#252423"}}
         }}],
         "calloutValue": [{"properties": {
-            "show": {"expr": {"Literal": {"Value": "true"}}}
+            "show": {"expr": {"Literal": {"Value": "true"}}},
+            "fontSize": {"expr": {"Literal": {"Value": "22"}}}
+        }}],
+        "gauge": [{"properties": {
+            "arcColor":    {"solid": {"color": "#0078D4"}},
+            "targetColor": {"solid": {"color": "#A4262C"}}
         }}]
     }
     cfg = _cfg("gauge", pq, proj, vc_objects=vc_objects)
     return _container(vid, x, y, z, w, h, cfg)
 
 
-# ---- Stacked Bar ------------------------------------------------------------
-def stacked_bar(vid, x, y, w, h, z=0):
+# ---- ETMI Band Card ---------------------------------------------------------
+def etmi_band_card(vid, x, y, w, h, z=0):
     pq = proto_query(
-        [_from("r", "dim_release"), _from("f", "fact_test_run")],
-        [
-            {**_col("r", "release_name"), "Name": "dim_release.release_name"},
-            {**_col("f", "run_status"), "Name": "fact_test_run.run_status"},
-            {**_meas("f", "Total Runs"), "Name": "fact_test_run.Total Runs"},
-        ]
+        [_from(V_ALI, VIEW)],
+        [{**_meas(V_ALI, "ETMI Band"), "Name": f"{VIEW}.ETMI Band"}]
     )
-    proj = {
-        "Category": [{"queryRef": "dim_release.release_name", "active": True}],
-        "Series": [{"queryRef": "fact_test_run.run_status", "active": True}],
-        "Y": [{"queryRef": "fact_test_run.Total Runs", "active": True}],
-    }
+    proj = {"Values": [{"queryRef": f"{VIEW}.ETMI Band", "active": True}]}
     vc_objects = {
         "title": [{"properties": {
             "show": {"expr": {"Literal": {"Value": "true"}}},
-            "text": {"expr": {"Literal": {"Value": "'Runs by Release & Status'"}}}
+            "text": {"expr": {"Literal": {"Value": "'Maturity Band'"}}},
+            "fontSize": {"expr": {"Literal": {"Value": "10"}}},
+            "fontColor": {"solid": {"color": "#605E5C"}}
         }}],
-        "xAxis": [{"properties": {
-            "show": {"expr": {"Literal": {"Value": "true"}}}
-        }}],
-        "yAxis": [{"properties": {
-            "show": {"expr": {"Literal": {"Value": "true"}}}
-        }}],
+        "labels": [{"properties": {
+            "fontSize": {"expr": {"Literal": {"Value": "20"}}},
+            "color":    {"solid": {"color": "#107C10"}}
+        }}]
     }
-    cfg = _cfg("barChart", pq, proj, vc_objects=vc_objects)
+    cfg = _cfg("card", pq, proj, vc_objects=vc_objects)
     return _container(vid, x, y, z, w, h, cfg)
 
 
-# ---- Line Chart -------------------------------------------------------------
-def line_chart(vid, x, y, w, h, z=0):
+# ---- ETMI Status Card -------------------------------------------------------
+def etmi_status_card(vid, x, y, w, h, z=0):
     pq = proto_query(
-        [_from("d", "dim_date"), _from("f", "fact_test_run")],
+        [_from(V_ALI, VIEW)],
+        [{**_meas(V_ALI, "ETMI Status"), "Name": f"{VIEW}.ETMI Status"}]
+    )
+    proj = {"Values": [{"queryRef": f"{VIEW}.ETMI Status", "active": True}]}
+    vc_objects = {
+        "title": [{"properties": {
+            "show": {"expr": {"Literal": {"Value": "true"}}},
+            "text": {"expr": {"Literal": {"Value": "'ETMI Status'"}}},
+            "fontSize": {"expr": {"Literal": {"Value": "10"}}},
+            "fontColor": {"solid": {"color": "#605E5C"}}
+        }}],
+        "labels": [{"properties": {
+            "fontSize": {"expr": {"Literal": {"Value": "18"}}},
+            "color":    {"solid": {"color": "#252423"}}
+        }}]
+    }
+    cfg = _cfg("card", pq, proj, vc_objects=vc_objects)
+    return _container(vid, x, y, z, w, h, cfg)
+
+
+# ---- ETMI Trend Line Chart --------------------------------------------------
+def etmi_trend_line(vid, x, y, w, h, z=0):
+    pq = proto_query(
+        [_from("r", "dim_release"), _from(V_ALI, VIEW)],
         [
-            {**_col("d", "full_date"), "Name": "dim_date.full_date"},
-            {**_meas("f", "Pass Rate %"), "Name": "fact_test_run.Pass Rate %"},
+            {**_col("r",    "release_name"),  "Name": "dim_release.release_name"},
+            {**_meas(V_ALI, "ETMI Score"),    "Name": f"{VIEW}.ETMI Score"},
+            {**_meas(V_ALI, "ETMI Target"),   "Name": f"{VIEW}.ETMI Target"},
         ]
     )
     proj = {
-        "Category": [{"queryRef": "dim_date.full_date", "active": True}],
-        "Y": [{"queryRef": "fact_test_run.Pass Rate %", "active": True}],
+        "Category": [{"queryRef": "dim_release.release_name",  "active": True}],
+        "Y":        [{"queryRef": f"{VIEW}.ETMI Score",         "active": True}],
+        "Y2":       [{"queryRef": f"{VIEW}.ETMI Target",        "active": True}],
     }
     vc_objects = {
         "title": [{"properties": {
             "show": {"expr": {"Literal": {"Value": "true"}}},
-            "text": {"expr": {"Literal": {"Value": "'Pass Rate % Trend'"}}}
+            "text": {"expr": {"Literal": {"Value": "'ETMI Score by Release'"}}}
         }}],
-        "xAxis": [{"properties": {"show": {"expr": {"Literal": {"Value": "true"}}}}},],
-        "yAxis": [{"properties": {"show": {"expr": {"Literal": {"Value": "true"}}}}},],
+        "xAxis": [{"properties": {"show": {"expr": {"Literal": {"Value": "true"}}}}}],
+        "yAxis": [{"properties": {"show": {"expr": {"Literal": {"Value": "true"}}}}}],
     }
     cfg = _cfg("lineChart", pq, proj, vc_objects=vc_objects)
     return _container(vid, x, y, z, w, h, cfg)
 
 
-# ---- Summary Table ----------------------------------------------------------
-def summary_table(vid, x, y, w, h, z=0):
+# ---- CXO Summary Table ------------------------------------------------------
+def cxo_summary_table(vid, x, y, w, h, z=0):
     pq = proto_query(
-        [_from("r", "dim_release"), _from("f", "fact_test_run"), _from("d", "dim_defect")],
+        [_from("r", "dim_release"), _from(V_ALI, VIEW)],
         [
-            {**_col("r", "release_name"), "Name": "dim_release.release_name"},
-            {**_meas("f", "Total Runs"), "Name": "fact_test_run.Total Runs"},
-            {**_meas("f", "Passed Runs"), "Name": "fact_test_run.Passed Runs"},
-            {**_meas("f", "Failed Runs"), "Name": "fact_test_run.Failed Runs"},
-            {**_meas("f", "Pass Rate (formatted)"), "Name": "fact_test_run.Pass Rate (formatted)"},
-            {**_meas("d", "Open Defects"), "Name": "dim_defect.Open Defects"},
-            {**_meas("d", "Critical Defects"), "Name": "dim_defect.Critical Defects"},
+            {**_col("r",    "release_name"),            "Name": "dim_release.release_name"},
+            {**_meas(V_ALI, "Automation Coverage %"),   "Name": f"{VIEW}.Automation Coverage %"},
+            {**_meas(V_ALI, "Regression Automation %"), "Name": f"{VIEW}.Regression Automation %"},
+            {**_meas(V_ALI, "Execution Efficiency %"),  "Name": f"{VIEW}.Execution Efficiency %"},
+            {**_meas(V_ALI, "ETMI Score"),              "Name": f"{VIEW}.ETMI Score"},
+            {**_meas(V_ALI, "ETMI Band"),               "Name": f"{VIEW}.ETMI Band"},
+            {**_meas(V_ALI, "P1 Total Runs"),           "Name": f"{VIEW}.P1 Total Runs"},
+            {**_meas(V_ALI, "P1 Pass Rate %"),          "Name": f"{VIEW}.P1 Pass Rate %"},
         ]
     )
     proj = {
         "Values": [
-            {"queryRef": "dim_release.release_name", "active": True},
-            {"queryRef": "fact_test_run.Total Runs", "active": True},
-            {"queryRef": "fact_test_run.Passed Runs", "active": True},
-            {"queryRef": "fact_test_run.Failed Runs", "active": True},
-            {"queryRef": "fact_test_run.Pass Rate (formatted)", "active": True},
-            {"queryRef": "dim_defect.Open Defects", "active": True},
-            {"queryRef": "dim_defect.Critical Defects", "active": True},
+            {"queryRef": "dim_release.release_name",              "active": True},
+            {"queryRef": f"{VIEW}.Automation Coverage %",         "active": True},
+            {"queryRef": f"{VIEW}.Regression Automation %",       "active": True},
+            {"queryRef": f"{VIEW}.Execution Efficiency %",        "active": True},
+            {"queryRef": f"{VIEW}.ETMI Score",                    "active": True},
+            {"queryRef": f"{VIEW}.ETMI Band",                     "active": True},
+            {"queryRef": f"{VIEW}.P1 Total Runs",                 "active": True},
+            {"queryRef": f"{VIEW}.P1 Pass Rate %",                "active": True},
         ]
     }
     vc_objects = {
         "title": [{"properties": {
             "show": {"expr": {"Literal": {"Value": "true"}}},
-            "text": {"expr": {"Literal": {"Value": "'Release Summary'"}}}
+            "text": {"expr": {"Literal": {"Value": "'Release ETMI Breakdown'"}}}
         }}],
         "columnHeaders": [{"properties": {
             "fontColor": {"solid": {"color": "#252423"}},
@@ -298,29 +328,8 @@ def summary_table(vid, x, y, w, h, z=0):
     return _container(vid, x, y, z, w, h, cfg)
 
 
-# ---- MoM Status Card --------------------------------------------------------
-def status_card(vid, x, y, w, h, z=0):
-    pq = proto_query(
-        [_from("f", "fact_test_run")],
-        [{**_meas("f", "P1 Pass Rate Status"), "Name": "fact_test_run.P1 Pass Rate Status"}]
-    )
-    proj = {"Values": [{"queryRef": "fact_test_run.P1 Pass Rate Status", "active": True}]}
-    vc_objects = {
-        "title": [{"properties": {
-            "show": {"expr": {"Literal": {"Value": "true"}}},
-            "text": {"expr": {"Literal": {"Value": "'P1 Status'"}}},
-            "fontSize": {"expr": {"Literal": {"Value": "10"}}}
-        }}],
-        "labels": [{"properties": {
-            "fontSize": {"expr": {"Literal": {"Value": "18"}}}
-        }}]
-    }
-    cfg = _cfg("card", pq, proj, vc_objects=vc_objects)
-    return _container(vid, x, y, z, w, h, cfg)
-
-
 # ---------------------------------------------------------------------------
-# Assemble P1 page
+# Assemble P1 | CXO Quality Dashboard page
 # ---------------------------------------------------------------------------
 
 def build_p1_page():
@@ -328,58 +337,57 @@ def build_p1_page():
     containers = []
     vid = 1
 
-    # Row 0: Title bar (full width)
-    containers.append(textbox(vid, 0, 0, W, 44, "P1 – Test Run Summary", font_size=20, bold=True))
+    # ── Row 0: Title bar (full width, h=44) ──────────────────────────────────
+    containers.append(textbox(vid, 0, 0, W, 44, "P1 | CXO Quality Dashboard", font_size=20, bold=True))
     vid += 1
 
-    # Row 1: Slicers (y=52)
-    containers.append(slicer_col(vid, 0,   52, 300, 64, "dim_release", "r", "release_name", "Release"))
+    # ── Row 1: Slicers (y=52, h=60) ──────────────────────────────────────────
+    containers.append(slicer_col(vid,   0, 52, 300, 60, "dim_release", "r", "release_name", "Release"))
     vid += 1
-    containers.append(slicer_col(vid, 312, 52, 300, 64, "dim_squad",   "s", "squad_name",   "Squad"))
+    containers.append(slicer_col(vid, 312, 52, 300, 60, "dim_squad",   "s", "squad_name",   "Squad"))
     vid += 1
-    containers.append(slicer_date(vid, 624, 52, 646, 64))
+    containers.append(slicer_date(vid, 624, 52, 646, 60))
     vid += 1
 
-    # Row 2: KPI cards + status + gauge (y=128, h=110)
-    # Layout: 4 cards×196 (188+8gap) = 784 + status 200 + 8gap + gauge 288 = 1280
-    card_w, card_h, gap = 188, 110, 8
-    card_y = 128
-    cards = [
-        ("fact_test_run", "f", "Total Runs",            "Total Runs"),
-        ("fact_test_run", "f", "Pass Rate (formatted)",  "Pass Rate"),
-        ("dim_defect",    "d", "Open Defects",           "Open Defects"),
-        ("dim_defect",    "d", "Critical Defects",       "Critical"),
-    ]
-    for i, (entity, alias, meas, title) in enumerate(cards):
-        containers.append(card(vid, i * (card_w + gap), card_y, card_w, card_h, entity, alias, meas, title))
+    # ── Row 2: ETMI gauge + 3 component cards + band + status (y=124, h=158) ─
+    # gauge(280) | 8 | AutoCov(196) | 8 | RegAuto(196) | 8 | ExecEff(196) | 8 | band(180) | 8 | status(200) = 1280
+    row2_y, row2_h = 124, 158
+    containers.append(etmi_gauge(vid, 0, row2_y, 280, row2_h))
+    vid += 1
+
+    comp_w, gap = 196, 8
+    comp_x = 280 + gap
+    for measure, title in [
+        ("Automation Coverage %",   "Automation Coverage %"),
+        ("Regression Automation %", "Regression Automation %"),
+        ("Execution Efficiency %",  "Execution Efficiency %"),
+    ]:
+        containers.append(card(vid, comp_x, row2_y, comp_w, row2_h, VIEW, V_ALI, measure, title, font_size=28))
         vid += 1
-    # P1 Status card
-    status_x = len(cards) * (card_w + gap)
-    status_w = 200
-    containers.append(status_card(vid, status_x, card_y, status_w, card_h))
+        comp_x += comp_w + gap
+
+    band_w = 180
+    containers.append(etmi_band_card(vid, comp_x, row2_y, band_w, row2_h))
     vid += 1
-    # Gauge — remaining width (1280 - 784 - 200 - 8 = 288)
-    gauge_x = status_x + status_w + gap
-    gauge_w = W - gauge_x
-    containers.append(gauge(vid, gauge_x, card_y, gauge_w, card_h))
+    comp_x += band_w + gap
+
+    status_w = W - comp_x
+    containers.append(etmi_status_card(vid, comp_x, row2_y, status_w, row2_h))
     vid += 1
 
-    # Row 3: Bar + Line (y=252, h=210)
-    chart_y = 252
-    chart_h = 210
-    containers.append(stacked_bar(vid, 0,   chart_y, 620, chart_h))
-    vid += 1
-    containers.append(line_chart(vid,  630, chart_y, 640, chart_h))
+    # ── Row 3: ETMI trend line (y=294, h=194) ────────────────────────────────
+    row3_y, row3_h = 294, 194
+    containers.append(etmi_trend_line(vid, 0, row3_y, W, row3_h))
     vid += 1
 
-    # Row 4: Table (y=474, h=238)
-    containers.append(summary_table(vid, 0, 474, W, 238))
+    # ── Row 4: CXO summary table (y=496, h=224) ──────────────────────────────
+    containers.append(cxo_summary_table(vid, 0, 496, W, 224))
     vid += 1
 
     section = {
         "id": 0,
         "name": _guid(),
-        "displayName": "P1 - Test Run Summary",
+        "displayName": "P1 | CXO Quality Dashboard",
         "filters": "[]",
         "ordinal": 0,
         "visualContainers": containers,
@@ -405,9 +413,10 @@ def read_layout(pbix_path):
 def write_pbix(pbix_in, pbix_out, new_layout):
     layout_bytes = json.dumps(new_layout, separators=(",", ":"), ensure_ascii=False).encode("utf-16-le")
 
-    shutil.copy2(pbix_in, pbix_out)
     tmp = pbix_out + ".tmp"
-    with zipfile.ZipFile(pbix_out, "r") as zin, \
+    # Read from pbix_in, write to tmp, then atomically replace pbix_out.
+    # This works whether pbix_in == pbix_out or not, without a redundant copy.
+    with zipfile.ZipFile(pbix_in, "r") as zin, \
          zipfile.ZipFile(tmp, "w", compression=zipfile.ZIP_DEFLATED) as zout:
         for item in zin.infolist():
             if item.filename == "Report/Layout":
@@ -425,10 +434,9 @@ if __name__ == "__main__":
     print(f"Reading layout from: {PBIX_IN}")
     layout = read_layout(PBIX_IN)
 
-    print("Building P1 page …")
+    print("Building P1 | CXO Quality Dashboard \u2026")
     p1_section = build_p1_page()
 
-    # Replace sections with P1 page only
     layout["sections"] = [p1_section]
 
     print(f"Writing to: {PBIX_OUT}")

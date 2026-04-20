@@ -1,0 +1,151 @@
+{
+  "id": 5,
+  "x": 0,
+  "y": 124,
+  "z": 0,
+  "width": 280,
+  "height": 158,
+  "config": {
+    "name": "09ec02fd9c9147409741",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "gauge",
+      "projections": {
+        "Y": [
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Score",
+            "active": true
+          }
+        ],
+        "MaxValue": [
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Target",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "v",
+            "Entity": "vw_p1_qa_health_by_release",
+            "Type": 0
+          },
+          {
+            "Name": "t",
+            "Entity": "vw_p1_qa_health_by_release",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "ETMI Score"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Score"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "t"
+                }
+              },
+              "Property": "ETMI Target"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Target"
+          }
+        ]
+      },
+      "vcObjects": {
+        "title": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'ETMI Score (0–100)'"
+                  }
+                }
+              },
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "11"
+                  }
+                }
+              },
+              "fontColor": {
+                "solid": {
+                  "color": "#252423"
+                }
+              }
+            }
+          }
+        ],
+        "calloutValue": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "22"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "gauge": [
+          {
+            "properties": {
+              "arcColor": {
+                "solid": {
+                  "color": "#0078D4"
+                }
+              },
+              "targetColor": {
+                "solid": {
+                  "color": "#A4262C"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

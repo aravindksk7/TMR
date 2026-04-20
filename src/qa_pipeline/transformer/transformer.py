@@ -15,6 +15,7 @@ full_refresh — Process all staging rows. dim_date is never truncated.
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
@@ -460,10 +461,8 @@ class Transformer:
             program_sk = row[0] if row else None
 
         # Ensure dim_application row exists
-        application_name: str | None = (
-            cf.get("application_name")
-            or _first_component(fields.get("components"))
-        )
+        _raw_app = cf.get("application_name") or _first_component(fields.get("components"))
+        application_name: str | None = None if _is_date_string(_raw_app) else _raw_app
         application_sk: int | None = None
         if application_name:
             platform = cf.get("platform")
@@ -515,10 +514,9 @@ class Transformer:
         fields = payload.get("fields", {})
         cf = self._mapper.extract(fields, "jira_defect")
 
-        squad_sk       = self._lookup_squad(cf.get("squad_name"))
-        application_sk = self._lookup_application(
-            cf.get("application_name") or _first_component(fields.get("components"))
-        )
+        squad_sk = self._lookup_squad(cf.get("squad_name"))
+        _raw_app_d = cf.get("application_name") or _first_component(fields.get("components"))
+        application_sk = self._lookup_application(None if _is_date_string(_raw_app_d) else _raw_app_d)
 
         severity = (
             cf.get("severity")
@@ -546,8 +544,8 @@ class Transformer:
         source_key: str,
         payload: dict[str, Any],
     ) -> None:
-        # payload may be Xray Server (has "fields" wrapper) or Cloud (flat)
-        fields = payload.get("fields", payload)
+        # Xray Server wraps Jira fields under "fields"; Xray Cloud wraps them under "jira"
+        fields = payload.get("fields") or payload.get("jira") or payload
         cf = self._mapper.extract(fields, "xray_test")
 
         # test_type from Cloud top-level or custom field
@@ -590,7 +588,8 @@ class Transformer:
         source_key: str,
         payload: dict[str, Any],
     ) -> None:
-        fields = payload.get("fields", payload)
+        # Xray Server wraps Jira fields under "fields"; Xray Cloud wraps them under "jira"
+        fields = payload.get("fields") or payload.get("jira") or payload
         cf = self._mapper.extract(fields, "xray_test_execution")
 
         environments_raw = cf.get("test_environments") or fields.get("customfield_10300")
@@ -1042,6 +1041,14 @@ def _extract_select(field: Any) -> str | None:
     if isinstance(field, dict):
         return field.get("value") or field.get("name")
     return str(field)
+
+
+_DATE_RE = re.compile(r'^\d{4}[-/]\d{2}[-/]\d{2}')
+
+
+def _is_date_string(value: str | None) -> bool:
+    """Return True if value looks like an ISO/slash-delimited date (YYYY-MM-DD or YYYY/MM/DD)."""
+    return bool(value and _DATE_RE.match(str(value)))
 
 
 def _extract_custom_field(payload: dict[str, Any], logical_name: str) -> str | None:

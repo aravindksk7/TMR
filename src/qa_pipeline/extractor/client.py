@@ -73,8 +73,9 @@ class ApiClient:
         self._retry_max = retry_max
         self._backoff_base_ms = backoff_base_ms
 
-        # Jira and Xray Server both use HTTP Basic auth.
-        # Prefix with "Basic" unless the caller already supplied "Basic"/"Bearer".
+        # Jira Cloud uses Basic auth (base64 email:api_token).
+        # Xray Cloud uses Bearer (JWT obtained from /api/v2/authenticate).
+        # Callers that already include the scheme prefix are passed through unchanged.
         auth_header = (
             auth_token
             if auth_token.startswith(("Basic ", "Bearer "))
@@ -110,6 +111,10 @@ class ApiClient:
 
     def close(self) -> None:
         self._client.close()
+
+    def update_auth_header(self, auth_header: str) -> None:
+        """Replace the Authorization header on the underlying HTTP client (used for token refresh)."""
+        self._client.headers["Authorization"] = auth_header
 
     # ── Core request ──────────────────────────────────────────────────────────
 

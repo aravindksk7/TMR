@@ -25,10 +25,11 @@ dev = [
 ]
 
 [project.scripts]
-qa-full-load  = "qa_pipeline.scripts.run_full_load:main"
-qa-delta      = "qa_pipeline.scripts.run_delta:main"
-qa-scheduler  = "qa_pipeline.scheduler.scheduler:run_scheduler"
-qa-seed-dates  = "qa_pipeline.scripts.seed_dim_date:main"
+qa-full-load          = "qa_pipeline.scripts.run_full_load:main"
+qa-delta              = "qa_pipeline.scripts.run_delta:main"
+qa-scheduler          = "qa_pipeline.scheduler.scheduler:run_scheduler"
+qa-seed-dates         = "qa_pipeline.scripts.seed_dim_date:main"
+qa-check-connectivity = "qa_pipeline.scripts.check_connectivity:main"
 
 [build-system]
 requires      = ["hatchling"]

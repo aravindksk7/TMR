@@ -1,0 +1,95 @@
+{
+  "id": 4,
+  "x": 624,
+  "y": 52,
+  "z": 0,
+  "width": 646,
+  "height": 60,
+  "config": {
+    "name": "6a333691a1c14382a3b9",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "slicer",
+      "projections": {
+        "Values": [
+          {
+            "queryRef": "dim_date.full_date",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "d",
+            "Entity": "dim_date",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "d"
+                }
+              },
+              "Property": "full_date"
+            },
+            "Name": "dim_date.full_date"
+          }
+        ]
+      },
+      "vcObjects": {},
+      "objects": {
+        "data": [
+          {
+            "properties": {
+              "mode": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Between'"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "header": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Date Range'"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

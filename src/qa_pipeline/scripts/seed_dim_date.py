@@ -29,6 +29,8 @@ USING (VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)) AS src
        week_of_year, day_of_month, day_of_week, day_name,
        is_weekend, fiscal_year, fiscal_quarter)
 ON tgt.date_sk = src.date_sk
+WHEN MATCHED AND (tgt.month_name != src.month_name OR tgt.day_name != src.day_name) THEN
+    UPDATE SET month_name = src.month_name, day_name = src.day_name
 WHEN NOT MATCHED THEN
     INSERT (date_sk, full_date, year, quarter, month, month_name,
             week_of_year, day_of_month, day_of_week, day_name,

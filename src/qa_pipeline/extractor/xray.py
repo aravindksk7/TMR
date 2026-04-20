@@ -15,6 +15,9 @@ Routing:
 """
 from __future__ import annotations
 
+import base64
+import json
+import time
 from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
@@ -52,7 +55,7 @@ query GetTestRuns($testExecIssueId: String!, $limit: Int!, $start: Int!) {
       status { name }
       startedOn
       finishedOn
-      assignee { accountId displayName email }
+      assignee { accountId displayName emailAddress }
       comment
       defects {
         issueId
@@ -272,6 +275,19 @@ class XrayServerExtractor:
 # ── Cloud extractor ────────────────────────────────────────────────────────────
 
 _XRAY_AUTH_URL = "https://xray.cloud.getxray.app/api/v2/authenticate"
+_TOKEN_REFRESH_BUFFER_S = 60  # re-authenticate this many seconds before JWT expiry
+
+
+def _jwt_expires_at(token: str) -> float:
+    """Decode the `exp` claim from a JWT and return it as a Unix timestamp.
+    Returns 0.0 if the token cannot be decoded (treated as already expired)."""
+    try:
+        payload_b64 = token.split(".")[1]
+        payload_b64 += "=" * (-len(payload_b64) % 4)  # restore base64 padding
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64))
+        return float(payload.get("exp", 0))
+    except Exception:  # noqa: BLE001
+        return 0.0
 
 
 class XrayCloudExtractor:
@@ -286,10 +302,11 @@ class XrayCloudExtractor:
         self._config = config
         self._run_id = run_id
 
-        bearer_token = self._authenticate(config)
+        self._token: str = self._authenticate(config)
+        self._token_exp: float = _jwt_expires_at(self._token)
         self._client = ApiClient(
             base_url=config.xray_base_url,
-            auth_token=f"Bearer {bearer_token}",
+            auth_token=f"Bearer {self._token}",
             retry_max=config.rate_limit_retry_max,
             backoff_base_ms=config.rate_limit_backoff_base_ms,
             http_proxy=config.http_proxy,
@@ -312,8 +329,19 @@ class XrayCloudExtractor:
         )
         resp.raise_for_status()
         token: str = resp.json()
-        log.info("xray_cloud.authenticated")
+        if not isinstance(token, str) or not token:
+            raise ValueError(f"Unexpected Xray Cloud auth response: {token!r}")
+        log.info("xray_cloud.authenticated", exp=_jwt_expires_at(token))
         return token
+
+    def _ensure_valid_token(self) -> None:
+        """Re-authenticate if the JWT is within the refresh buffer of expiry."""
+        if time.time() < self._token_exp - _TOKEN_REFRESH_BUFFER_S:
+            return
+        log.info("xray_cloud.token_refresh")
+        self._token = self._authenticate(self._config)
+        self._token_exp = _jwt_expires_at(self._token)
+        self._client.update_auth_header(f"Bearer {self._token}")
 
     def __enter__(self) -> XrayCloudExtractor:
         return self
@@ -326,6 +354,7 @@ class XrayCloudExtractor:
         project_key: str,
         watermark: datetime | None = None,
     ) -> tuple[list[StagingRecord], ExtractorResult]:
+        self._ensure_valid_token()
         records: list[StagingRecord] = []
         try:
             for page in self._client.paginate_xray_cloud_graphql(
@@ -353,6 +382,7 @@ class XrayCloudExtractor:
         project_key: str,
         watermark: datetime | None = None,
     ) -> tuple[list[StagingRecord], ExtractorResult]:
+        self._ensure_valid_token()
         records: list[StagingRecord] = []
         try:
             for page in self._client.paginate_xray_cloud_graphql(
@@ -380,6 +410,7 @@ class XrayCloudExtractor:
         project_key: str,
         watermark: datetime | None = None,
     ) -> tuple[list[StagingRecord], ExtractorResult]:
+        self._ensure_valid_token()
         records: list[StagingRecord] = []
         try:
             for page in self._client.paginate_xray_cloud_graphql(
@@ -420,6 +451,7 @@ class XrayCloudExtractor:
         self,
         execution_issue_id: str,
     ) -> tuple[list[StagingRecord], list[StagingRecord]]:
+        self._ensure_valid_token()
         run_records: list[StagingRecord] = []
         step_records: list[StagingRecord] = []
 

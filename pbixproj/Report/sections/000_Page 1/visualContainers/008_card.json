@@ -1,0 +1,111 @@
+{
+  "id": 9,
+  "x": 900,
+  "y": 124,
+  "z": 0,
+  "width": 180,
+  "height": 158,
+  "config": {
+    "name": "2c448a0b338e43d7883b",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "card",
+      "projections": {
+        "Values": [
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Band",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "v",
+            "Entity": "vw_p1_qa_health_by_release",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "ETMI Band"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Band"
+          }
+        ]
+      },
+      "vcObjects": {
+        "title": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Maturity Band'"
+                  }
+                }
+              },
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "10"
+                  }
+                }
+              },
+              "fontColor": {
+                "solid": {
+                  "color": "#605E5C"
+                }
+              }
+            }
+          }
+        ],
+        "labels": [
+          {
+            "properties": {
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "20"
+                  }
+                }
+              },
+              "color": {
+                "solid": {
+                  "color": "#107C10"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

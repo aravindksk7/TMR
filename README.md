@@ -23,6 +23,9 @@ Jira / Xray  ──►  qa-pipeline (Python)  ──►  SQL Server  ──►  
 | Add a new report page to Power BI | [How-to: Add Power BI Report Page](docs/how-to/05-add-powerbi-page.md) |
 | Add or remove a Power BI user / RLS role | [How-to: Manage RLS Users](docs/how-to/06-manage-rls-users.md) |
 | Diagnose a broken pipeline run | [How-to: Troubleshoot the Pipeline](docs/how-to/07-troubleshoot-pipeline.md) |
+| Follow Jira/Xray field guardrails for reliable metrics | [How-to: Jira/Xray Field Guardrails](docs/how-to/13-jira-xray-field-guardrails.md) |
+| Share a one-page team poster for Jira/Xray guardrails | [How-to: Jira/Xray Metrics Guardrails Team Poster](docs/how-to/14-jira-xray-metrics-guardrails-poster.md) |
+| Print an A4 wall poster for Jira/Xray guardrails | [How-to: Jira/Xray Guardrails A4 Poster](docs/how-to/15-jira-xray-guardrails-poster-a4.md) |
 
 ---
 

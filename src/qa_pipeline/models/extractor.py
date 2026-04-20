@@ -14,8 +14,8 @@ class ExtractorConfig(BaseModel):
     jira_base_url: str
     xray_base_url: str
     auth_token: str                            # base64 email:api_token or Bearer
-    jira_api_version: str = "2"               # "2" for Server/DC, "3" for Cloud
-    xray_variant: Literal["server", "cloud"] = "server"
+    jira_api_version: str = "3"               # "2" for Server/DC, "3" for Cloud
+    xray_variant: Literal["server", "cloud"] = "cloud"
     xray_client_id: str | None = None      # Xray Cloud OAuth client ID
     xray_client_secret: str | None = None  # Xray Cloud OAuth client secret
     project_keys: list[str] = []

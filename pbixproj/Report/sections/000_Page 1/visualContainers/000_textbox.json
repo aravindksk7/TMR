@@ -1,0 +1,74 @@
+{
+  "id": 1,
+  "x": 0,
+  "y": 0,
+  "z": 0,
+  "width": 1280,
+  "height": 44,
+  "config": {
+    "name": "0fed2e6adb764d318e5b",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 0
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "textbox",
+      "vcObjects": {
+        "general": [
+          {
+            "properties": {
+              "paragraphs": {
+                "expr": {
+                  "Literal": {
+                    "Value": "[{\"name\": \"f0199a394d244aca98a2\", \"textRuns\": [{\"name\": \"a1f635ece8c644a3971a\", \"value\": \"P1 | CXO Quality Dashboard\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"20pt\"}}], \"horizontalTextAlignment\": \"Center\"}]"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "objects": {
+        "general": [
+          {
+            "properties": {
+              "paragraphs": {
+                "expr": {
+                  "Literal": {
+                    "Value": "[{\"name\": \"f0199a394d244aca98a2\", \"textRuns\": [{\"name\": \"a1f635ece8c644a3971a\", \"value\": \"P1 | CXO Quality Dashboard\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"20pt\"}}], \"horizontalTextAlignment\": \"Center\"}]"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "name": "f0199a394d244aca98a2",
+          "textRuns": [
+            {
+              "name": "a1f635ece8c644a3971a",
+              "value": "P1 | CXO Quality Dashboard",
+              "textStyle": {
+                "fontWeight": "bold",
+                "fontSize": "20pt"
+              }
+            }
+          ],
+          "horizontalTextAlignment": "Center"
+        }
+      ]
+    }
+  },
+  "filters": "[]"
+}

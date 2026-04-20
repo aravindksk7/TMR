@@ -1,0 +1,111 @@
+{
+  "id": 10,
+  "x": 1088,
+  "y": 124,
+  "z": 0,
+  "width": 192,
+  "height": 158,
+  "config": {
+    "name": "fec262b8440c4b56800e",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "card",
+      "projections": {
+        "Values": [
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Status",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "v",
+            "Entity": "vw_p1_qa_health_by_release",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "ETMI Status"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Status"
+          }
+        ]
+      },
+      "vcObjects": {
+        "title": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'ETMI Status'"
+                  }
+                }
+              },
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "10"
+                  }
+                }
+              },
+              "fontColor": {
+                "solid": {
+                  "color": "#605E5C"
+                }
+              }
+            }
+          }
+        ],
+        "labels": [
+          {
+            "properties": {
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "18"
+                  }
+                }
+              },
+              "color": {
+                "solid": {
+                  "color": "#252423"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

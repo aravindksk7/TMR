@@ -1,0 +1,111 @@
+{
+  "id": 8,
+  "x": 696,
+  "y": 124,
+  "z": 0,
+  "width": 196,
+  "height": 158,
+  "config": {
+    "name": "6f7970ad553640379512",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "card",
+      "projections": {
+        "Values": [
+          {
+            "queryRef": "vw_p1_qa_health_by_release.Execution Efficiency %",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "v",
+            "Entity": "vw_p1_qa_health_by_release",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "Execution Efficiency %"
+            },
+            "Name": "vw_p1_qa_health_by_release.Execution Efficiency %"
+          }
+        ]
+      },
+      "vcObjects": {
+        "title": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Execution Efficiency %'"
+                  }
+                }
+              },
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "10"
+                  }
+                }
+              },
+              "fontColor": {
+                "solid": {
+                  "color": "#605E5C"
+                }
+              }
+            }
+          }
+        ],
+        "labels": [
+          {
+            "properties": {
+              "fontSize": {
+                "expr": {
+                  "Literal": {
+                    "Value": "28"
+                  }
+                }
+              },
+              "color": {
+                "solid": {
+                  "color": "#252423"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

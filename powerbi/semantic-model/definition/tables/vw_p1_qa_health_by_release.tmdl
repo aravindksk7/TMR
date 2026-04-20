@@ -21,6 +21,49 @@ table vw_p1_qa_health_by_release
 		lineageTag: 1a13abb3-34e8-414d-a939-0effa47ecf3d
 		formatString: 0.0
 
+	/// ETMI component 1 (weight 0.4) — % of all runs executed by automation
+	measure 'Automation Coverage %' = [P1 Automation Rate %]
+		lineageTag: e7c21a00-1111-4aaa-b000-000000000001
+		formatString: 0.0
+
+	/// ETMI component 2 (weight 0.3) — % of regression-type runs that are automated
+	measure 'Regression Automation %' =
+			VAR _reg_type   = FILTER(ALL('dim_test_type'), 'dim_test_type'[test_type_name] = "Regression")
+			VAR _reg_tests  = CALCULATETABLE(ALL('dim_test'), _reg_type)
+			VAR _total_reg  = CALCULATE(COUNTROWS('fact_test_run'), _reg_tests)
+			VAR _auto_reg   = CALCULATE(COUNTROWS('fact_test_run'), _reg_tests, 'fact_test_run'[is_automated] = TRUE())
+			RETURN DIVIDE(_auto_reg, _total_reg, 0) * 100
+		lineageTag: e7c21a00-1111-4aaa-b000-000000000002
+		formatString: 0.0
+
+	/// ETMI component 3 (weight 0.3) — passed runs as a share of all runs
+	measure 'Execution Efficiency %' = [P1 Pass Rate %]
+		lineageTag: e7c21a00-1111-4aaa-b000-000000000003
+		formatString: 0.0
+
+	/// ETMI = (Automation Coverage × 0.4) + (Regression Automation × 0.3) + (Execution Efficiency × 0.3)
+	measure 'ETMI Score' =
+			DIVIDE([Automation Coverage %], 100, 0) * 40
+			+ DIVIDE([Regression Automation %], 100, 0) * 30
+			+ DIVIDE([Execution Efficiency %], 100, 0) * 30
+		lineageTag: e7c21a00-1111-4aaa-b000-000000000004
+		formatString: 0.0
+
+	measure 'ETMI Band' =
+			SWITCH(
+			    TRUE(),
+			    [ETMI Score] >= 75, "Mature",
+			    [ETMI Score] >= 50, "Developing",
+			    "Emerging"
+			)
+		lineageTag: e7c21a00-1111-4aaa-b000-000000000005
+
+	measure 'ETMI Target' = 75
+		lineageTag: e7c21a00-1111-4aaa-b000-000000000006
+
+	measure 'ETMI Status' = IF([ETMI Score] >= [ETMI Target], "On Track", "At Risk")
+		lineageTag: e7c21a00-1111-4aaa-b000-000000000007
+
 	column release_name
 		dataType: string
 		lineageTag: 9d97dfa1-3c9c-4728-8b4e-c42b973e873e

@@ -1,0 +1,146 @@
+{
+  "id": 11,
+  "x": 0,
+  "y": 294,
+  "z": 0,
+  "width": 1280,
+  "height": 194,
+  "config": {
+    "name": "08a1c8d1e620456eafca",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "lineChart",
+      "projections": {
+        "Category": [
+          {
+            "queryRef": "dim_release.release_name",
+            "active": true
+          }
+        ],
+        "Y": [
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Score",
+            "active": true
+          }
+        ],
+        "Y2": [
+          {
+            "queryRef": "vw_p1_qa_health_by_release.ETMI Target",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "r",
+            "Entity": "dim_release",
+            "Type": 0
+          },
+          {
+            "Name": "v",
+            "Entity": "vw_p1_qa_health_by_release",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "r"
+                }
+              },
+              "Property": "release_name"
+            },
+            "Name": "dim_release.release_name"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "ETMI Score"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Score"
+          },
+          {
+            "Measure": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "v"
+                }
+              },
+              "Property": "ETMI Target"
+            },
+            "Name": "vw_p1_qa_health_by_release.ETMI Target"
+          }
+        ]
+      },
+      "vcObjects": {
+        "title": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'ETMI Score by Release'"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "xAxis": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "yAxis": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

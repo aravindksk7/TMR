@@ -44,6 +44,10 @@ htmlcov/
 # mypy
 .mypy_cache/
 
+# Power BI binaries (large; use pbixproj/ source instead)
+*.pbix
+*.pbit
+
 # Local AI/tool config
 .claude/
 .cursor/

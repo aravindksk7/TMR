@@ -1,0 +1,100 @@
+{
+  "id": 3,
+  "x": 312,
+  "y": 52,
+  "z": 0,
+  "width": 300,
+  "height": 60,
+  "config": {
+    "name": "0aa9445f55344594b17a",
+    "layouts": [
+      {
+        "id": 0,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 0,
+          "height": 0,
+          "tabOrder": 1000
+        }
+      }
+    ],
+    "singleVisual": {
+      "visualType": "slicer",
+      "projections": {
+        "Values": [
+          {
+            "queryRef": "dim_squad.squad_name",
+            "active": true
+          }
+        ]
+      },
+      "prototypeQuery": {
+        "Version": 2,
+        "From": [
+          {
+            "Name": "s",
+            "Entity": "dim_squad",
+            "Type": 0
+          }
+        ],
+        "Select": [
+          {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Source": "s"
+                }
+              },
+              "Property": "squad_name"
+            },
+            "Name": "dim_squad.squad_name"
+          }
+        ]
+      },
+      "vcObjects": {},
+      "objects": {
+        "data": [
+          {
+            "properties": {
+              "mode": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Dropdown'"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "header": [
+          {
+            "properties": {
+              "show": {
+                "expr": {
+                  "Literal": {
+                    "Value": "true"
+                  }
+                }
+              },
+              "fontColor": {
+                "solid": {
+                  "color": "#252423"
+                }
+              },
+              "text": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Squad'"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "filters": "[]"
+}

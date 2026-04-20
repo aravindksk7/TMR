@@ -1,8 +1,11 @@
 {
-  "displayName": "Page 1",
-  "displayOption": 1,
-  "height": 720,
+  "id": 0,
   "name": "3239ea28848390c1580e",
+  "displayName": "P1 | CXO Quality Dashboard",
+  "filters": "[]",
   "ordinal": 0,
-  "width": 1280
+  "config": "{}",
+  "displayOption": 1,
+  "width": 1280,
+  "height": 720
 }

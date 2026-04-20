@@ -24,6 +24,7 @@ class ExtractorConfig(BaseModel):
     rate_limit_backoff_base_ms: int = 1000
     http_proxy: str | None = None              # e.g. http://proxy.corp.com:8080
     https_proxy: str | None = None             # e.g. http://proxy.corp.com:8080
+    no_proxy: str | None = None                # comma-separated hosts that bypass the proxy
     ssl_ca_bundle: str | None = None           # path to corporate CA bundle (.pem/.crt)
 
 

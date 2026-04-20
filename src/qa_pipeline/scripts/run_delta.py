@@ -118,6 +118,7 @@ def _run(
             rate_limit_backoff_base_ms=settings.rate_limit_backoff_base_ms,
             http_proxy=settings.http_proxy,
             https_proxy=settings.https_proxy,
+            no_proxy=settings.no_proxy,
             ssl_ca_bundle=settings.ssl_ca_bundle,
         )
 

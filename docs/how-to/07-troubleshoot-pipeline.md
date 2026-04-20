@@ -138,6 +138,36 @@ pip install -e .
 
 ---
 
+### `WinError 10060` — Connection timed out (TCP)
+
+**Symptom:** The pipeline exits immediately with an error like:
+```
+httpx.ConnectError: [WinError 10060] A connection attempt failed because the connected
+party did not properly respond after a period of time
+```
+
+This means the pipeline server cannot reach Atlassian or Xray Cloud directly and a corporate proxy is required.
+
+**Fix:**
+
+1. Ask your network team for the proxy address and port (e.g. `http://proxy.corp.com:8080`).
+2. Add to `.env`:
+   ```ini
+   HTTP_PROXY=http://proxy.corp.com:8080
+   HTTPS_PROXY=http://proxy.corp.com:8080
+   # Hosts that should NOT go through the proxy (comma-separated):
+   NO_PROXY=localhost,127.0.0.1,sqlsrv01,.corp.com
+   ```
+3. If the proxy performs TLS inspection, also add the corporate CA bundle:
+   ```ini
+   SSL_CA_BUNDLE=C:\certs\corporate-ca-bundle.pem
+   ```
+4. Verify with: `qa-check-connectivity`
+
+> **Important:** Setting `HTTP_PROXY` in Windows System Environment Variables or via `$env:HTTPS_PROXY` in PowerShell is **not sufficient** — the pipeline reads proxy settings from `.env` and applies them explicitly to every HTTP call. Only `.env` is authoritative.
+
+---
+
 ### SSL / TLS errors (`SSL Provider`, `certificate verify failed`)
 
 Add `TrustServerCertificate=yes` to the DSN in `.env`:

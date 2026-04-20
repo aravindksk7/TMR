@@ -13,10 +13,12 @@ Usage:
 from __future__ import annotations
 
 import sys
+import time
 
 import httpx
 import structlog
 
+from qa_pipeline.extractor.client import _build_proxy_mounts
 from qa_pipeline.extractor.xray import _XRAY_AUTH_URL, _jwt_expires_at
 from qa_pipeline.settings import PipelineSettings
 
@@ -26,15 +28,13 @@ _XRAY_GQL_URL = "https://xray.cloud.getxray.app/api/v2/graphql"
 _GQL_PING = "{ __typename }"
 
 
-def _check_jira(settings: PipelineSettings) -> bool:
+def _check_jira(client: httpx.Client, settings: PipelineSettings) -> bool:
     url = f"{str(settings.jira_base_url).rstrip('/')}/rest/api/3/myself"
     auth = f"Basic {settings.jira_auth_token.get_secret_value()}"
     try:
-        resp = httpx.get(
+        resp = client.get(
             url,
             headers={"Authorization": auth, "Accept": "application/json"},
-            timeout=15.0,
-            follow_redirects=True,
         )
         resp.raise_for_status()
         data = resp.json()
@@ -48,18 +48,17 @@ def _check_jira(settings: PipelineSettings) -> bool:
     return False
 
 
-def _check_xray_auth(settings: PipelineSettings) -> str | None:
+def _check_xray_auth(client: httpx.Client, settings: PipelineSettings) -> str | None:
     if not settings.xray_client_id or not settings.xray_client_secret:
         print("  [FAIL] Xray Cloud: XRAY_CLIENT_ID or XRAY_CLIENT_SECRET not set")
         return None
     try:
-        resp = httpx.post(
+        resp = client.post(
             _XRAY_AUTH_URL,
             json={
                 "client_id": settings.xray_client_id.get_secret_value(),
                 "client_secret": settings.xray_client_secret.get_secret_value(),
             },
-            timeout=30.0,
         )
         resp.raise_for_status()
         token: str = resp.json()
@@ -67,7 +66,6 @@ def _check_xray_auth(settings: PipelineSettings) -> str | None:
             print(f"  [FAIL] Xray Cloud auth: unexpected response body: {token!r}")
             return None
         exp = _jwt_expires_at(token)
-        import time
         ttl_h = (exp - time.time()) / 3600 if exp else 0
         print(f"  [PASS] Xray Cloud auth: JWT obtained, expires in {ttl_h:.1f}h")
         return token
@@ -78,9 +76,9 @@ def _check_xray_auth(settings: PipelineSettings) -> str | None:
     return None
 
 
-def _check_xray_graphql(token: str) -> bool:
+def _check_xray_graphql(client: httpx.Client, token: str) -> bool:
     try:
-        resp = httpx.post(
+        resp = client.post(
             _XRAY_GQL_URL,
             json={"query": _GQL_PING},
             headers={
@@ -88,7 +86,6 @@ def _check_xray_graphql(token: str) -> bool:
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             },
-            timeout=15.0,
         )
         resp.raise_for_status()
         data = resp.json()
@@ -108,16 +105,23 @@ def main() -> None:
     settings = PipelineSettings()
     results: list[bool] = []
 
-    print("--- Jira Cloud ---")
-    results.append(_check_jira(settings))
+    mounts = _build_proxy_mounts(settings.http_proxy, settings.https_proxy, settings.no_proxy)
+    with httpx.Client(
+        **({"mounts": mounts} if mounts else {}),
+        verify=settings.ssl_ca_bundle or True,
+        timeout=15.0,
+        follow_redirects=True,
+    ) as client:
+        print("--- Jira Cloud ---")
+        results.append(_check_jira(client, settings))
 
-    print("--- Xray Cloud authentication ---")
-    token = _check_xray_auth(settings)
-    results.append(token is not None)
+        print("--- Xray Cloud authentication ---")
+        token = _check_xray_auth(client, settings)
+        results.append(token is not None)
 
-    if token:
-        print("--- Xray Cloud GraphQL ---")
-        results.append(_check_xray_graphql(token))
+        if token:
+            print("--- Xray Cloud GraphQL ---")
+            results.append(_check_xray_graphql(client, token))
 
     print()
     if all(results):

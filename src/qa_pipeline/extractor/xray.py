@@ -25,7 +25,7 @@ from uuid import UUID
 import httpx
 import structlog
 
-from qa_pipeline.extractor.client import ApiClient
+from qa_pipeline.extractor.client import ApiClient, _build_proxy_mounts
 from qa_pipeline.models.extractor import ExtractorConfig, ExtractorResult
 from qa_pipeline.models.staging import StagingRecord
 
@@ -136,6 +136,7 @@ class XrayServerExtractor:
             backoff_base_ms=config.rate_limit_backoff_base_ms,
             http_proxy=config.http_proxy,
             https_proxy=config.https_proxy,
+            no_proxy=config.no_proxy,
             ssl_ca_bundle=config.ssl_ca_bundle,
         )
 
@@ -311,6 +312,7 @@ class XrayCloudExtractor:
             backoff_base_ms=config.rate_limit_backoff_base_ms,
             http_proxy=config.http_proxy,
             https_proxy=config.https_proxy,
+            no_proxy=config.no_proxy,
             ssl_ca_bundle=config.ssl_ca_bundle,
         )
 
@@ -321,12 +323,16 @@ class XrayCloudExtractor:
             raise ValueError(
                 "XRAY_CLIENT_ID and XRAY_CLIENT_SECRET are required for xray_variant=cloud"
             )
-        resp = httpx.post(
-            _XRAY_AUTH_URL,
-            json={"client_id": config.xray_client_id, "client_secret": config.xray_client_secret},
-            timeout=30.0,
+        mounts = _build_proxy_mounts(config.http_proxy, config.https_proxy, config.no_proxy)
+        with httpx.Client(
+            **({"mounts": mounts} if mounts else {}),
             verify=config.ssl_ca_bundle or True,
-        )
+            timeout=30.0,
+        ) as probe:
+            resp = probe.post(
+                _XRAY_AUTH_URL,
+                json={"client_id": config.xray_client_id, "client_secret": config.xray_client_secret},
+            )
         resp.raise_for_status()
         token: str = resp.json()
         if not isinstance(token, str) or not token:

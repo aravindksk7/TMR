@@ -47,10 +47,11 @@ Jira / Xray  ──►  qa-pipeline (Python)  ──►  SQL Server  ──►  
 ## CLI commands
 
 ```cmd
-qa-full-load       # full extraction + transformation (first run or nightly)
-qa-delta           # incremental extraction + transformation
-qa-scheduler       # start APScheduler daemon
-qa-seed-dates      # seed dim_date table (run once after DB init)
+qa-full-load            # full extraction + transformation (first run or nightly)
+qa-delta                # incremental extraction + transformation
+qa-scheduler            # start APScheduler daemon
+qa-seed-dates           # seed dim_date table (run once after DB init)
+qa-check-connectivity   # verify Jira Cloud + Xray Cloud connectivity and credentials
 ```
 
 ---

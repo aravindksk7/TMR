@@ -26,31 +26,39 @@
 ## 1. Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  On-Premises Network                                                │
+┌────────────────── Internet / Atlassian Cloud ──────────────────────┐
 │                                                                     │
-│  ┌──────────────┐   HTTPS   ┌──────────────────┐                  │
-│  │  Jira Server │◄─────────►│                  │                  │
-│  │  (or Cloud)  │           │  qa-pipeline      │                  │
-│  └──────────────┘           │  Python 3.11      │                  │
-│                             │  Windows Service  │                  │
-│  ┌──────────────┐   HTTPS   │  or Task Scheduler│                  │
-│  │  Xray Plugin │◄─────────►│                  │                  │
-│  │  (Server/DC) │           └────────┬─────────┘                  │
-│  └──────────────┘                    │ pyodbc                      │
-│                                      ▼                             │
-│                         ┌────────────────────────┐                 │
-│                         │     SQL Server 2019+   │                 │
-│                         │  ┌──────────────────┐  │                 │
-│                         │  │   Staging_DB     │  │                 │
-│                         │  │   (raw JSON)     │  │                 │
-│                         │  └──────────────────┘  │                 │
-│                         │  ┌──────────────────┐  │                 │
-│                         │  │  Reporting_DB    │  │◄── Power BI     │
-│                         │  │  (star schema)   │  │    Desktop /    │
-│                         │  └──────────────────┘  │    Report Server│
-│                         └────────────────────────┘                 │
-└──────────────────────────────────────────────────────────���──────────┘
+│  yourcompany.atlassian.net          xray.cloud.getxray.app         │
+│  ┌────────────────────┐             ┌────────────────────┐         │
+│  │  Jira Cloud        │             │  Xray Cloud        │         │
+│  │  REST API v3       │             │  GraphQL API v2    │         │
+│  └────────────────────┘             └────────────────────┘         │
+│              ▲                                ▲                     │
+└──────────────┼────────────────────────────────┼────────────────────┘
+               │ HTTPS (via corporate proxy      │
+               │ if on-premises)                 │
+┌──────────────┼────────────────────────────────┼────────────────────┐
+│  On-Premises │Network                          │                   │
+│              ▼                                ▼                     │
+│       ┌─────────────────────────────────────────────┐              │
+│       │   qa-pipeline  (Python 3.11)                 │              │
+│       │   Windows Service / Task Scheduler           │              │
+│       │   extract → stage → transform                │              │
+│       └─────────────────────┬───────────────────────┘              │
+│                             │ pyodbc                               │
+│                             ▼                                      │
+│              ┌──────────────────────────────┐                      │
+│              │      SQL Server 2019+        │                      │
+│              │  ┌──────────────────────┐    │                      │
+│              │  │   Staging_DB         │    │                      │
+│              │  │   (raw JSON)         │    │                      │
+│              │  └──────────────────────┘    │                      │
+│              │  ┌──────────────────────┐    │◄── Power BI          │
+│              │  │   Reporting_DB       │    │    Desktop /         │
+│              │  │   (star schema)      │    │    Report Server     │
+│              │  └──────────────────────┘    │                      │
+│              └──────────────────────────────┘                      │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
 **Data flow:**
@@ -94,29 +102,60 @@ The pipeline server can be the same machine as SQL Server for small installation
 ### 2.3 Network requirements
 
 The pipeline server must be able to reach:
-- Jira instance: HTTPS port 443 (or custom port)
-- Xray REST endpoints: same host as Jira (Server/DC) or `xray.cloud.getxray.app` (Cloud)
+- Jira Cloud: `https://<tenant>.atlassian.net` — port 443
+- Xray Cloud auth: `https://xray.cloud.getxray.app` — port 443
 - SQL Server: TCP port 1433 (or custom instance port)
 
 Firewall rules needed (outbound from pipeline server):
 
 ```
-Destination: <jira-host>        Port: 443    Protocol: TCP
-Destination: <sql-server-host>  Port: 1433   Protocol: TCP
+Destination: <tenant>.atlassian.net       Port: 443    Protocol: TCP
+Destination: xray.cloud.getxray.app       Port: 443    Protocol: TCP
+Destination: <sql-server-host>            Port: 1433   Protocol: TCP
 ```
 
-### 2.4 Jira / Xray API credentials
+**Corporate proxy (on-premises environments):**
 
-Create a dedicated service account in Jira:
+If your network requires an outbound HTTP/HTTPS proxy to reach the internet, configure the three proxy variables in `.env` (see Section 6.1). The pipeline uses these variables for all HTTP calls including the Xray Cloud JWT authentication request — bare OS environment variables are not sufficient because pydantic-settings loads `.env` into the application without writing to `os.environ`.
 
-1. In Jira: **Settings → User Management → Create User**
-   - Username: `qa-pipeline-svc`
+```ini
+HTTP_PROXY=http://proxy.corp.com:8080
+HTTPS_PROXY=http://proxy.corp.com:8080
+NO_PROXY=localhost,127.0.0.1,sqlsrv01,.corp.com
+```
+
+If the proxy requires a custom CA certificate, also set:
+```ini
+SSL_CA_BUNDLE=C:\certs\corporate-ca-bundle.pem
+```
+
+### 2.4 Jira Cloud API credentials
+
+1. In Jira Cloud: **Settings → User Management → Invite User**
+   - Email: `qa-pipeline-svc@yourcompany.com`
    - Role: **Browse Projects** on all QA-related projects (read-only is sufficient)
-2. Generate an API token (Jira Cloud) or use username/password (Jira Server):
-   - Cloud: **Account Settings → Security → API Tokens → Create**
-   - Server/DC: Use HTTP Basic auth — encode `username:password` in Base64
+2. Generate an API token for this account:
+   - Log in as the service account → **Account Settings → Security → API Tokens → Create API token**
+   - Copy the token value — it is shown only once
+3. Base64-encode `email:api_token` for use in `.env`:
+   ```powershell
+   $cred = "qa-pipeline-svc@yourcompany.com:your-api-token-here"
+   [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($cred))
+   ```
+   Then set: `JIRA_AUTH_TOKEN=Basic <output>`
 
-Keep the token secure. You will need it for the `.env` file in Section 6.
+### 2.5 Xray Cloud API credentials
+
+1. In Xray Cloud: go to **Xray → API Keys** (top-right menu in Jira Cloud).
+2. Click **Generate a pair of Client ID and Client Secret**.
+3. Copy both values — the secret is shown only once.
+4. Set in `.env`:
+   ```ini
+   XRAY_CLIENT_ID=<client-id>
+   XRAY_CLIENT_SECRET=<client-secret>
+   ```
+
+The pipeline automatically exchanges these credentials for a short-lived JWT Bearer token at startup and refreshes it before expiry.
 
 ---
 
@@ -276,6 +315,7 @@ Verify the CLI scripts installed:
 qa-full-load --help
 qa-delta --help
 qa-seed-dates --help
+qa-check-connectivity --help
 ```
 
 ---
@@ -294,23 +334,29 @@ notepad .env
 Complete `.env` reference:
 
 ```ini
-# ── Jira / Xray ─────────────────────────────────────────────────────��─────────
-# Your Jira base URL (no trailing slash)
-JIRA_BASE_URL=https://jira.yourcompany.com
+# ── Jira Cloud ────────────────────────────────────────────────────────────────
+# Your Atlassian Cloud base URL (no trailing slash)
+JIRA_BASE_URL=https://yourcompany.atlassian.net
 
-# Xray base URL — same as Jira for Server/DC
-XRAY_BASE_URL=https://jira.yourcompany.com
+# Jira REST API version: "3" for Cloud (default), "2" for Server/DC
+JIRA_API_VERSION=3
 
-# Auth token:
-#   Jira Server/DC: Basic <base64(username:password)>
-#     e.g. Basic cWEtcGlwZWxpbmU6bXlwYXNzd29yZA==
-#   Jira Cloud:     Bearer <api-token>
-JIRA_AUTH_TOKEN=Basic cWEtcGlwZWxpbmU6bXlwYXNzd29yZA==
+# Basic auth token: base64-encode "email@company.com:api_token"
+# Generate an API token at: Account Settings → Security → API Tokens
+JIRA_AUTH_TOKEN=Basic ZW1haWxAY29tcGFueS5jb206YXBpX3Rva2Vu
 
-# "server" for Xray Server/DC, "cloud" for Xray Cloud
-XRAY_VARIANT=server
+# ── Xray Cloud ────────────────────────────────────────────────────────────────
+# Xray Cloud GraphQL base URL (fixed — do not change)
+XRAY_BASE_URL=https://xray.cloud.getxray.app
 
-# Comma-separated list of Jira project keys to include
+# "cloud" for Xray Cloud (default), "server" for Xray Server/DC
+XRAY_VARIANT=cloud
+
+# Xray Cloud OAuth credentials — from Xray Cloud → API Keys → Generate
+XRAY_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+XRAY_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Comma-separated list of Jira project keys to extract
 JIRA_PROJECT_KEYS=QA,PROJ,PLATFORM
 
 # ── SQL Server ────────────────────────────────────────────────────────────────
@@ -318,18 +364,26 @@ STAGING_DB_DSN=DRIVER={ODBC Driver 18 for SQL Server};SERVER=SQLSRV01\MSSQLSERVE
 REPORTING_DB_DSN=DRIVER={ODBC Driver 18 for SQL Server};SERVER=SQLSRV01\MSSQLSERVER;DATABASE=Reporting_DB;UID=qa_pipeline_svc;PWD=StrongP@ssw0rd!;TrustServerCertificate=yes
 SCHEDULER_DB_URL=mssql+pyodbc://qa_pipeline_svc:StrongP%40ssw0rd!@SQLSRV01\MSSQLSERVER/Staging_DB?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes
 
+# ── Corporate proxy (on-premises environments only) ───────────────────────────
+# Required when the pipeline server must go through a proxy to reach the internet.
+# Leave blank or omit if the server has direct internet access.
+HTTP_PROXY=http://proxy.corp.com:8080
+HTTPS_PROXY=http://proxy.corp.com:8080
+# Comma-separated hosts/domains that bypass the proxy.
+# Use a leading dot to match the domain and all subdomains: .corp.com
+NO_PROXY=localhost,127.0.0.1,sqlsrv01,.corp.com
+# Path to corporate CA bundle if the proxy performs TLS inspection:
+# SSL_CA_BUNDLE=C:\certs\corporate-ca-bundle.pem
+
 # ── Extraction tuning ─────────────────────────────────────────────────────────
 MAX_RESULTS_PER_PAGE=100
 RATE_LIMIT_RETRY_MAX=5
 RATE_LIMIT_BACKOFF_BASE_MS=1000
 
-# Comma-separated project keys (duplicates JIRA_PROJECT_KEYS — keep consistent)
-JIRA_PROJECT_KEYS=QA,PROJ,PLATFORM
-
 # ── Custom field map path ─────────────────────────────────────────────────────
 CUSTOM_FIELD_MAP_PATH=config/custom_field_map.json
 
-# ── Scheduler cron ───────────────────────────��────────────────────────────────
+# ── Scheduler cron ────────────────────────────────────────────────────────────
 EXTRACTOR_CRON_HOUR=*/4      # delta run every 4 hours
 FULL_LOAD_CRON_HOUR=1        # full load at 01:00 UTC nightly
 
@@ -527,12 +581,17 @@ This may take 30–120 minutes depending on your data volume.
 cd C:\Services\qa-pipeline
 .venv\Scripts\activate
 
-REM Optional: test connectivity first (no DB writes)
+REM Step 1 — verify API connectivity (no DB writes)
+qa-check-connectivity
+
+REM Step 2 — dry run to verify extraction and staging (no transformation)
 qa-full-load --dry-run
 
-REM Actual full load
+REM Step 3 — actual full load
 qa-full-load
 ```
+
+`qa-check-connectivity` tests Jira Cloud auth, Xray Cloud JWT auth, and a GraphQL ping in sequence. Fix any `[FAIL]` lines before proceeding to a full load.
 
 **What happens:**
 1. Connects to Jira and extracts all issues (stories, bugs, epics) for configured projects.

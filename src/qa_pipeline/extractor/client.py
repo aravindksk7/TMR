@@ -36,6 +36,45 @@ def _is_retryable(exc: BaseException) -> bool:
     return False
 
 
+# ── Proxy mount builder ────────────────────────────────────────────────────────
+
+def _build_proxy_mounts(
+    http_proxy: str | None,
+    https_proxy: str | None,
+    no_proxy: str | None,
+) -> dict[str, httpx.HTTPTransport]:
+    """
+    Build an httpx mounts dict that routes requests through the corporate proxy
+    and bypasses it for hosts listed in no_proxy.
+
+    no_proxy format: comma-separated hostnames or domains.
+    A leading dot (e.g. '.corp.com') is treated as a wildcard that matches the
+    domain itself and all subdomains (corp.com, foo.corp.com, bar.corp.com).
+    """
+    mounts: dict[str, httpx.HTTPTransport] = {}
+
+    if http_proxy:
+        mounts["http://"] = httpx.HTTPTransport(proxy=http_proxy)
+    if https_proxy:
+        mounts["https://"] = httpx.HTTPTransport(proxy=https_proxy)
+
+    # More-specific mounts override less-specific ones in httpx.
+    # Add a direct (no-proxy) transport for every no_proxy host/domain.
+    for entry in (no_proxy or "").split(","):
+        host = entry.strip()
+        if not host:
+            continue
+        if host.startswith("."):
+            # .corp.com → bypass for corp.com and *.corp.com
+            domain = host.lstrip(".")
+            mounts[f"all://{domain}"] = httpx.HTTPTransport()
+            mounts[f"all://*.{domain}"] = httpx.HTTPTransport()
+        else:
+            mounts[f"all://{host}"] = httpx.HTTPTransport()
+
+    return mounts
+
+
 # ── Low-level client ───────────────────────────────────────────────────────────
 
 class ApiClient:
@@ -67,6 +106,7 @@ class ApiClient:
         timeout: float = 30.0,
         http_proxy: str | None = None,
         https_proxy: str | None = None,
+        no_proxy: str | None = None,
         ssl_ca_bundle: str | None = None,
     ) -> None:
         self._base_url = base_url.rstrip("/")
@@ -82,11 +122,7 @@ class ApiClient:
             else f"Basic {auth_token}"
         )
 
-        mounts: dict[str, httpx.HTTPTransport] = {}
-        if http_proxy:
-            mounts["http://"] = httpx.HTTPTransport(proxy=http_proxy)
-        if https_proxy:
-            mounts["https://"] = httpx.HTTPTransport(proxy=https_proxy)
+        mounts = _build_proxy_mounts(http_proxy, https_proxy, no_proxy)
 
         self._client = httpx.Client(
             base_url=self._base_url,

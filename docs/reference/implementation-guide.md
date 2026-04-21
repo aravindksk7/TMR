@@ -346,10 +346,13 @@ JIRA_API_VERSION=3
 JIRA_AUTH_TOKEN=Basic ZW1haWxAY29tcGFueS5jb206YXBpX3Rva2Vu
 
 # ── Xray Cloud ────────────────────────────────────────────────────────────────
-# Xray Cloud GraphQL base URL (fixed — do not change)
+# GraphQL base URL — host only, no trailing /api/v2 path.
+# Xray SaaS cloud:          https://xray.cloud.getxray.app  (fixed)
+# Xray DC on-premises:      https://xray.yourcompany.com    (your host)
 XRAY_BASE_URL=https://xray.cloud.getxray.app
 
-# "cloud" for Xray Cloud (default), "server" for Xray Server/DC
+# "cloud" for Xray Cloud SaaS or Xray DC with GraphQL API
+# "server" for Xray Server/DC REST-only installations
 XRAY_VARIANT=cloud
 
 # Xray Cloud OAuth credentials — from Xray Cloud → API Keys → Generate
@@ -417,7 +420,26 @@ $cred = "qa-pipeline-svc:MyPassword123"
 
 Then set: `JIRA_AUTH_TOKEN=Basic cWEtcGlwZWxpbmUtc3ZjOk15UGFzc3dvcmQxMjM=`
 
-### 6.3 Verify the connection string
+### 6.3 Xray GraphQL API argument names
+
+The pipeline uses `XRAY_VARIANT=cloud` for any Xray installation that exposes the GraphQL API — both Xray SaaS and Xray DC on-premises (DC versions ≥ 4.x).
+
+The GraphQL queries use **`projectId`** (not `projectKey`) as the argument name for all project-scoped queries (`getTestExecutions`, `getTests`, `getTestPlans`). Pass the Jira **project key** string as the value regardless — the Xray API accepts the project key in this field.
+
+```graphql
+# Example — what the pipeline sends
+getTestExecutions(projectId: "GOL", limit: 100, start: 0)
+```
+
+> **Xray SaaS vs DC note:** Early versions of the Xray Cloud SaaS GraphQL schema used `projectKey` as the argument name. If you are on Xray Cloud SaaS and see zero results or a GraphQL schema error, verify the correct argument name in your Xray Cloud → **API Explorer** and update the pipeline queries accordingly — see [Troubleshoot the Pipeline](../how-to/07-troubleshoot-pipeline.md).
+
+Test runs are fetched by passing an **array** of execution issue IDs:
+
+```graphql
+getTestRuns(testExecIssueIds: ["EX-123"], limit: 100, start: 0)
+```
+
+### 6.4 Verify the connection string
 
 Test the SQL Server connection manually:
 

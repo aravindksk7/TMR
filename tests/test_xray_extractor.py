@@ -3,6 +3,9 @@ tests/test_xray_extractor.py — Unit tests for XrayServerExtractor and build_xr
 """
 from __future__ import annotations
 
+import base64
+import json
+import time
 import uuid
 from unittest.mock import MagicMock, patch
 
@@ -41,7 +44,7 @@ def server_config():
 def cloud_config():
     return ExtractorConfig(
         jira_base_url="https://jira.atlassian.net",
-        xray_base_url="https://xray.cloud.getxray.app/api/v2",
+        xray_base_url="https://xray.cloud.getxray.app",
         auth_token="Bearer cloud-token",
         xray_variant="cloud",
         project_keys=["QA"],
@@ -160,3 +163,120 @@ class TestXrayServerExtractor:
             records, _ = ext.extract_preconditions("QA")
 
         assert records[0].entity_type == "xray_precondition"
+
+
+def _make_jwt(exp_offset: int = 3600) -> str:
+    payload = base64.urlsafe_b64encode(
+        json.dumps({"exp": int(time.time()) + exp_offset}).encode()
+    ).decode().rstrip("=")
+    return f"header.{payload}.signature"
+
+
+class TestXrayCloudExtractorTestRuns:
+    _GQL_URL = "https://xray.cloud.getxray.app/api/v2/graphql"
+    # base_url is https://xray.cloud.getxray.app; client appends /api/v2/graphql
+
+    def _make_extractor(self, cloud_config, run_id):
+        with patch.object(XrayCloudExtractor, "_authenticate", return_value=_make_jwt()):
+            return XrayCloudExtractor(cloud_config, run_id)
+
+    @respx.mock
+    def test_extract_test_runs_returns_run_and_step_records(self, cloud_config, run_id):
+        respx.post(self._GQL_URL).mock(
+            return_value=httpx.Response(200, json={
+                "data": {
+                    "getTestRuns": {
+                        "total": 1,
+                        "results": [
+                            {
+                                "id": "run-1",
+                                "status": {"name": "PASS"},
+                                "startedOn": "2024-01-01T10:00:00Z",
+                                "finishedOn": "2024-01-01T10:05:00Z",
+                                "assigneeId": "user-abc",
+                                "comment": None,
+                                "defects": [],
+                                "evidence": [],
+                                "steps": [
+                                    {"id": "s1", "status": {"name": "PASS"}, "comment": None,
+                                     "actualResult": None, "evidence": []},
+                                    {"id": "s2", "status": {"name": "PASS"}, "comment": None,
+                                     "actualResult": None, "evidence": []},
+                                ],
+                                "test": {
+                                    "issueId": "12345",
+                                    "testType": {"name": "Manual"},
+                                    "jira": {"key": "QA-100", "summary": "Login test"},
+                                    "customFields": [{"id": "cf1", "name": "Priority", "values": ["High"]}],
+                                },
+                            }
+                        ],
+                    }
+                }
+            })
+        )
+        ext = self._make_extractor(cloud_config, run_id)
+        run_recs, step_recs = ext.extract_test_runs("exec-issue-id-1")
+
+        assert len(run_recs) == 1
+        assert run_recs[0].entity_type == "xray_test_run"
+        assert run_recs[0].source_key == "run-1"
+        assert len(step_recs) == 2
+        assert all(r.entity_type == "xray_test_step_result" for r in step_recs)
+
+    @respx.mock
+    def test_extract_test_runs_step_source_key_includes_run_id(self, cloud_config, run_id):
+        respx.post(self._GQL_URL).mock(
+            return_value=httpx.Response(200, json={
+                "data": {
+                    "getTestRuns": {
+                        "total": 1,
+                        "results": [
+                            {
+                                "id": "run-99",
+                                "status": {"name": "FAIL"},
+                                "assigneeId": None,
+                                "comment": None,
+                                "defects": [],
+                                "evidence": [],
+                                "steps": [
+                                    {"id": "step-x", "status": {"name": "FAIL"}, "comment": None,
+                                     "actualResult": "wrong output", "evidence": []},
+                                ],
+                                "test": {"issueId": "99999", "testType": {"name": "Manual"},
+                                         "jira": {}, "customFields": []},
+                            }
+                        ],
+                    }
+                }
+            })
+        )
+        ext = self._make_extractor(cloud_config, run_id)
+        _, step_recs = ext.extract_test_runs("exec-issue-id-99")
+
+        assert "run-99" in step_recs[0].source_key
+        assert "step-x" in step_recs[0].source_key
+
+    @respx.mock
+    def test_extract_test_runs_empty_results(self, cloud_config, run_id):
+        respx.post(self._GQL_URL).mock(
+            return_value=httpx.Response(200, json={
+                "data": {"getTestRuns": {"total": 0, "results": []}}
+            })
+        )
+        ext = self._make_extractor(cloud_config, run_id)
+        run_recs, step_recs = ext.extract_test_runs("exec-issue-id-empty")
+
+        assert run_recs == []
+        assert step_recs == []
+
+    @respx.mock
+    def test_extract_test_runs_api_error_returns_empty(self, cloud_config, run_id):
+        respx.post(self._GQL_URL).mock(
+            return_value=httpx.Response(500, json={"error": "internal server error"})
+        )
+        ext = self._make_extractor(cloud_config, run_id)
+        run_recs, step_recs = ext.extract_test_runs("exec-issue-id-fail")
+
+        assert run_recs == []
+        assert step_recs == []

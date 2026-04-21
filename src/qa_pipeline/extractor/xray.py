@@ -35,7 +35,7 @@ log = structlog.get_logger(__name__)
 
 _GQL_TEST_EXECUTIONS = """
 query GetTestExecutions($projectKey: String!, $limit: Int!, $start: Int!) {
-  getTestExecutions(projectKey: $projectKey, limit: $limit, start: $start) {
+  getTestExecutions(projectId: $projectKey, limit: $limit, start: $start) {
     total
     results {
       issueId
@@ -48,20 +48,16 @@ query GetTestExecutions($projectKey: String!, $limit: Int!, $start: Int!) {
 
 _GQL_TEST_RUNS = """
 query GetTestRuns($testExecIssueId: String!, $limit: Int!, $start: Int!) {
-  getTestRuns(testExecIssueId: $testExecIssueId, limit: $limit, start: $start) {
+  getTestRuns(testExecIssueIds: [$testExecIssueId], limit: $limit, start: $start) {
     total
     results {
       id
       status { name }
       startedOn
       finishedOn
-      assignee { accountId displayName emailAddress }
+      assigneeId
       comment
-      defects {
-        issueId
-        jira(fields: ["key","summary","status","priority","issuetype",
-                      "customfield_10200","labels"])
-      }
+      defects
       evidence { filename }
       steps {
         id
@@ -75,8 +71,8 @@ query GetTestRuns($testExecIssueId: String!, $limit: Int!, $start: Int!) {
         testType { name }
         jira(fields: ["key","summary","status","assignee","customfield_10100",
                       "fixVersions","labels"])
+        customFields { id name values }
       }
-      customFields { id name value }
     }
   }
 }
@@ -84,7 +80,7 @@ query GetTestRuns($testExecIssueId: String!, $limit: Int!, $start: Int!) {
 
 _GQL_TESTS = """
 query GetTests($projectKey: String!, $limit: Int!, $start: Int!) {
-  getTests(projectKey: $projectKey, limit: $limit, start: $start) {
+  getTests(projectId: $projectKey, limit: $limit, start: $start) {
     total
     results {
       issueId
@@ -103,7 +99,7 @@ query GetTests($projectKey: String!, $limit: Int!, $start: Int!) {
 
 _GQL_TEST_PLANS = """
 query GetTestPlans($projectKey: String!, $limit: Int!, $start: Int!) {
-  getTestPlans(projectKey: $projectKey, limit: $limit, start: $start) {
+  getTestPlans(projectId: $projectKey, limit: $limit, start: $start) {
     total
     results {
       issueId

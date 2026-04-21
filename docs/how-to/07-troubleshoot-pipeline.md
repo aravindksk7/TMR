@@ -196,6 +196,30 @@ If the `qa-scheduler` Windows Service (NSSM) shows as running but no jobs fire:
 
 ---
 
+### Xray Cloud GraphQL returns zero test runs or HTTP 400/422
+
+**Symptoms:** `records_extracted = 0` for `xray_test_run`, or the log shows:
+```
+xray_cloud.extract_test_runs_failed error="... 400 Bad Request ..."
+```
+
+**Likely causes and fixes:**
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| All Xray entities return 0, not just test runs | Wrong `XRAY_BASE_URL` — the path `/api/v2` must **not** be included in the base URL | Set `XRAY_BASE_URL=https://xray.cloud.getxray.app` (host only, no path suffix) |
+| GraphQL error "Unknown argument `projectKey`" | Your Xray version uses `projectId` as the argument name (standard for Xray DC and current SaaS) | Already the default in this pipeline — confirm `src/qa_pipeline/extractor/xray.py` queries use `projectId:` |
+| GraphQL error "Unknown argument `testExecIssueId`" | API expects the plural array form `testExecIssueIds` | Already the default — confirm `_GQL_TEST_RUNS` uses `testExecIssueIds: [$testExecIssueId]` |
+| Auth error `401` on GraphQL calls only | JWT has expired mid-run | Pipeline auto-refreshes tokens; if the error is persistent, verify `XRAY_CLIENT_ID` / `XRAY_CLIENT_SECRET` are current |
+
+**Quick verification** — run the connectivity check to confirm Xray auth and a basic GraphQL ping succeed before a full load:
+
+```cmd
+qa-check-connectivity
+```
+
+---
+
 ## Escalation checklist
 
 If none of the above resolves the issue, collect the following before escalating:
